@@ -9,7 +9,10 @@ import moviepy.editor as mp
 
 #PATH_MOVIES = '/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/'
 # Local
-PATH_MOVIES = '/Users/silviaromanato/Desktop/ServerMIPLAB/FilmFiles/'
+if Local:
+    PATH_MOVIES = '/Users/silviaromanato/Desktop/ServerMIPLAB/FilmFiles/'
+else:
+    PATH_MOVIES = '/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/'
 
 Local = False
 
