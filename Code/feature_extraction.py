@@ -27,6 +27,8 @@ def FrameCapture(MOVIE_PATH):
     average_hue = []
     while success:
         success, image = vidObj.read()
+        if success == False:
+            print('The extraction failed')
         count += 1
 
         cv2.imwrite("/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/frame%d.jpg" % count, image)
