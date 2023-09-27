@@ -28,6 +28,8 @@ def FrameCapture(MOVIE_PATH):
     while success:
         success, image = vidObj.read()
         count += 1
+
+        image = cv2.imread('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/path_to_image.jpg')
         h_channel, s_channel, v_channel = convert_to_hsv(image)        
         sum_v = np.sum(v_channel)
         sum_s = np.sum(s_channel)
