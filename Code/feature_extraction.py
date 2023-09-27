@@ -9,12 +9,14 @@ import moviepy.editor as mp
 
 #PATH_MOVIES = '/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/'
 # Local
+Local = False
+
 if Local:
     PATH_MOVIES = '/Users/silviaromanato/Desktop/ServerMIPLAB/FilmFiles/'
 else:
     PATH_MOVIES = '/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/'
 
-Local = False
+
 
 def convert_to_hsv(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
