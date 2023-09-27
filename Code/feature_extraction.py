@@ -11,7 +11,7 @@ import moviepy.editor as mp
 # Local
 PATH_MOVIES = '/Users/silviaromanato/Desktop/ServerMIPLAB/FilmFiles/'
 
-Local = True
+Local = False
 
 def convert_to_hsv(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
