@@ -39,6 +39,7 @@ def FrameCapture(MOVIE_PATH):
             if success is False:
                 print("Error: Unable to load the image.")
             else:
+                print('Read a new frame: ', success)
                 count += 1
                 if Local:
                     cv2.imwrite("/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/frame%d.jpg" % count, image)
@@ -76,7 +77,7 @@ if __name__ == '__main__':
         
         df_movie = FrameCapture(MOVIE_PATH)
 
-        print(df_movie.head())
+        print(df_movie.head(30))
 
         # plot the average brightness and saturation and hue
         plt.figure()
