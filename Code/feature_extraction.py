@@ -90,11 +90,20 @@ if __name__ == '__main__':
             plt.legend()
             if Local:
                 plt.savefig(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/image_{movie_name}.png')
+                # save the dataframe to a csv file
+                df_movie.to_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/movie_features_{movie_name}.csv', index=False)
             else:
                 plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/image_{movie_name}.png')
+                # save the dataframe to a csv file
+                df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name}.csv', index=False)
             print('The plot was done and saved!')
         else:    
             print('The movie images were already analyzed!')
+            # load the dataframe
+            if Local:
+                df_movie = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/movie_features_{movie_name}.csv')
+            else:
+                df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name}.csv')
 
         # extract the audio from the movie
         print('Extracting the audio from the movie...')
@@ -124,13 +133,8 @@ if __name__ == '__main__':
         print("Duration (minutes):", duration_minutes)
         
         # Define parameters for energy calculation
-        max_slice = 10  # Maximum duration for each slice in seconds
+        max_slice = 3  # Maximum duration for each slice in seconds
         window_length = int(max_slice * sr)  # Convert duration to samples
-
-        # Extract a specific slice of the audio (example: from 21 to 22 seconds)
-        start_sample = int(21 * sr)
-        end_sample = int(22 * sr)
-        a = x[start_sample:end_sample]
 
         # Calculate energy for each slice of audio
         s_energy = np.array([sum(abs(x[i:i + window_length] ** 2)) for i in range(0, len(x), window_length)])
