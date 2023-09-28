@@ -112,14 +112,29 @@ if __name__ == '__main__':
             clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav")
             filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav"
         print('The audio was extracted!')
-        x, sr = librosa.load(filename, sr=22050)
-        int(librosa.get_duration(x, sr) / 60)
-        max_slice = 10
-        window_length = max_slice * sr
-        a = x[21 * window_length:22 * window_length]
-        ipd.Audio(a, rate=sr)
 
+        # extract the energy from the audio
+        x, sr = librosa.load(filename, sr=22050)
+        # Calculate the duration of the audio in seconds
+        duration_seconds = librosa.get_duration(y=x, sr=sr)
+        # If you want the duration in minutes
+        duration_minutes = duration_seconds / 60
+
+        print("Duration (seconds):", duration_seconds)
+        print("Duration (minutes):", duration_minutes)
+        
+        # Define parameters for energy calculation
+        max_slice = 10  # Maximum duration for each slice in seconds
+        window_length = int(max_slice * sr)  # Convert duration to samples
+
+        # Extract a specific slice of the audio (example: from 21 to 22 seconds)
+        start_sample = int(21 * sr)
+        end_sample = int(22 * sr)
+        a = x[start_sample:end_sample]
+
+        # Calculate energy for each slice of audio
         s_energy = np.array([sum(abs(x[i:i + window_length] ** 2)) for i in range(0, len(x), window_length)])
+
         print('The energy is: ', s_energy)
 
         plt.hist(s_energy)
