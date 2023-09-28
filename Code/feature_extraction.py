@@ -43,10 +43,6 @@ def FrameCapture(MOVIE_PATH):
                 count += 1
                 if count % 500 == 0:
                     print(f"Frame {count} processed")
-                if Local:
-                    cv2.imwrite("/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/frame%d.jpg" % count, image)
-                else:
-                    cv2.imwrite("/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/frame%d.jpg" % count, image)
                 h_channel, s_channel, v_channel = convert_to_hsv(image)        
                 sum_v = np.sum(v_channel)
                 sum_s = np.sum(s_channel)
