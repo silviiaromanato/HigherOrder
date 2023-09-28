@@ -92,6 +92,7 @@ if __name__ == '__main__':
                 plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/image_{movie_name}.png')
                 # save the dataframe to a csv file
                 df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name}.csv', index=False)
+            plt.close()
             print('The plot was done and saved!')
         else:    
             print(f'The movie images were already analyzed for movie {movie_name}!')
@@ -130,7 +131,7 @@ if __name__ == '__main__':
             print("Duration (minutes):", duration_minutes)
             
             # Define parameters for energy calculation
-            max_slice = 3  # Maximum duration for each slice in seconds
+            max_slice = 0.5  # Maximum duration for each slice in seconds
             window_length = int(max_slice * sr)  # Convert duration to samples
 
             # Calculate energy for each slice of audio
@@ -138,11 +139,13 @@ if __name__ == '__main__':
 
             print('The energy is: ', s_energy)
 
-            plt.hist(s_energy)
-            if Local:
-                plt.savefig(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/energys_{movie_name}.png')
-            else:
-                plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energys_{movie_name}.png')
+            plt.plot(s_energy, label = "energy")    
+            plt.xlabel('chunk')
+            plt.ylabel('energy')
+            plt.title('Energy over time')
+            plt.legend()
+            plt.show()
+            plt.close()
             print('The plot of the energy was done and saved!')
 
             # make the energy a numpy array
