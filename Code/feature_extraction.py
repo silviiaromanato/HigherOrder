@@ -39,7 +39,7 @@ def FrameCapture(MOVIE_PATH):
             if success is False:
                 print("Error: Unable to load the image.")
             else:
-                print('Read a new frame: ', success)
+                #print('Read a new frame: ', success)
                 count += 1
                 if Local:
                     cv2.imwrite("/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/frame%d.jpg" % count, image)
@@ -86,17 +86,17 @@ if __name__ == '__main__':
         plt.plot(df_movie['average_hue'], label='hue')
         plt.legend()
         if Local:
-            plt.savefig('/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/image.png')
+            plt.savefig(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/image_{movie_name}.png')
         else:
-            plt.savefig('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/image.png')
+            plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/image_{movie_name}.png')
 
         clip = mp.VideoFileClip(MOVIE_PATH).subclip(1, 1380)
         if Local:
-            clip.audio.write_audiofile("/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audioYouAgain.wav")
-            filename = "/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audioYouAgain.wav"
+            clip.audio.write_audiofile(f"/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audio_{movie_name}.wav")
+            filename = f"/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audio_{movie_name}.wav"
         else:
-            clip.audio.write_audiofile("/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audioYouAgain.wav")
-            filename = "/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audioYouAgain.wav"
+            clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav")
+            filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav"
         x, sr = librosa.load(filename, sr=22050)
         int(librosa.get_duration(x, sr) / 60)
         max_slice = 10
@@ -109,18 +109,18 @@ if __name__ == '__main__':
 
         plt.hist(s_energy)
         if Local:
-            plt.savefig('/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/energy.png')
+            plt.savefig(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/energys_{movie_name}.png')
         else:
-            plt.savefig('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energy.png')
+            plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energys_{movie_name}.png')
 
         # add the energy to the dataframe
         df_movie['energy'] = s_energy
 
         # save the dataframe to a csv file
         if Local:
-            df_movie.to_csv('/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/movie_features.csv', index=False)
+            df_movie.to_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/movie_features_{movie_name}.csv', index=False)
         else:
-            df_movie.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features.csv', index=False)
+            df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name}.csv', index=False)
 
         print(df_movie.head())
         print('The code was run!')
