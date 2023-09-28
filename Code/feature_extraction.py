@@ -77,7 +77,7 @@ if __name__ == '__main__':
         MOVIE_PATH = PATH_MOVIES + movie_name
         print(MOVIE_PATH)
 
-        if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/image_{movie_name}.png'):
+        if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name}.csv'):
             df_movie = FrameCapture(MOVIE_PATH)
 
             print(df_movie.head(30))
