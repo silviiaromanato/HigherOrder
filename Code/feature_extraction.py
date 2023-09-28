@@ -98,7 +98,7 @@ if __name__ == '__main__':
                 df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name}.csv', index=False)
             print('The plot was done and saved!')
         else:    
-            print('The movie images were already analyzed!')
+            print(f'The movie images were already analyzed for movie {movie_name}!')
             # load the dataframe
             if Local:
                 df_movie = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/movie_features_{movie_name}.csv')
@@ -106,56 +106,58 @@ if __name__ == '__main__':
                 df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name}.csv')
 
         # extract the audio from the movie
-        print('Extracting the audio from the movie...')
-        video = mp.VideoFileClip(MOVIE_PATH)
-        video_duration = video.duration
-        start_time = 1  # Start time in seconds
-        end_time = video_duration  # End time, limited to video duration
+        if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energy_{movie_name}.npy'):
+            print('Extracting the audio from the movie...')
+            video = mp.VideoFileClip(MOVIE_PATH)
+            video_duration = video.duration
+            start_time = 1  # Start time in seconds
+            end_time = video_duration  # End time, limited to video duration
 
-        # Create the subclip within the specified time range
-        clip = video.subclip(start_time, end_time)
-        if Local:
-            clip.audio.write_audiofile(f"/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audio_{movie_name}.wav")
-            filename = f"/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audio_{movie_name}.wav"
+            # Create the subclip within the specified time range
+            clip = video.subclip(start_time, end_time)
+            if Local:
+                clip.audio.write_audiofile(f"/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audio_{movie_name}.wav")
+                filename = f"/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audio_{movie_name}.wav"
+            else:
+                clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav")
+                filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav"
+            print('The audio was extracted!')
+
+            # extract the energy from the audio
+            x, sr = librosa.load(filename, sr=22050)
+            # Calculate the duration of the audio in seconds
+            duration_seconds = librosa.get_duration(y=x, sr=sr)
+            # If you want the duration in minutes
+            duration_minutes = duration_seconds / 60
+
+            print("Duration (seconds):", duration_seconds)
+            print("Duration (minutes):", duration_minutes)
+            
+            # Define parameters for energy calculation
+            max_slice = 3  # Maximum duration for each slice in seconds
+            window_length = int(max_slice * sr)  # Convert duration to samples
+
+            # Calculate energy for each slice of audio
+            s_energy = np.array([sum(abs(x[i:i + window_length] ** 2)) for i in range(0, len(x), window_length)])
+
+            print('The energy is: ', s_energy)
+
+            plt.hist(s_energy)
+            if Local:
+                plt.savefig(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/energys_{movie_name}.png')
+            else:
+                plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energys_{movie_name}.png')
+            print('The plot of the energy was done and saved!')
+
+            # make the energy a numpy array
+            s_energy = np.array(s_energy)
+
+            # save the energy to a numpy file
+            if Local:
+                np.save(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/energy_{movie_name}.npy', s_energy)
+            else:
+                np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energy_{movie_name}.npy', s_energy)
         else:
-            clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav")
-            filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav"
-        print('The audio was extracted!')
+            print(f'The energy was already extracted for {movie_name}!')
 
-        # extract the energy from the audio
-        x, sr = librosa.load(filename, sr=22050)
-        # Calculate the duration of the audio in seconds
-        duration_seconds = librosa.get_duration(y=x, sr=sr)
-        # If you want the duration in minutes
-        duration_minutes = duration_seconds / 60
-
-        print("Duration (seconds):", duration_seconds)
-        print("Duration (minutes):", duration_minutes)
-        
-        # Define parameters for energy calculation
-        max_slice = 3  # Maximum duration for each slice in seconds
-        window_length = int(max_slice * sr)  # Convert duration to samples
-
-        # Calculate energy for each slice of audio
-        s_energy = np.array([sum(abs(x[i:i + window_length] ** 2)) for i in range(0, len(x), window_length)])
-
-        print('The energy is: ', s_energy)
-
-        plt.hist(s_energy)
-        if Local:
-            plt.savefig(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/energys_{movie_name}.png')
-        else:
-            plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energys_{movie_name}.png')
-        print('The plot of the energy was done and saved!')
-
-        # add the energy to the dataframe
-        df_movie['energy'] = s_energy
-
-        # save the dataframe to a csv file
-        if Local:
-            df_movie.to_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/movie_features_{movie_name}.csv', index=False)
-        else:
-            df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name}.csv', index=False)
-
-        print(df_movie.head(30))
         print('The code was run!')
