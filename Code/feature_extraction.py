@@ -95,7 +95,6 @@ if __name__ == '__main__':
             print('The plot was done and saved!')
         else:    
             print('The movie images were already analyzed!')
-            continue
 
         # extract the audio from the movie
         print('Extracting the audio from the movie...')
