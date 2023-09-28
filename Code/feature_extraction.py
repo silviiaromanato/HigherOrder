@@ -41,6 +41,8 @@ def FrameCapture(MOVIE_PATH):
             else:
                 #print('Read a new frame: ', success)
                 count += 1
+                if count % 500 == 0:
+                    print(f"Frame {count} processed")
                 if Local:
                     cv2.imwrite("/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/frame%d.jpg" % count, image)
                 else:
@@ -89,7 +91,10 @@ if __name__ == '__main__':
             plt.savefig(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/image_{movie_name}.png')
         else:
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/image_{movie_name}.png')
+        print('The plot was done and saved!')
 
+        # extract the audio from the movie
+        print('Extracting the audio from the movie...')
         clip = mp.VideoFileClip(MOVIE_PATH).subclip(1, 1380)
         if Local:
             clip.audio.write_audiofile(f"/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audio_{movie_name}.wav")
@@ -97,6 +102,7 @@ if __name__ == '__main__':
         else:
             clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav")
             filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav"
+        print('The audio was extracted!')
         x, sr = librosa.load(filename, sr=22050)
         int(librosa.get_duration(x, sr) / 60)
         max_slice = 10
@@ -105,13 +111,14 @@ if __name__ == '__main__':
         ipd.Audio(a, rate=sr)
 
         s_energy = np.array([sum(abs(x[i:i + window_length] ** 2)) for i in range(0, len(x), window_length)])
-        print(s_energy)
+        print('The energy is: ', s_energy)
 
         plt.hist(s_energy)
         if Local:
             plt.savefig(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/energys_{movie_name}.png')
         else:
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energys_{movie_name}.png')
+        print('The plot of the energy was done and saved!')
 
         # add the energy to the dataframe
         df_movie['energy'] = s_energy
@@ -122,5 +129,5 @@ if __name__ == '__main__':
         else:
             df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name}.csv', index=False)
 
-        print(df_movie.head())
+        print(df_movie.head(30))
         print('The code was run!')
