@@ -160,4 +160,6 @@ if __name__ == '__main__':
         else:
             print(f'The energy was already extracted for {movie_name}!')
 
-        print('The code was run!')
+        print('\n')
+        print(f'The code was run for movie {movie_name}!')
+        print('\n')
