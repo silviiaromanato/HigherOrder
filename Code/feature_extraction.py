@@ -76,26 +76,36 @@ if __name__ == '__main__':
     for movie_name in os.listdir(PATH_MOVIES):
         MOVIE_PATH = PATH_MOVIES + movie_name
         print(MOVIE_PATH)
-        
-        df_movie = FrameCapture(MOVIE_PATH)
 
-        print(df_movie.head(30))
+        if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/image_{movie_name}.png'):
+            df_movie = FrameCapture(MOVIE_PATH)
 
-        # plot the average brightness and saturation and hue
-        plt.figure()
-        plt.plot(df_movie['average_brightness'], label='brightness')
-        plt.plot(df_movie['average_saturation'], label='saturation')
-        plt.plot(df_movie['average_hue'], label='hue')
-        plt.legend()
-        if Local:
-            plt.savefig(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/image_{movie_name}.png')
-        else:
-            plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/image_{movie_name}.png')
-        print('The plot was done and saved!')
+            print(df_movie.head(30))
+
+            # plot the average brightness and saturation and hue
+            plt.figure()
+            plt.plot(df_movie['average_brightness'], label='brightness')
+            plt.plot(df_movie['average_saturation'], label='saturation')
+            plt.plot(df_movie['average_hue'], label='hue')
+            plt.legend()
+            if Local:
+                plt.savefig(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Data/Output/image_{movie_name}.png')
+            else:
+                plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/image_{movie_name}.png')
+            print('The plot was done and saved!')
+        else:    
+            print('The movie images were already analyzed!')
+            continue
 
         # extract the audio from the movie
         print('Extracting the audio from the movie...')
-        clip = mp.VideoFileClip(MOVIE_PATH).subclip(1, 1380)
+        video = mp.VideoFileClip(MOVIE_PATH)
+        video_duration = video.duration
+        start_time = 1  # Start time in seconds
+        end_time = video_duration  # End time, limited to video duration
+
+        # Create the subclip within the specified time range
+        clip = video.subclip(start_time, end_time)
         if Local:
             clip.audio.write_audiofile(f"/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audio_{movie_name}.wav")
             filename = f"/Users/silviaromanato/Desktop/SEMESTER_PROJECT/HigherOrder/Audio/audio_{movie_name}.wav"
