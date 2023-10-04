@@ -30,7 +30,8 @@ def compute_X(PATH, movie, method):
     if method == 'scaffold':
         scaffold_current=np.zeros((30,int(114*113/2)))
         for i in glob.glob(PATH+'*'):
-            if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
+            if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
+                print('The file is: ', i)
                 file=h5py.File(i,'r')
                 N=114
                 u,v=np.triu_indices(n=N,k=1)
@@ -259,68 +260,73 @@ nBoot = 1000        # Number of bootstrap iterations
 seed = 10           # Seed for reproducibility
 sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
-if __name__ == '__main__':  
+if __name__ == '__main__': 
+    PERFORM_BOLD = False
+    PERFORLM_SCAFFOLD = True 
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
     print('The shape of the Y behavioural dataset is: ', Y.shape)
 
     PLS_results = pd.DataFrame(columns=['Covariance Explained', 'P-value', 'Movie', 'LC'])
-    for movie_number, movie_name in enumerate(list_movies):
-        print('\n' + ' -' * 10 + ' BOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
-        
-        # Select the movie
-        X_movie = compute_X(PATH_BOLD, movie_name, method='bold')
 
-        # Perform the PLSC Behavioural analysis
-        res = run_decomposition(X_movie, Y)
-        res_permu = permutation(res, nPer, seed, sl)
-        res_bootstrap = bootstrap(res, nBoot, seed)
-        print('The pvalues are: ', res_permu['P_val'])
+    if PERFORM_BOLD:
+        for movie_number, movie_name in enumerate(list_movies):
+            print('\n' + ' -' * 10 + ' BOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
+            
+            # Select the movie
+            X_movie = compute_X(PATH_BOLD, movie_name, method='bold')
 
-        # Save the results
-        results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])),
-                                columns=['Covariance Explained', 'P-value'])
-        data_cov_significant=results[results['P-value'] < p_star]
-        data_cov_significant.sort_values('P-value')
-        results['Movie']=movie_name
-        results['LC']=np.arange(1,13)
+            # Perform the PLSC Behavioural analysis
+            res = run_decomposition(X_movie, Y)
+            res_permu = permutation(res, nPer, seed, sl)
+            res_bootstrap = bootstrap(res, nBoot, seed)
+            print('The pvalues are: ', res_permu['P_val'])
 
-        # Concatenate the results
-        PLS_results = pd.concat([PLS_results, results], axis=0)
-        print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
-        PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_BOLD_results.csv', index=False)
+            # Save the results
+            results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])),
+                                    columns=['Covariance Explained', 'P-value'])
+            data_cov_significant=results[results['P-value'] < p_star]
+            data_cov_significant.sort_values('P-value')
+            results['Movie']=movie_name
+            results['LC']=np.arange(1,13)
 
-        # Print the results
-        exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'BOLD')
+            # Concatenate the results
+            PLS_results = pd.concat([PLS_results, results], axis=0)
+            print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
+            PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_BOLD_results.csv', index=False)
 
-    print('\n' + ' -' * 10 + ' Finished BOLD; starting SCAFFOLD ' + ' -' * 10)
+            # Print the results
+            exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'BOLD')
 
-    for movie_number, movie_name in enumerate(list_movies):
-        print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
-        X = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
+        print('\n' + ' -' * 10 + ' Finished BOLD; starting SCAFFOLD ' + ' -' * 10)
 
-        # Perform the PLSC Behavioural analysis
-        res = run_decomposition(X_movie, Y)
-        res_permu = permutation(res, nPer, seed, sl)
-        res_bootstrap = bootstrap(res, nBoot, seed)
-        print('The pvalues are: ', res_permu['P_val'])
+    if PERFORLM_SCAFFOLD:
+        for movie_number, movie_name in enumerate(list_movies):
+            print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
+            X = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
 
-        # Save the results
-        results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])),
-                                columns=['Covariance Explained', 'P-value'])
-        data_cov_significant=results[results['P-value'] < p_star]
-        data_cov_significant.sort_values('P-value')
-        results['Movie']=movie_name
-        results['LC']=np.arange(1,13)
+            # Perform the PLSC Behavioural analysis
+            res = run_decomposition(X_movie, Y)
+            res_permu = permutation(res, nPer, seed, sl)
+            res_bootstrap = bootstrap(res, nBoot, seed)
+            print('The pvalues are: ', res_permu['P_val'])
 
-        # Concatenate the results
-        PLS_results = pd.concat([PLS_results, results], axis=0)
-        print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
-        PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_SCAFFOLD_results.csv', index=False)
+            # Save the results
+            results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])),
+                                    columns=['Covariance Explained', 'P-value'])
+            data_cov_significant=results[results['P-value'] < p_star]
+            data_cov_significant.sort_values('P-value')
+            results['Movie']=movie_name
+            results['LC']=np.arange(1,13)
 
-        # Print the results
-        exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
+            # Concatenate the results
+            PLS_results = pd.concat([PLS_results, results], axis=0)
+            print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
+            PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_SCAFFOLD_results.csv', index=False)
+
+            # Print the results
+            exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
 
 
 
