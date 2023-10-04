@@ -28,7 +28,7 @@ def compute_X(PATH, movie, method):
     
     
     if method == 'scaffold':
-        scaffold_current=np.zeros((31,int(114*113/2)))
+        scaffold_current=np.zeros((30,int(114*113/2)))
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
                 print('The file is: ', i)
@@ -37,6 +37,8 @@ def compute_X(PATH, movie, method):
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
                 print(subjID)
+                if subjID > 30:
+                    continue
                 for t in range(1,len(file)+1):
                     scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
