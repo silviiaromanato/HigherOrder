@@ -86,7 +86,7 @@ def compute_X(PATH, movie, method):
                     continue
                 print(file[str(0)][:])
                 for t in range(1,len(file)+1):
-                    current_tri[subjID,:]+=file[str(t)][:][u,v]
+                    current_tri[subjID,:]+=file[str(t)][:]
                 current_tri[subjID]=current_tri[subjID]/len(file)
         X = current_tri.copy()
 
