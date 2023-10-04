@@ -36,13 +36,12 @@ def compute_X(PATH, movie, method):
                 N=114
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
-                print(subjID)
                 if subjID > 29:
                     continue
                 for t in range(1,len(file)+1):
                     scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
-        print('The shape of the current scaffold is: ', scaffold_current.shape)
+
         print('The current scaffold matrix looks like: ', scaffold_current)
 
         X = scaffold_current.copy()
