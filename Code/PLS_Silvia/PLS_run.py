@@ -41,10 +41,7 @@ def compute_X(PATH, movie, method):
                     for t in range(1,len(file)+1):
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                     scaffold_current[subjID]=scaffold_current[subjID]/len(file)
-                
-
-        print('The current scaffold matrix looks like: ', scaffold_current)
-
+            print('The current scaffold matrix looks like: ', scaffold_current)
         X = scaffold_current.copy()
 
     elif method == 'bold':
