@@ -10,7 +10,7 @@ from numpy.random import MT19937
 from scipy import signal
 import scipy
 from sklearn.utils.validation import check_X_y
-import nibabel as nib
+#import nibabel as nib
 
 def alignement(df,  offset_TR, onset_TR=72, affiche=False):
     """
