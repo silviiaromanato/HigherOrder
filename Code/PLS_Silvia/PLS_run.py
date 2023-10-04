@@ -84,7 +84,7 @@ def compute_X(PATH, movie, method):
                 subjID = int(i.split('/')[-1].split('_')[4][1:3]) - 1
                 if subjID > 29:
                     continue
-                print(file[str(t)][:])
+                print(file[str(0)][:])
                 for t in range(1,len(file)+1):
                     current_tri[subjID,:]+=file[str(t)][:][u,v]
                 current_tri[subjID]=current_tri[subjID]/len(file)
