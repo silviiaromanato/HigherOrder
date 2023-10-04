@@ -306,7 +306,7 @@ if __name__ == '__main__':
     if PERFORLM_SCAFFOLD:
         for movie_number, movie_name in enumerate(list_movies):
             print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
-            X = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
+            X_movie = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
 
             # Perform the PLSC Behavioural analysis
             res = run_decomposition(X_movie, Y)
