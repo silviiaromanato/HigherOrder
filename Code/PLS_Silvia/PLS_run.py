@@ -70,11 +70,22 @@ def compute_X(PATH, movie, method):
         X = pd.DataFrame(mtx_upper_triangular)
 
     elif method == 'tringles':
+        current_tri = np.zeros((30,int(114*113*112/6)))
         for i in glob.glob(PATH+'*'):
-            if (i.split('/')[-1].split('-')[0] == 'Violating_triangles_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
-                list_subjects.append(i)
-
-    
+            if (i.split('/')[-1].split('-')[0] == 'violating_triangles_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
+                try:
+                    file=h5py.File(i,'r',swmr=True)
+                except:
+                    continue
+                N=114
+                u,v=np.triu_indices(n=N,k=1)
+                subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
+                if subjID > 29:
+                    continue
+                for t in range(1,len(file)+1):
+                    current_tri[subjID,:]+=file[str(t)][:][u,v]
+                current_tri[subjID]=current_tri[subjID]/len(file)
+        X = current_tri.copy()
 
     return X
 
@@ -248,6 +259,7 @@ def exp_var(S, Sp_vect, LC_pvals, name, movie_name, METHOD):
 
 PATH_BOLD = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/Data/'
 PATH_SCAFFOLD = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/Code/Results/scaffold_frequency/'
+PATH_TRIANGLES = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/Code/Results/violating_triangles/'
 list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 
                 'LessonLearned', 'Payload', 'Rest', 'Sintel', 'Spaceman', 'Superhero', 
                 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
@@ -262,7 +274,8 @@ sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 if __name__ == '__main__': 
     PERFORM_BOLD = False
-    PERFORLM_SCAFFOLD = True 
+    PERFORM_SCAFFOLD = False 
+    PERFORM_TRIANGLES = True
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
@@ -301,7 +314,7 @@ if __name__ == '__main__':
 
         print('\n' + ' -' * 10 + ' Finished BOLD; starting SCAFFOLD ' + ' -' * 10)
 
-    if PERFORLM_SCAFFOLD:
+    if PERFORM_SCAFFOLD:
         for movie_number, movie_name in enumerate(list_movies):
             print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
             X_movie = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
@@ -330,6 +343,34 @@ if __name__ == '__main__':
             # Print the results
             exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
 
+    if PERFORM_TRIANGLES:
+        for movie_number, movie_name in enumerate(list_movies):
+            print('\n' + ' -' * 10 + ' TRIANGLES FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
+            X_movie = compute_X(PATH_TRIANGLES, movie_name, method='triangles')
+            X_movie = pd.DataFrame(X_movie)
+            print('The shape of the X movie is: ', X_movie.shape, 'The type is: ', type(X_movie))
+
+            # Perform the PLSC Behavioural analysis
+            res = run_decomposition(X_movie, Y)
+            res_permu = permutation(res, nPer, seed, sl)
+            res_bootstrap = bootstrap(res, nBoot, seed)
+            print('The pvalues are: ', res_permu['P_val'])
+
+            # Save the results
+            results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])),
+                                    columns=['Covariance Explained', 'P-value'])
+            data_cov_significant=results[results['P-value'] < p_star]
+            data_cov_significant.sort_values('P-value')
+            results['Movie']=movie_name
+            results['LC']=np.arange(1,13)
+
+            # Concatenate the results
+            PLS_results = pd.concat([PLS_results, results], axis=0)
+            print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
+            PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_TRIANGLES_results.csv', index=False)
+
+            # Print the results
+            exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'TRIANGLES')
 
 
 
