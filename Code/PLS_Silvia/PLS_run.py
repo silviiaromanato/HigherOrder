@@ -81,7 +81,7 @@ def compute_X(PATH, movie, method):
                     continue
                 N=114
                 u,v=np.triu_indices(n=N,k=1)
-                subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
+                subjID = int(i.split('/')[-1].split('_')[4][1:3]) - 1
                 if subjID > 29:
                     continue
                 for t in range(1,len(file)+1):
