@@ -27,7 +27,6 @@ def compute_X(path_subjects, movie):
     """
     list_subjects = []
     for i in glob.glob(path_subjects+'*'):
-        print(i)
         if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
             list_subjects.append(i)
 
@@ -262,7 +261,7 @@ if __name__ == '__main__':
         data_cov_significant=results[results['P-value'] < p_star]
         data_cov_significant.sort_values('P-value')
         results['Movie']=movie_name
-        results['LC']=np.arange(1,16)
+        results['LC']=np.arange(1,13)
 
         # Concatenate the results
         PLS_results = pd.concat([PLS_results, results], axis=0)
