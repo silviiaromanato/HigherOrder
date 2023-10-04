@@ -27,6 +27,7 @@ def compute_X(path_subjects, movie):
     """
     list_subjects = []
     for i in glob.glob(path_subjects+'*'):
+        print(i)
         if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
             list_subjects.append(i)
 
