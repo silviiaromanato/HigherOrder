@@ -13,7 +13,7 @@ import glob
 from compute import *
 from matplotlib import pyplot as plt
 
-def compute_X(path_subjects, movie):
+def compute_X(path_subjects, movie, method):
     """
     Compute the X dataset for the PLS analysis
 
@@ -25,29 +25,54 @@ def compute_X(path_subjects, movie):
     Output:
     - X: X dataset
     """
+    
     list_subjects = []
-    for i in glob.glob(path_subjects+'*'):
-        if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
-            list_subjects.append(i)
+    if method == 'scaffold':
+        scaffold_current=np.zeros((30,int(114*113/2)))
+        for i in glob.glob(path_subjects+'*'):
+            if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
+                file=h5py.File(i,'r')
+                N=114
+                u,v=np.triu_indices(n=N,k=1)
+                subjID = i.split('/')[-1].split('-')[1][1:3]
+                print(subjID)
+                for t in range(1,len(file)+1):
+                    scaffold_current[subjID,:]+=file[str(t)][:][u,v]
+                scaffold_current[subjID]=scaffold_current[subjID]/len(file)
+        print('The shape of the current scaffold is: ', scaffold_current.shape)
+        print('The current scaffold matrix looks like: ', scaffold_current)
 
-    mtx_upper_triangular = []
-    for i, PATH_SUBJ in enumerate(list_subjects):
-        data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
+        X = scaffold_current.copy()
 
-        # Obtain the connectivity matrix
-        connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+    elif method == 'bold':
+        for i in glob.glob(path_subjects+'*'):
+            if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
+                list_subjects.append(i)
 
-        # Obtain the upper triangular part of the matrix
-        upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
+        mtx_upper_triangular = []
+        for i, PATH_SUBJ in enumerate(list_subjects):
+            data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
 
-        # Append the upper triangular part of the matrix to the list
-        mtx_upper_triangular.append(upper_triangular)
+            # Obtain the connectivity matrix
+            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
 
-    # Convert the list into a numpy array
-    mtx_upper_triangular = np.array(mtx_upper_triangular)
+            # Obtain the upper triangular part of the matrix
+            upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
 
-    X = pd.DataFrame(mtx_upper_triangular)
-    print('The matrix X for the movie ', movie, 'was computed and has shape: ', X.shape)
+            # Append the upper triangular part of the matrix to the list
+            mtx_upper_triangular.append(upper_triangular)
+
+        # Convert the list into a numpy array
+        mtx_upper_triangular = np.array(mtx_upper_triangular)
+
+        X = pd.DataFrame(mtx_upper_triangular)
+
+    elif method == 'tringles':
+        for i in glob.glob(path_subjects+'*'):
+            if (i.split('/')[-1].split('-')[0] == 'Violating_triangles_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
+                list_subjects.append(i)
+
+    
 
     return X
 
@@ -158,7 +183,7 @@ def bootstrap(res_original,nBoot,seed):
 
     return res
 
-def exp_var(S, Sp_vect, LC_pvals, name, movie_name): 
+def exp_var(S, Sp_vect, LC_pvals, name, movie_name, METHOD): 
     """
     Plot the cumulative explained variance and save it
     
@@ -216,10 +241,11 @@ def exp_var(S, Sp_vect, LC_pvals, name, movie_name):
     # Defining display layout
     plt.tight_layout()
 
-    plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{movie_name}.png', dpi=300)
-    print('The plot was saved in: ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{movie_name}.png')
+    plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{METHOD}_{movie_name}.png', dpi=300)
+    print('The plot was saved in: ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{METHOD}_{movie_name}.png')
 
-path_subjects = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/Data/'
+PATH_BOLD = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/Data/'
+PATH_SCAFFOLD = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/Code/Results/scaffold_frequency/'
 list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 
                 'LessonLearned', 'Payload', 'Rest', 'Sintel', 'Spaceman', 'Superhero', 
                 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
@@ -238,16 +264,12 @@ if __name__ == '__main__':
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
     print('The shape of the Y behavioural dataset is: ', Y.shape)
 
-    # Load the X brain dataset
-    X = np.stack([compute_X(path_subjects, movie) for movie in list_movies], axis=2)
-    print('The shape of the X dataset is: ', X.shape)
-
     PLS_results = pd.DataFrame(columns=['Covariance Explained', 'P-value', 'Movie', 'LC'])
     for movie_number, movie_name in enumerate(list_movies):
-        print('\n' + ' -' * 10 + ' Movie name: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
+        print('\n' + ' -' * 10 + ' BOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
         
         # Select the movie
-        X_movie = pd.DataFrame(X[:, :, movie_number])
+        X_movie = compute_X(path_subjects, movie, method='bold')
 
         # Perform the PLSC Behavioural analysis
         res = run_decomposition(X_movie, Y)
@@ -266,9 +288,41 @@ if __name__ == '__main__':
         # Concatenate the results
         PLS_results = pd.concat([PLS_results, results], axis=0)
         print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
+        PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_BOLD_results.csv', index=False)
 
         # Print the results
-        exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number)
+        exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'BOLD')
+
+    print('\n' + ' -' * 10 + ' Finished BOLD; starting SCAFFOLD ' + ' -' * 10)
+
+    for movie_number, movie_name in enumerate(list_movies):
+        print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
+        X = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
+
+        # Perform the PLSC Behavioural analysis
+        res = run_decomposition(X_movie, Y)
+        res_permu = permutation(res, nPer, seed, sl)
+        res_bootstrap = bootstrap(res, nBoot, seed)
+        print('The pvalues are: ', res_permu['P_val'])
+
+        # Save the results
+        results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])),
+                                columns=['Covariance Explained', 'P-value'])
+        data_cov_significant=results[results['P-value'] < p_star]
+        data_cov_significant.sort_values('P-value')
+        results['Movie']=movie_name
+        results['LC']=np.arange(1,13)
+
+        # Concatenate the results
+        PLS_results = pd.concat([PLS_results, results], axis=0)
+        print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
+        PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_SCAFFOLD_results.csv', index=False)
+
+        # Print the results
+        exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
+
+
+
 
 
 
