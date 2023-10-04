@@ -72,7 +72,9 @@ def compute_X(PATH, movie, method):
     elif method == 'triangles':
         current_tri = np.zeros((30,int(114*113*112/6)))
         for i in glob.glob(PATH+'*'):
-            if (i.split('/')[-1].split('_')[1].endswith(f'{movie}.hd5')):
+            print(i.split('/')[-1].split('_')[1])
+            if (i.endswith(f'{movie}.hd5')):
+                print(i)
                 try:
                     file=h5py.File(i,'r',swmr=True)
                 except:
