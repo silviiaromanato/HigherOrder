@@ -349,6 +349,7 @@ if __name__ == '__main__':
             X_movie = compute_X(PATH_TRIANGLES, movie_name, method='triangles')
             X_movie = pd.DataFrame(X_movie)
             print('The shape of the X movie is: ', X_movie.shape, 'The type is: ', type(X_movie))
+            print(X_movie.head())
 
             # Perform the PLSC Behavioural analysis
             res = run_decomposition(X_movie, Y)
