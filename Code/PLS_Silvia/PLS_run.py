@@ -13,23 +13,23 @@ import glob
 from compute import *
 from matplotlib import pyplot as plt
 
-def compute_X(path_subjects, movie, method):
+def compute_X(PATH, movie, method):
     """
     Compute the X dataset for the PLS analysis
 
     -------------------------------------
     Input:
-    - param path_subjects: path of the subjects' data
+    - param PATH: path of the subjects' data
     - param movie: movie to consider
     -------------------------------------
     Output:
     - X: X dataset
     """
     
-    list_subjects = []
+    
     if method == 'scaffold':
         scaffold_current=np.zeros((30,int(114*113/2)))
-        for i in glob.glob(path_subjects+'*'):
+        for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 file=h5py.File(i,'r')
                 N=114
@@ -45,7 +45,8 @@ def compute_X(path_subjects, movie, method):
         X = scaffold_current.copy()
 
     elif method == 'bold':
-        for i in glob.glob(path_subjects+'*'):
+        list_subjects = []
+        for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 list_subjects.append(i)
 
@@ -68,7 +69,7 @@ def compute_X(path_subjects, movie, method):
         X = pd.DataFrame(mtx_upper_triangular)
 
     elif method == 'tringles':
-        for i in glob.glob(path_subjects+'*'):
+        for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Violating_triangles_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 list_subjects.append(i)
 
@@ -269,7 +270,7 @@ if __name__ == '__main__':
         print('\n' + ' -' * 10 + ' BOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
         
         # Select the movie
-        X_movie = compute_X(path_subjects, movie, method='bold')
+        X_movie = compute_X(PATH_BOLD, movie, method='bold')
 
         # Perform the PLSC Behavioural analysis
         res = run_decomposition(X_movie, Y)
