@@ -220,6 +220,7 @@ def exp_var(S, Sp_vect, LC_pvals, name, movie_name):
     plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{movie_name}.png', dpi=300)
     print('The plot was saved in: ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{movie_name}.png')
 
+path_subjects = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/Data/'
 list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 
                 'LessonLearned', 'Payload', 'Rest', 'Sintel', 'Spaceman', 'Superhero', 
                 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
@@ -239,7 +240,6 @@ if __name__ == '__main__':
     print('The shape of the Y behavioural dataset is: ', Y.shape)
 
     # Load the X brain dataset
-    path_subjects = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/Data'
     X = np.stack([compute_X(path_subjects, movie) for movie in list_movies], axis=2)
     print('The shape of the X dataset is: ', X.shape)
 
