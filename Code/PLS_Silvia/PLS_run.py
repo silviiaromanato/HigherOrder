@@ -270,7 +270,7 @@ if __name__ == '__main__':
         print('\n' + ' -' * 10 + ' BOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
         
         # Select the movie
-        X_movie = compute_X(PATH_BOLD, movie, method='bold')
+        X_movie = compute_X(PATH_BOLD, movie_name, method='bold')
 
         # Perform the PLSC Behavioural analysis
         res = run_decomposition(X_movie, Y)
