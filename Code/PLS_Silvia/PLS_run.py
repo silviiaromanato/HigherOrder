@@ -307,6 +307,8 @@ if __name__ == '__main__':
         for movie_number, movie_name in enumerate(list_movies):
             print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
             X_movie = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
+            X_movie = pd.DataFrame(X_movie)
+            print('The shape of the X movie is: ', X_movie.shape, 'The type is: ', type(X_movie))
 
             # Perform the PLSC Behavioural analysis
             res = run_decomposition(X_movie, Y)
