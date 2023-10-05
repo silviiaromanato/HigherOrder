@@ -38,8 +38,7 @@ def compute_X(PATH, movie, method):
                 N=114
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
-                if subjID > 29:
-                    continue
+                print(subjID)
                 for t in range(1,len(file)+1):
                     scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
@@ -50,39 +49,26 @@ def compute_X(PATH, movie, method):
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 list_subjects.append(i)
-
         mtx_upper_triangular = []
         for i, PATH_SUBJ in enumerate(list_subjects):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
-
-            # Obtain the connectivity matrix
             connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
-
-            # Obtain the upper triangular part of the matrix
             upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
-
-            # Append the upper triangular part of the matrix to the list
             mtx_upper_triangular.append(upper_triangular)
-
-        # Convert the list into a numpy array
         mtx_upper_triangular = np.array(mtx_upper_triangular)
-
         X = pd.DataFrame(mtx_upper_triangular)
 
     elif method == 'triangles':
         current_tri = np.zeros((30,int(114*113*112/6)))
         for i in glob.glob(PATH+'*'):
-            print(i.split('/')[-1].split('_')[1])
             if (i.endswith(f'{movie}.hd5')):
-                print(i)
                 try:
                     file=h5py.File(i,'r',swmr=True)
                 except:
                     continue
                 #u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('_')[4][1:3]) - 1
-                if subjID > 29:
-                    continue
+                print(subjID)
                 for t in range(1,len(file)+1):
                     try:
                         current_tri[subjID,:]+=file[str(t)][:]
@@ -277,8 +263,8 @@ seed = 10           # Seed for reproducibility
 sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 if __name__ == '__main__': 
-    PERFORM_BOLD = False
-    PERFORM_SCAFFOLD = False 
+    PERFORM_BOLD = True
+    PERFORM_SCAFFOLD = True
     PERFORM_TRIANGLES = True
 
     # Load the Y behavioural dataset
