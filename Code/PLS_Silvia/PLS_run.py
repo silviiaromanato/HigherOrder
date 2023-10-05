@@ -348,6 +348,10 @@ if __name__ == '__main__':
             exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
 
     if PERFORM_TRIANGLES:
+        PLS_results = pd.read_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_TRIANGLES_results.csv')
+        already_done = PLS_results.Movie.unique()
+        print('Already done are: ', already_done)
+        list_movies = [movie for movie in list_movies if movie not in already_done]
         for movie_number, movie_name in enumerate(list_movies):
             print('\n' + ' -' * 10 + ' TRIANGLES FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
             X_movie = compute_X(PATH_TRIANGLES, movie_name, method='triangles')
