@@ -84,11 +84,10 @@ def compute_X(PATH, movie, method):
                 subjID = int(i.split('/')[-1].split('_')[4][1:3]) - 1
                 if subjID > 29:
                     continue
-                print(file[str(0)][:])
-                print('The length of the file is: ', len(file)+1)
                 for t in range(1,len(file)+1):
                     try:
-                        current_tri[subjID,:]+=file[str(t)][:]
+                        current_tri[subjID,:]+=file[str(t)][:][u,v]
+                        print(file[str(t)][:][u,v])
                     except:
                         print(f"Object '{t}' does not exist in the HDF5 file.")
                 current_tri[subjID]=current_tri[subjID]/len(file)
