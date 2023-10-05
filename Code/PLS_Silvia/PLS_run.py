@@ -79,15 +79,13 @@ def compute_X(PATH, movie, method):
                     file=h5py.File(i,'r',swmr=True)
                 except:
                     continue
-                N=114
-                u,v=np.triu_indices(n=N,k=1)
+                #u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('_')[4][1:3]) - 1
                 if subjID > 29:
                     continue
                 for t in range(1,len(file)+1):
                     try:
                         current_tri[subjID,:]+=file[str(t)][:]
-                        print(current_tri[subjID,:])
                     except:
                         print(f"Object '{t}' does not exist in the HDF5 file.")
                 current_tri[subjID]=current_tri[subjID]/len(file)
@@ -325,7 +323,7 @@ if __name__ == '__main__':
             print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
             X_movie = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
             X_movie = pd.DataFrame(X_movie)
-            print('The shape of the X movie is: ', X_movie.shape, 'The type is: ', type(X_movie))
+            print('The shape of the X movie is: ', X_movie.shape)
 
             # Perform the PLSC Behavioural analysis
             res = run_decomposition(X_movie, Y)
@@ -354,7 +352,7 @@ if __name__ == '__main__':
             print('\n' + ' -' * 10 + ' TRIANGLES FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
             X_movie = compute_X(PATH_TRIANGLES, movie_name, method='triangles')
             X_movie = pd.DataFrame(X_movie)
-            print('The shape of the X movie is: ', X_movie.shape, 'The type is: ', type(X_movie))
+            print('The shape of the X movie is: ', X_movie.shape)
             print(X_movie.head())
 
             # Perform the PLSC Behavioural analysis
