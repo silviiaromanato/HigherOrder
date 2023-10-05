@@ -263,7 +263,7 @@ seed = 10           # Seed for reproducibility
 sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 if __name__ == '__main__': 
-    PERFORM_BOLD = True
+    PERFORM_BOLD = False
     PERFORM_SCAFFOLD = True
     PERFORM_TRIANGLES = True
 
