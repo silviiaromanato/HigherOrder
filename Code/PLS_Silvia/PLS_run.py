@@ -87,7 +87,7 @@ def compute_X(PATH, movie, method):
                 print(file[str(0)][:])
                 print('The length of the file is: ', len(file)+1)
                 for t in range(1,len(file)+1):
-                    if '382' in file:
+                    if t in file:
                         current_tri[subjID,:]+=file[str(t)][:]
                     else:
                         print(f"Object '{t}' does not exist in the HDF5 file.")
