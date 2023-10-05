@@ -89,7 +89,7 @@ def compute_X(PATH, movie, method):
                 for t in range(1,len(file)+1):
                     try:
                         current_tri[subjID,:]+=file[str(t)][:]
-                    else:
+                    except:
                         print(f"Object '{t}' does not exist in the HDF5 file.")
                 current_tri[subjID]=current_tri[subjID]/len(file)
         X = current_tri.copy()
