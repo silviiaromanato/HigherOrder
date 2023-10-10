@@ -26,9 +26,23 @@ def compute_X(PATH, movie, method):
     - X: X dataset
     """
     
+    if method == 'bold':
+        list_subjects = []
+        for i in glob.glob(PATH+'*'):
+            if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
+                list_subjects.append(i)
+        mtx_upper_triangular = []
+        for i, PATH_SUBJ in enumerate(list_subjects):
+            data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
+            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+            upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
+            mtx_upper_triangular.append(upper_triangular)
+        mtx_upper_triangular = np.array(mtx_upper_triangular)
+        X = pd.DataFrame(mtx_upper_triangular)
+        print('The shape of X for BOLD is: 'm, X.shape)
     
-    if method == 'scaffold':
-        scaffold_current=np.zeros((30,int(114*113/2)))
+    elif method == 'scaffold':
+        scaffold_current=np.zeros((32,int(114*113/2)))
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
                 try:
@@ -44,22 +58,8 @@ def compute_X(PATH, movie, method):
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
         X = scaffold_current.copy()
 
-    elif method == 'bold':
-        list_subjects = []
-        for i in glob.glob(PATH+'*'):
-            if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
-                list_subjects.append(i)
-        mtx_upper_triangular = []
-        for i, PATH_SUBJ in enumerate(list_subjects):
-            data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
-            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
-            upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
-            mtx_upper_triangular.append(upper_triangular)
-        mtx_upper_triangular = np.array(mtx_upper_triangular)
-        X = pd.DataFrame(mtx_upper_triangular)
-
     elif method == 'triangles':
-        current_tri = np.zeros((30,int(114*113*112/6)))
+        current_tri = np.zeros((32,int(114*113*112/6)))
         for i in glob.glob(PATH+'*'):
             if (i.endswith(f'{movie}.hd5')):
                 try:
