@@ -52,6 +52,7 @@ def compute_X(PATH, movie, method):
                 N=114
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
+                print(int(subjID) == 11)
                 if (int(subjID) == 11):
                     print(f'The  subjected {subjID} which is corrupted was encountered and therefore skipped!')
                     continue
