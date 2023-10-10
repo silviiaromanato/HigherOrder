@@ -278,6 +278,7 @@ if __name__ == '__main__':
     PERFORM_BOLD = False
     PERFORM_SCAFFOLD = True
     PERFORM_TRIANGLES = True
+    print(f'We are going to perform BOLD: {PERFORM_BOLD}, scaffold: {PERFORM_SCAFFOLD}, triangles: {PERFORM_TRIANGLES}')
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
