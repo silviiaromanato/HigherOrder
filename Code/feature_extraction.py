@@ -47,8 +47,6 @@ def FrameCapture(MOVIE_PATH):
                 if count % 500 == 0:
                     print(f"Frame {count} processed")
 
-                # Convert to RGB
-                image = image.convert('RGB')
                 width, height = image.size
                 for x in range(0, width):
                     for y in range(0, height):
@@ -173,7 +171,7 @@ if __name__ == '__main__':
                                                                                                 # based on some transformation in a Mel- scale. 
                                                                                                 # It is commonly used in speech recognition as people’s voices are usually on a 
                                                                                                 # certain range of frequency and different from one to another.
-            mfccs = librosa.feature.mfcc(x, sr=sr)
+            mfccs = librosa.feature.mfcc(y, sr=sr)
             # Displaying the MFCCs:
             plt.figure(figsize=(15, 3)) 
             librosa.display.specshow(mfccs, sr=sr, x_axis='time')
@@ -183,7 +181,7 @@ if __name__ == '__main__':
 
             ##################### CHROMA ################### : dominant keys
             hop_length = 512
-            chromagram = librosa.feature.chroma_stft(x, sr=sr, hop_length=hop_length)
+            chromagram = librosa.feature.chroma_stft(y, sr=sr, hop_length=hop_length)
             fig, ax = plt.subplots(figsize=(15, 3))
             img = librosa.display.specshow(chromagram, x_axis='time', y_axis='chroma', hop_length=hop_length, cmap='coolwarm') 
             fig.colorbar(img, ax=ax)
