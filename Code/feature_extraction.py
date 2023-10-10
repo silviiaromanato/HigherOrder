@@ -168,21 +168,21 @@ if __name__ == '__main__':
             np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.npy', np.array(zcrs))
             print(f"Zero crossing rate: {zcrs}", 'The length is: ', len(zcrs))
 
-            """##################### Mel-Frequency Cepstral Coefficients (MFCCs) ################### : is a representation of the short- term power spectrum of a sound, 
+            ##################### Mel-Frequency Cepstral Coefficients (MFCCs) ################### : is a representation of the short- term power spectrum of a sound, 
                                                                                                 # based on some transformation in a Mel- scale. 
                                                                                                 # It is commonly used in speech recognition as people’s voices are usually on a 
                                                                                                 # certain range of frequency and different from one to another.
-            mfccs = librosa.feature.mfcc(y, sr=sr)
+            mfccs = librosa.feature.mfcc(y = y, sr=sr)
             # Displaying the MFCCs:
             plt.figure(figsize=(15, 3)) 
             librosa.display.specshow(mfccs, sr=sr, x_axis='time')
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.png')
             np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.npy', np.array(mfccs))
-            print(f"MFCCs: {mfccs}")"""
+            print(f"MFCCs: {mfccs} and the length is {len(mfccs)}")
 
             ##################### CHROMA ################### : dominant keys
             hop_length = 512
-            chromagram = librosa.feature.chroma_stft(y, sr=sr, hop_length=hop_length)
+            chromagram = librosa.feature.chroma_stft(y = y, sr=sr, hop_length=hop_length)
             fig, ax = plt.subplots(figsize=(15, 3))
             img = librosa.display.specshow(chromagram, x_axis='time', y_axis='chroma', hop_length=hop_length, cmap='coolwarm') 
             fig.colorbar(img, ax=ax)
