@@ -99,14 +99,14 @@ if __name__ == '__main__':
         MOVIE_PATH = PATH_MOVIES + movie_name
         print(MOVIE_PATH)
 
-        #################### IMAGES ####################
+        """#################### IMAGES ####################
         if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv'):
             df_movie = FrameCapture(MOVIE_PATH)
             print(df_movie.head(30))
             df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv', index=False)
         else:    
             print(f'The movie images were already analyzed for movie {movie_name[:-4]}!')
-            df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv')
+            df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv')"""
 
         #################### AUDIO ####################
         if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energy_{movie_name[:-4]}.npy'):
