@@ -40,8 +40,6 @@ def compute_X(PATH, movie, method):
         mtx_upper_triangular = np.array(mtx_upper_triangular)
         X = pd.DataFrame(mtx_upper_triangular)
         print('The shape of X for BOLD is: ', X.shape)
-        for i in range(32):
-            print(f'Subject {i} has entries: ', X[i])
     
     elif method == 'scaffold':
         scaffold_current=np.zeros((32,int(114*113/2)))
@@ -59,6 +57,9 @@ def compute_X(PATH, movie, method):
                     scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
         X = scaffold_current.copy()
+        print('The shape of X for SCAFFOLD is: ', X.shape)
+        for i in range(32):
+            print(f'Subject {i} has entries: ', X[i])
 
     elif method == 'triangles':
         current_tri = np.zeros((32,int(114*113*112/6)))
@@ -265,7 +266,7 @@ seed = 10           # Seed for reproducibility
 sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 if __name__ == '__main__': 
-    PERFORM_BOLD = True
+    PERFORM_BOLD = False
     PERFORM_SCAFFOLD = True
     PERFORM_TRIANGLES = True
 
