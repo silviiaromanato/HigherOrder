@@ -40,6 +40,8 @@ def compute_X(PATH, movie, method):
         mtx_upper_triangular = np.array(mtx_upper_triangular)
         X = pd.DataFrame(mtx_upper_triangular)
         print('The shape of X for BOLD is: ', X.shape)
+        for i in range(32):
+            print(f'Subject {i} has entries: ', X[i])
     
     elif method == 'scaffold':
         scaffold_current=np.zeros((32,int(114*113/2)))
