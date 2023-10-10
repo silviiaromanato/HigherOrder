@@ -56,7 +56,7 @@ def FrameCapture(MOVIE_PATH):
                 width, height = v_channel.shape
                 total_pixels = width * height
 
-                # Compute the average RGB
+                """# Compute the average RGB
                 image = Image.fromarray(image)
                 print('The type of image is: ', type(image, 'and the shape is: ', image.shape))
                 for x in range(0, width):
@@ -68,28 +68,29 @@ def FrameCapture(MOVIE_PATH):
 
                 r_total = r_total / (width * height)
                 g_total = g_total / (width * height)
-                b_total = b_total / (width * height)
+                b_total = b_total / (width * height)"""
 
                 average_brightness.append(sum_v / total_pixels)
                 average_saturation.append(sum_s / total_pixels)
                 average_hue.append(sum_h / total_pixels)
-                average_red.append(r_total)
-                average_green.append(g_total)
-                average_blue.append(b_total)
+                #average_red.append(r_total)
+                #average_green.append(g_total)
+                #average_blue.append(b_total)
         except Exception as e:
             print(f"An error occurred: {e}")
 
     print('The average saturation of the movie is: ', np.mean(average_saturation))
     print('The average brightness of the movie is: ', np.mean(average_brightness))
     print('The average hue of the movie is: ', np.mean(average_hue))
-    print('The average red of the movie is: ', np.mean(average_red))
-    print('The average green of the movie is: ', np.mean(average_green))
-    print('The average blue of the movie is: ', np.mean(average_blue))
+    #print('The average red of the movie is: ', np.mean(average_red))
+    #print('The average green of the movie is: ', np.mean(average_green))
+    #print('The average blue of the movie is: ', np.mean(average_blue))
 
     # convert the average brightness and saturation to a dataframe
     df_movie = pd.DataFrame({'average_brightness': average_brightness, 'average_saturation': average_saturation, 
-                             'average_hue': average_hue, 'average_red': average_red, 'average_green': average_green,
-                                'average_blue': average_blue})
+                             'average_hue': average_hue, 
+                             #'average_red': average_red, 'average_green': average_green, 'average_blue': average_blue
+                                })
 
     return df_movie
 
