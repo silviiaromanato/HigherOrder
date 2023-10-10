@@ -53,6 +53,9 @@ def compute_X(PATH, movie, method):
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
                 print(subjID)
+                if subjID == 11 or subjID == 17:
+                    print(f'The  subjected {subjID} which is corrupted was encountered and therefore skipped!')
+                    continue
                 for t in range(1,len(file)+1):
                     scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
@@ -72,6 +75,9 @@ def compute_X(PATH, movie, method):
                 #u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('_')[4][1:3]) - 1
                 print(subjID)
+                if subjID == 11 or subjID == 17:
+                    print(f'The  subjected {subjID} which is corrupted was encountered and therefore skipped!')
+                    continue
                 for t in range(1,len(file)+1):
                     try:
                         current_tri[subjID,:]+=file[str(t)][:]
@@ -270,7 +276,7 @@ sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 if __name__ == '__main__': 
     PERFORM_BOLD = False
-    PERFORM_SCAFFOLD = False
+    PERFORM_SCAFFOLD = True
     PERFORM_TRIANGLES = True
 
     # Load the Y behavioural dataset
