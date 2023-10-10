@@ -157,7 +157,7 @@ if __name__ == '__main__':
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.png')
             # SAVE THE RMS
             np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.npy', np.array(rms))
-            print(f"RMS Energy: {rms}", 'The length is: ', len(rms))
+            print(f"RMS Energy: {rms}", 'The length is: ', rms.shape)
 
             ##################### ZERO CROSSING RATE ################### : number of times that the signal crosses the horizontal axis
             zcrs = librosa.feature.zero_crossing_rate(y)
@@ -166,7 +166,7 @@ if __name__ == '__main__':
             plt.plot(zcrs[0])
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.png')
             np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.npy', np.array(zcrs))
-            print(f"Zero crossing rate: {zcrs}", 'The length is: ', len(zcrs))
+            print(f"Zero crossing rate: {zcrs}", 'The length is: ', zcrs.shape)
 
             ##################### Mel-Frequency Cepstral Coefficients (MFCCs) ################### : is a representation of the short- term power spectrum of a sound, 
                                                                                                 # based on some transformation in a Mel- scale. 
@@ -178,7 +178,7 @@ if __name__ == '__main__':
             librosa.display.specshow(mfccs, sr=sr, x_axis='time')
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.png')
             np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.npy', np.array(mfccs))
-            print(f"MFCCs: {mfccs} and the length is {len(mfccs)}")
+            print(f"MFCCs: {mfccs} and the length is {mfccs.shape}")
 
             ##################### CHROMA ################### : dominant keys
             hop_length = 512
@@ -189,7 +189,7 @@ if __name__ == '__main__':
             ax.set(title='Chromagram')
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.png')
             np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.npy', np.array(chromagram))
-            print(f"Chromagram: {chromagram}", 'The length is: ', len(chromagram))
+            print(f"Chromagram: {chromagram}", 'The length is: ', chromagram.shape)
 
             ##################### TEMPOGRAM ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
             hop_length = 512
@@ -203,7 +203,7 @@ if __name__ == '__main__':
             fig.colorbar(img, ax=ax)
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Tempogram_{movie_name[:-4]}.png')
             np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Tempogram_{movie_name[:-4]}.npy', np.array(tempogram))
-            print(f"Tempogram: {tempogram}", 'The  length is: ', len(tempogram))
+            print(f"Tempogram: {tempogram}", 'The  length is: ', tempogram.shape)
 
 
             #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energy_{movie_name}.npy', np.array(s_energy))
