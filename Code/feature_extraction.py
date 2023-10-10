@@ -156,7 +156,7 @@ if __name__ == '__main__':
             ax[1].set(title='log Power spectrogram')
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.png')
             # SAVE THE RMS
-            np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.npy', np.array(rms))
+            #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.npy', np.array(rms))
             print(f"RMS Energy: {rms}", 'The length is: ', rms.shape)
 
             ##################### ZERO CROSSING RATE ################### : number of times that the signal crosses the horizontal axis
@@ -177,7 +177,7 @@ if __name__ == '__main__':
             plt.figure(figsize=(15, 3)) 
             librosa.display.specshow(mfccs, sr=sr, x_axis='time')
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.png')
-            np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.npy', np.array(mfccs))
+            #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.npy', np.array(mfccs))
             print(f"MFCCs: {mfccs} and the length is {mfccs.shape}")
 
             ##################### CHROMA ################### : dominant keys
@@ -188,25 +188,34 @@ if __name__ == '__main__':
             fig.colorbar(img, ax=ax)
             ax.set(title='Chromagram')
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.png')
-            np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.npy', np.array(chromagram))
+            #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.npy', np.array(chromagram))
             print(f"Chromagram: {chromagram}", 'The length is: ', chromagram.shape)
 
             ##################### TEMPOGRAM ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
             hop_length = 512
             oenv = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
             times = librosa.times_like(oenv, sr=sr, hop_length=hop_length) 
-            tempogram = librosa.feature.tempogram(onset_envelope=oenv, sr=sr,hop_length=hop_length)
-            #tempo = librosa.beat.tempo(onset_envelope=oenv, sr=sr, hop_length=hop_length)[0]
+            tempo = librosa.beat.tempo(onset_envelope=oenv, sr=sr, hop_length=hop_length)[0]
             fig, ax = plt.subplots(figsize=(15, 3))
-            img = librosa.display.specshow(tempogram, sr=sr, hop_length=hop_length, x_axis='time', y_axis='tempo')
+            img = librosa.display.specshow(tempo, sr=sr, hop_length=hop_length, x_axis='time', y_axis='tempo')
             ax.set(title=f'Tempogram')
             fig.colorbar(img, ax=ax)
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Tempogram_{movie_name[:-4]}.png')
-            np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Tempogram_{movie_name[:-4]}.npy', np.array(tempogram))
-            print(f"Tempogram: {tempogram}", 'The  length is: ', tempogram.shape)
+            #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Tempogram_{movie_name[:-4]}.npy', np.array(tempogram))
+            print(f"Tempogram: {tempo}", 'The  length is: ', tempo.shape)
 
+            # concatenate all the features on the cloumns
+            features = np.concatenate((rms, zcrs, mfccs, chromagram, tempo), axis=1)
+            # create a dataframe
+            df_features = pd.DataFrame(features, columns = ['rms', 'zcrs', 'mfccs_0', 'mfccs_1', 'mfccs_2', 'mfccs_3', 'mfccs_4',
+                                                            'mfccs_5', 'mfccs_6', 'mfccs_7', 'mfccs_8', 'mfccs_9', 'mfccs_10',
+                                                            'mfccs_11', 'mfccs_12', 'mfccs_13', 'mfccs_14', 'mfccs_15', 'mfccs_16',
+                                                            'mfccs_17', 'mfccs_18', 'mfccs_19', 'chromagram_0', 'chromagram_1', 'chromagram_2', 
+                                                            'chromagram_3', 'chromagram_4', 'chromagram_5', 'chromagram_6', 'chromagram_7',
+                                                            'chromagram_8', 'chromagram_9', 'chromagram_10', 'chromagram_11', 'tempo'])
 
-            #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energy_{movie_name}.npy', np.array(s_energy))
+            # save the dataframe
+            df_features.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_sound_{movie_name[:-4]}.csv', index=False)
         else:
             print(f'The energy was already extracted for {movie_name}!')
 
