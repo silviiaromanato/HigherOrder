@@ -63,8 +63,6 @@ def compute_X(PATH, movie, method):
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
         X = scaffold_current.copy()
         print('The shape of X for SCAFFOLD is: ', X.shape)
-        for i in range(32):
-            print(f'Subject {i} has entries: ', X[i])
 
     elif method == 'triangles':
         current_tri = np.zeros((30,int(114*113*112/6)))
@@ -90,8 +88,6 @@ def compute_X(PATH, movie, method):
                 current_tri[subjID]=current_tri[subjID]/len(file)
         X = current_tri.copy()
         print('The shape of X for TRIANGLES is: ', X.shape)
-        for i in range(32):
-            print(f'Subject {i} has entries: ', X[i])
 
     return X
 
