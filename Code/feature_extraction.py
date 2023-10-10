@@ -47,7 +47,15 @@ def FrameCapture(MOVIE_PATH):
                 if count % 500 == 0:
                     print(f"Frame {count} processed")
 
-                width, height = image.size
+                # Convert to HSV
+                h_channel, s_channel, v_channel = convert_to_hsv(image)        
+                sum_v = np.sum(v_channel)
+                sum_s = np.sum(s_channel)
+                sum_h = np.sum(h_channel)
+                width, height = v_channel.shape
+                total_pixels = width * height
+
+                # Compute the average RGB
                 for x in range(0, width):
                     for y in range(0, height):
                         r, g, b = image.getpixel((x, y))
@@ -59,14 +67,6 @@ def FrameCapture(MOVIE_PATH):
                 g_total = g_total / (width * height)
                 b_total = b_total / (width * height)
 
-                # Convert to HSV
-                h_channel, s_channel, v_channel = convert_to_hsv(image)        
-                sum_v = np.sum(v_channel)
-                sum_s = np.sum(s_channel)
-                sum_h = np.sum(h_channel)
-
-                # Compute the features
-                total_pixels = width * height
                 average_brightness.append(sum_v / total_pixels)
                 average_saturation.append(sum_s / total_pixels)
                 average_hue.append(sum_h / total_pixels)
