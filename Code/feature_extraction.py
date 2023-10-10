@@ -196,12 +196,6 @@ if __name__ == '__main__':
             oenv = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
             times = librosa.times_like(oenv, sr=sr, hop_length=hop_length) 
             tempo = librosa.beat.tempo(onset_envelope=oenv, sr=sr, hop_length=hop_length)[0]
-            fig, ax = plt.subplots(figsize=(15, 3))
-            img = librosa.display.specshow(tempo, sr=sr, hop_length=hop_length, x_axis='time', y_axis='tempo')
-            ax.set(title=f'Tempogram')
-            fig.colorbar(img, ax=ax)
-            plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Tempogram_{movie_name[:-4]}.png')
-            #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Tempogram_{movie_name[:-4]}.npy', np.array(tempogram))
             print(f"Tempogram: {tempo}", 'The  length is: ', tempo.shape)
 
             # concatenate all the features on the cloumns
