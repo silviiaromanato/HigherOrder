@@ -79,6 +79,9 @@ def compute_X(PATH, movie, method):
                         print(f"Object '{t}' does not exist in the HDF5 file.")
                 current_tri[subjID]=current_tri[subjID]/len(file)
         X = current_tri.copy()
+        print('The shape of X for TRIANGLES is: ', X.shape)
+        for i in range(32):
+            print(f'Subject {i} has entries: ', X[i])
 
     return X
 
@@ -267,7 +270,7 @@ sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 if __name__ == '__main__': 
     PERFORM_BOLD = False
-    PERFORM_SCAFFOLD = True
+    PERFORM_SCAFFOLD = False
     PERFORM_TRIANGLES = True
 
     # Load the Y behavioural dataset
