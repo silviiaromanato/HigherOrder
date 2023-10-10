@@ -163,6 +163,7 @@ if __name__ == '__main__':
             print(f"RMS Energy: {rms}", 'The length is: ', rms.shape)
             # save as a dataframe
             df_rms = pd.DataFrame(rms, columns = ['rms'])
+            df_rms.reset_index(drop=True, inplace=True)
 
             ##################### ZERO CROSSING RATE ################### : number of times that the signal crosses the horizontal axis
             zcrs = librosa.feature.zero_crossing_rate(y)
@@ -174,6 +175,7 @@ if __name__ == '__main__':
             print(f"Zero crossing rate: {zcrs}", 'The length is: ', zcrs.shape)
             # save as a dataframe
             df_zcrs = pd.DataFrame(zcrs, columns = ['zcrs'])
+            df_zcrs.reset_index(drop=True, inplace=True)
 
             ##################### Mel-Frequency Cepstral Coefficients (MFCCs) ################### : is a representation of the short- term power spectrum of a sound, 
                                                                                                 # based on some transformation in a Mel- scale. 
@@ -191,6 +193,7 @@ if __name__ == '__main__':
                                                             'mfccs_5', 'mfccs_6', 'mfccs_7', 'mfccs_8', 'mfccs_9', 'mfccs_10',
                                                             'mfccs_11', 'mfccs_12', 'mfccs_13', 'mfccs_14', 'mfccs_15', 'mfccs_16',
                                                             'mfccs_17', 'mfccs_18', 'mfccs_19'])
+            df_mfccs.reset_index(drop=True, inplace=True)
 
             ##################### CHROMA ################### : dominant keys
             hop_length = 512
@@ -206,6 +209,7 @@ if __name__ == '__main__':
             df_chromagram = pd.DataFrame(chromagram, columns = ['chromagram_0', 'chromagram_1', 'chromagram_2', 
                                                             'chromagram_3', 'chromagram_4', 'chromagram_5', 'chromagram_6', 'chromagram_7',
                                                             'chromagram_8', 'chromagram_9', 'chromagram_10', 'chromagram_11'])
+            df_chromagram.reset_index(drop=True, inplace=True)
 
             ##################### TEMPOGRAM ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
             hop_length = 512
@@ -217,7 +221,7 @@ if __name__ == '__main__':
             df_tempo = pd.DataFrame(tempo, columns = ['tempo'])
 
             # concatenate all the features on the cloumns of the dfs
-            features = pd.concat([df_rms, df_zcrs, df_mfccs, df_chromagram, df_tempo], axis=1)
+            df_features = pd.concat([df_rms, df_zcrs, df_mfccs, df_chromagram, df_tempo], axis=1)
 
             # save the dataframe
             df_features.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_sound_{movie_name[:-4]}.csv', index=False)
