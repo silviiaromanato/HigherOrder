@@ -52,8 +52,11 @@ def compute_X(PATH, movie, method):
                 N=114
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
-                if subjID == 18 | subjID == 12:
-                    subjID -= 1
+                if subjID > 10:
+                    if subjID > 16:
+                        subjID -= 2
+                    else:
+                        subjID -= 1
                 print(subjID)
                 for t in range(1,len(file)+1):
                     scaffold_current[subjID,:]+=file[str(t)][:][u,v]
@@ -73,8 +76,11 @@ def compute_X(PATH, movie, method):
                     continue
                 #u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('_')[4][1:3]) - 1
-                if subjID == 18 | subjID == 12:
-                    subjID -= 1
+                if subjID > 10:
+                    if subjID > 16:
+                        subjID -= 2
+                    else:
+                        subjID -= 1
                 print(subjID)
                 for t in range(1,len(file)+1):
                     try:
