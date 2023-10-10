@@ -7,6 +7,7 @@ import librosa
 import IPython.display as ipd
 import moviepy.editor as mp
 from pydub import AudioSegment
+from PIL import Image
 
 #PATH_MOVIES = '/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/'
 # Local
@@ -56,6 +57,8 @@ def FrameCapture(MOVIE_PATH):
                 total_pixels = width * height
 
                 # Compute the average RGB
+                image = Image.fromarray(image)
+                print('The type of image is: ', type(image, 'and the shape is: ', image.shape))
                 for x in range(0, width):
                     for y in range(0, height):
                         r, g, b = image.getpixel((x, y))
@@ -96,14 +99,13 @@ if __name__ == '__main__':
         print(MOVIE_PATH)
 
         #################### IMAGES ####################
-        #if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv'):
-        if os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv'):
+        if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv'):
             df_movie = FrameCapture(MOVIE_PATH)
             print(df_movie.head(30))
             df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv', index=False)
-        """else:    
+        else:    
             print(f'The movie images were already analyzed for movie {movie_name[:-4]}!')
-            df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv')"""
+            df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv')
 
         #################### AUDIO ####################
         if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energy_{movie_name[:-4]}.npy'):
