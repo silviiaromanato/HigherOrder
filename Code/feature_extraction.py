@@ -96,13 +96,14 @@ if __name__ == '__main__':
         print(MOVIE_PATH)
 
         #################### IMAGES ####################
-        if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv'):
+        #if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv'):
+        if os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv'):
             df_movie = FrameCapture(MOVIE_PATH)
             print(df_movie.head(30))
             df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv', index=False)
-        else:    
+        """else:    
             print(f'The movie images were already analyzed for movie {movie_name[:-4]}!')
-            df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv')
+            df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv')"""
 
         #################### AUDIO ####################
         if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energy_{movie_name[:-4]}.npy'):
@@ -167,7 +168,7 @@ if __name__ == '__main__':
             np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name}.npy', np.array(zcrs))
             print(f"Zero crossing rate: {zcrs}")
 
-            ##################### Mel-Frequency Cepstral Coefficients (MFCCs) ################### : is a representation of the short- term power spectrum of a sound, 
+            """##################### Mel-Frequency Cepstral Coefficients (MFCCs) ################### : is a representation of the short- term power spectrum of a sound, 
                                                                                                 # based on some transformation in a Mel- scale. 
                                                                                                 # It is commonly used in speech recognition as people’s voices are usually on a 
                                                                                                 # certain range of frequency and different from one to another.
@@ -177,7 +178,7 @@ if __name__ == '__main__':
             librosa.display.specshow(mfccs, sr=sr, x_axis='time')
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.png')
             np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name}.npy', np.array(mfccs))
-            print(f"MFCCs: {mfccs}")
+            print(f"MFCCs: {mfccs}")"""
 
             ##################### CHROMA ################### : dominant keys
             hop_length = 512
