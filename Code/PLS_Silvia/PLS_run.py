@@ -57,7 +57,6 @@ def compute_X(PATH, movie, method):
                         subjID -= 2
                     else:
                         subjID -= 1
-                print(subjID)
                 for t in range(1,len(file)+1):
                     scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
@@ -79,7 +78,6 @@ def compute_X(PATH, movie, method):
                         subjID -= 2
                     else:
                         subjID -= 1
-                print(subjID)
                 for t in range(1,len(file)+1):
                     try:
                         current_tri[subjID,:]+=file[str(t)][:]
@@ -359,7 +357,6 @@ if __name__ == '__main__':
             print('\n' + ' -' * 10 + ' TRIANGLES FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
             X_movie = compute_X(PATH_TRIANGLES, movie_name, method='triangles')
             X_movie = pd.DataFrame(X_movie)
-            print('The shape of the X movie is: ', X_movie.shape)
             print(X_movie.head())
 
             # Perform the PLSC Behavioural analysis
