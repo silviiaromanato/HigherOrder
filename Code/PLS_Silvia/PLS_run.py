@@ -42,7 +42,7 @@ def compute_X(PATH, movie, method):
         print('The shape of X for BOLD is: ', X.shape)
     
     elif method == 'scaffold':
-        scaffold_current=np.zeros((32,int(114*113/2)))
+        scaffold_current=np.zeros((30,int(114*113/2)))
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
                 try:
@@ -52,13 +52,9 @@ def compute_X(PATH, movie, method):
                 N=114
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
-                print(int(subjID) == 11)
-                if (int(subjID) == 11):
-                    print(f'The  subjected {subjID} which is corrupted was encountered and therefore skipped!')
-                    continue
-                elif int(subjID) == 17:
-                    print(f'The  subjected {subjID} which is corrupted was encountered and therefore skipped!')
-                    continue
+                if subjID == 18 | subjID == 12:
+                    subjID -= 1
+                print(subjID)
                 for t in range(1,len(file)+1):
                     scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
@@ -68,7 +64,7 @@ def compute_X(PATH, movie, method):
             print(f'Subject {i} has entries: ', X[i])
 
     elif method == 'triangles':
-        current_tri = np.zeros((32,int(114*113*112/6)))
+        current_tri = np.zeros((30,int(114*113*112/6)))
         for i in glob.glob(PATH+'*'):
             if (i.endswith(f'{movie}.hd5')):
                 try:
@@ -77,12 +73,9 @@ def compute_X(PATH, movie, method):
                     continue
                 #u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('_')[4][1:3]) - 1
-                if (int(subjID) == 11):
-                    print(f'The  subjected {subjID} which is corrupted was encountered and therefore skipped!')
-                    continue
-                elif int(subjID) == 17:
-                    print(f'The  subjected {subjID} which is corrupted was encountered and therefore skipped!')
-                    continue
+                if subjID == 18 | subjID == 12:
+                    subjID -= 1
+                print(subjID)
                 for t in range(1,len(file)+1):
                     try:
                         current_tri[subjID,:]+=file[str(t)][:]
