@@ -6,7 +6,7 @@ import os
 import librosa
 import IPython.display as ipd
 import moviepy.editor as mp
-import AudioSegment
+from pydub import AudioSegment
 
 #PATH_MOVIES = '/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/'
 # Local
