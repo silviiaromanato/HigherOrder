@@ -39,7 +39,7 @@ def compute_X(PATH, movie, method):
             mtx_upper_triangular.append(upper_triangular)
         mtx_upper_triangular = np.array(mtx_upper_triangular)
         X = pd.DataFrame(mtx_upper_triangular)
-        print('The shape of X for BOLD is: 'm, X.shape)
+        print('The shape of X for BOLD is: ', X.shape)
     
     elif method == 'scaffold':
         scaffold_current=np.zeros((32,int(114*113/2)))
