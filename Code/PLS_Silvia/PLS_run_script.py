@@ -266,13 +266,15 @@ def exp_var(S, Sp_vect, LC_pvals, name, movie_name, METHOD):
 
 PATH = sys.argv[1]
 movie_name = sys.argv[2]
+method = sys.argv[3]
 print('The path is: ', PATH)
 print('The movie is: ', movie_name)
+print('The method is: ', method)
 
-# print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' -' * 10)
-# X_movie = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
-# X_movie = pd.DataFrame(X_movie)
-# print('The shape of the X movie is: ', X_movie.shape)
+print('\n' + ' -' * 10 + f' {method} FOR: ', movie_name, ' -' * 10)
+X_movie = compute_X(PATH, movie_name, method=method)
+X_movie = pd.DataFrame(X_movie)
+print('The shape of the X movie is: ', X_movie.shape)
 
 # # Perform the PLSC Behavioural analysis
 # res = run_decomposition(X_movie, Y)
