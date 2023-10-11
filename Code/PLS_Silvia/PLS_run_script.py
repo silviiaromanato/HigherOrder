@@ -301,13 +301,17 @@ if __name__ == '__main__':
 
     # Load the areas from yeo
     yeo_dict = loading_yeo(PATH_YEO)
-    print(yeo_dict)
+
+    if region == None:
+        name_of_region = 'ALL'
+    else:
+        name_of_region = region
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
     print('The shape of the Y behavioural dataset is: ', Y.shape)
 
-    print('\n' + ' -' * 10 + f' {method} FOR: ', movie_name, ' -' * 10)
+    print('\n' + ' -' * 10 + f' for {method}, {movie_name} and {name_of_region} FOR: ', movie_name, ' -' * 10)
     X_movie = compute_X(PATH, movie_name, method=method, regions = region)
     X_movie = pd.DataFrame(X_movie)
     print('The shape of the X movie is: ', X_movie.shape)
@@ -326,13 +330,13 @@ if __name__ == '__main__':
     results['LC']=np.arange(1,13)
 
     # Concatenate the results
-    if region == None:
-        name_of_region = 'ALL'
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{name_of_region}_results.csv'
+    if os.path.exists(PATH_SAVE):
+        PLS_results = pd.read_csv(PATH_SAVE)
+        PLS_results = pd.concat([PLS_results, results], axis=0)
     else:
-        name_of_region = region
-    PLS_results = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{name_of_region}_results.csv')
-    PLS_results = pd.concat([PLS_results, results], axis=0)
+        PLS_results = pd.DataFrame(results)
     print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
-    PLS_results.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{name_of_region}_results.csv', index=False)
+    PLS_results.to_csv(PATH_SAVE, index=False)
 
     print(f'------------ The PLS for {method}, {movie_name} and {name_of_region} was performed!!! ------------')
