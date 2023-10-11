@@ -97,8 +97,9 @@ def compute_X(PATH, movie, method, regions = None):
                     else:
                         subjID -= 1
                 for t in range(0,len(file)):
-                    current_tri[subjID,:]+=file[str(t)][:]
-                current_tri[subjID]=current_tri[subjID][indices_yeo_all]/len(file)
+                    current_tri[subjID,:]+=file[str(t)][:][indices_yeo_all]
+                    print('The shape of the current triangles X is: ', current_tri.shape)
+                current_tri[subjID]=current_tri[subjID]/len(file)
         X = current_tri.copy()
         print('The shape of X for TRIANGLES is: ', X.shape)
 
