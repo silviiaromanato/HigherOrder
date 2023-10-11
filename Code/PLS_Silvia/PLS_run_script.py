@@ -18,7 +18,7 @@ import sys
 import warnings
 warnings.simplefilter('ignore', DeprecationWarning)
 
-def compute_X(PATH, movie, method):
+def compute_X(PATH, movie, method, regions = None):
     """
     Compute the X dataset for the PLS analysis
 
@@ -30,7 +30,11 @@ def compute_X(PATH, movie, method):
     Output:
     - X: X dataset
     """
-    
+    yeo_dict = loading_yeo(PATH_YEO)
+
+    if regions != None:
+        yeo_indices = yeo_dict[regions]
+
     if method == 'bold':
         list_subjects = []
         for i in glob.glob(PATH+'*'):
@@ -39,7 +43,10 @@ def compute_X(PATH, movie, method):
         mtx_upper_triangular = []
         for i, PATH_SUBJ in enumerate(list_subjects):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
-            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+            if regions is None:
+                connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+            else:
+                connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
             upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
             mtx_upper_triangular.append(upper_triangular)
         mtx_upper_triangular = np.array(mtx_upper_triangular)
@@ -262,6 +269,14 @@ def exp_var(S, Sp_vect, LC_pvals, name, movie_name, METHOD):
     plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{METHOD}_{movie_name}.png', dpi=300)
     print('The plot was saved in: ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{METHOD}_{movie_name}.png')
 
+def loading_yeo(path=PATH_YEO):
+    ##Loading the yeoROIS
+    yeoROIs=np.array([i[0]-1 for i in loadmat(path)['yeoROIs']])
+    yeoROI_dict={label_Yeo:np.where(yeoROIs==idx_Yeo)[0] for idx_Yeo,label_Yeo in enumerate(['VIS','SM','DA','VA','L','FP','DMN','SC','C'])}
+    yeoROI_dict['SC']=np.array(sorted(np.hstack((yeoROI_dict['SC'],yeoROI_dict['C']))))
+    del yeoROI_dict['C']
+    return(yeoROI_dict)
+
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
 nBoot = 1000        # Number of bootstrap iterations
@@ -269,23 +284,29 @@ seed = 10           # Seed for reproducibility
 sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 columns = ['DASS_dep', 'DASS_anx', 'DASS_str',	'bas_d', 'bas_f', 'bas_r', 'bis', 'BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
+PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 
 if __name__ == '__main__': 
     PATH = sys.argv[1]
     movie_name = sys.argv[2]
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
-    
+    regions = sys.argv[5]
+
     print('The path is: ', PATH)
     print('The movie is: ', movie_name)
     print('The method is: ', method)
+
+    # Load the areas from yeo
+    yeo_dict = loading_yeo(PATH_YEO)
+    print(yeo_dict)
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
     print('The shape of the Y behavioural dataset is: ', Y.shape)
 
     print('\n' + ' -' * 10 + f' {method} FOR: ', movie_name, ' -' * 10)
-    X_movie = compute_X(PATH, movie_name, method=method)
+    X_movie = compute_X(PATH, movie_name, method=method, regions = regions)
     X_movie = pd.DataFrame(X_movie)
     print('The shape of the X movie is: ', X_movie.shape)
 
