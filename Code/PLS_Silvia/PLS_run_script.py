@@ -74,19 +74,22 @@ def compute_X(PATH, movie, method, regions = None):
         print('The shape of X for SCAFFOLD is: ', X.shape)
 
     elif method == 'triangles':
-        current_tri = np.zeros((30,int(114*113*112/6)))
+
+        indices_yeo_all = []
+        for idx_triangles,(i,j,k) in enumerate(combinations(np.arange(114),3)):
+            flag=[i in yeo_indices, j in yeo_indices, k in yeo_indices]
+            if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
+                indices_yeo_all.append(idx_triangles)
+        indices_yeo_all=np.array(indices_yeo_all)
+
+        current_tri = np.zeros((30,len(yeo_indices)))
         for string in glob.glob(PATH+'*'):
             if (string.endswith(f'{movie}.hd5')):
                 try:
                     file=h5py.File(string,'r',swmr=True)
                 except:
                     continue
-                indices_yeo_all = []
-                for idx_triangles,(i,j,k) in enumerate(combinations(np.arange(114),3)):
-                    flag=[i in yeo_indices, j in yeo_indices, k in yeo_indices]
-                    if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
-                        indices_yeo_all.append(idx_triangles)
-                indices_yeo_all=np.array(indices_yeo_all)
+                
                 subjID = int(string.split('/')[-1].split('_')[4][1:3]) - 1
                 if subjID > 10:
                     if subjID > 16:
@@ -94,7 +97,6 @@ def compute_X(PATH, movie, method, regions = None):
                     else:
                         subjID -= 1
                 for t in range(0,len(file)):
-                    print(file[str(t)][:])
                     current_tri[subjID,:]+=file[str(t)][:]
                 current_tri[subjID]=current_tri[subjID][indices_yeo_all]/len(file)
         X = current_tri.copy()
