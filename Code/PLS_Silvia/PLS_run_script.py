@@ -2,9 +2,6 @@ import numpy as np
 import h5py 
 import pandas as pd
 from behavPLS import BehavPLS
-# sys.path.append('Code/PLSC_code/')
-#from plot import *
-#from nilearn.masking import compute_brain_mask
 from configparser import ConfigParser
 from argparse import ArgumentParser
 from scipy.io import loadmat
@@ -14,6 +11,7 @@ import glob
 from compute import *
 from matplotlib import pyplot as plt
 import sys 
+from itertools import combinations
 
 import warnings
 warnings.simplefilter('ignore', DeprecationWarning)
@@ -83,7 +81,11 @@ def compute_X(PATH, movie, method, regions = None):
                     file=h5py.File(i,'r',swmr=True)
                 except:
                     continue
-                #u,v=np.triu_indices(n=N,k=1)
+                for idx_triangles,(i,j,k) in enumerate(combinations(np.arange(N),3)):
+                    flag=[i in yeo_indices, j in yeo_indices, k in yeo_indices]
+                    if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
+                        indices_yeo_all.append(idx_triangles)
+                indices_yeo_all=np.array(indices_yeo_all)
                 subjID = int(i.split('/')[-1].split('_')[4][1:3]) - 1
                 if subjID > 10:
                     if subjID > 16:
@@ -328,15 +330,16 @@ if __name__ == '__main__':
     data_cov_significant.sort_values('P-value')
     results['Movie']=movie_name
     results['LC']=np.arange(1,13)
+    results['Region'] = name_of_region
 
     # Concatenate the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{name_of_region}_results.csv'
-    if os.path.exists(PATH_SAVE):
-        PLS_results = pd.read_csv(PATH_SAVE)
-        PLS_results = pd.concat([PLS_results, results], axis=0)
-    else:
-        PLS_results = pd.DataFrame(results)
+    # if os.path.exists(PATH_SAVE):
+    #     PLS_results = pd.read_csv(PATH_SAVE)
+    #     PLS_results = pd.concat([PLS_results, results], axis=0)
+    # else:
+    PLS_results = pd.DataFrame(results)
     print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
     PLS_results.to_csv(PATH_SAVE, index=False)
 
-    print(f'------------ The PLS for {method}, {movie_name} and {name_of_region} was performed!!! ------------')
+    print('\n' + f"------------ The PLS for {method}, {movie_name} and {name_of_region} was performed!!! ------------")
