@@ -81,7 +81,7 @@ def compute_X(PATH, movie, method, regions = None):
             if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
                 indices_yeo_all.append(idx_triangles)
         indices_yeo_all=np.array(indices_yeo_all)
-        length = int((length * (length-1) * (length-2)) / (3*2)))
+        length = int((length * (length-1) * (length-2)) / (3*2))
         print(length)
 
         current_tri = np.zeros((30, length))
