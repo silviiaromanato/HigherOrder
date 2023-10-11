@@ -262,9 +262,8 @@ def exp_var(S, Sp_vect, LC_pvals, name, movie_name, METHOD):
 
 PATH = sys.argv[1]
 movie_name = sys.argv[2]
-print(PATH, movie_name)
 
-# print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
+# print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' -' * 10)
 # X_movie = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
 # X_movie = pd.DataFrame(X_movie)
 # print('The shape of the X movie is: ', X_movie.shape)
@@ -276,8 +275,7 @@ print(PATH, movie_name)
 # print('The pvalues are: ', res_permu['P_val'])
 
 # # Save the results
-# results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])),
-#                         columns=['Covariance Explained', 'P-value'])
+# results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
 # data_cov_significant=results[results['P-value'] < p_star]
 # data_cov_significant.sort_values('P-value')
 # results['Movie']=movie_name
@@ -289,4 +287,4 @@ print(PATH, movie_name)
 # PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_SCAFFOLD_results.csv', index=False)
 
 # # Print the results
-# exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
+# # exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
