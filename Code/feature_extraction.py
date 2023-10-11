@@ -216,7 +216,7 @@ if __name__ == '__main__':
                                                             'chromagram_8', 'chromagram_9', 'chromagram_10', 'chromagram_11'])
             df_chromagram.reset_index(drop=True, inplace=True)
 
-            ##################### TEMPOGRAM ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
+            """##################### TEMPOGRAM ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
             hop_length = 512
             oenv = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
             times = librosa.times_like(oenv, sr=sr, hop_length=hop_length) 
@@ -224,10 +224,10 @@ if __name__ == '__main__':
             print(f"Tempogram: {tempo}", 'The  length is: ', tempo.shape)
             # save as a dataframe
             tempo = tempo.T
-            df_tempo = pd.DataFrame(tempo, columns = ['tempo'])
+            df_tempo = pd.DataFrame(tempo, columns = ['tempo'])"""
 
             # concatenate all the features on the cloumns of the dfs
-            df_features = pd.concat([df_rms, df_zcrs, df_mfccs, df_chromagram, df_tempo], axis=1)
+            df_features = pd.concat([df_rms, df_zcrs, df_mfccs, df_chromagram], axis=1)
 
             # save the dataframe
             df_features.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_sound_{movie_name[:-4]}.csv', index=False)
