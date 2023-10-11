@@ -161,6 +161,8 @@ if __name__ == '__main__':
             # SAVE THE RMS
             #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.npy', np.array(rms))
             print(f"RMS Energy: {rms}", 'The length is: ', rms.shape)
+            # exchange the dimension of the array in order to save it as a dataframe
+            rms = rms.T
             # save as a dataframe
             df_rms = pd.DataFrame(rms, columns = ['rms'])
             df_rms.reset_index(drop=True, inplace=True)
@@ -173,6 +175,7 @@ if __name__ == '__main__':
             plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.png')
             #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.npy', np.array(zcrs))
             print(f"Zero crossing rate: {zcrs}", 'The length is: ', zcrs.shape)
+            zcrs = zcrs.T
             # save as a dataframe
             df_zcrs = pd.DataFrame(zcrs, columns = ['zcrs'])
             df_zcrs.reset_index(drop=True, inplace=True)
