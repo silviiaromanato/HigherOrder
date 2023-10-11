@@ -78,7 +78,7 @@ def compute_X(PATH, movie, method):
                         subjID -= 2
                     else:
                         subjID -= 1
-                for t in range(1,len(file)+1):
+                for t in range(0,len(file)):
                     try:
                         current_tri[subjID,:]+=file[str(t)][:]
                     except:
