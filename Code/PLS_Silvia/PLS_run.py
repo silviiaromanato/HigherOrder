@@ -274,7 +274,7 @@ sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 if __name__ == '__main__': 
     PERFORM_BOLD = False
-    PERFORM_SCAFFOLD = True
+    PERFORM_SCAFFOLD = False
     PERFORM_TRIANGLES = True
     print(f'We are going to perform BOLD: {PERFORM_BOLD}, scaffold: {PERFORM_SCAFFOLD}, triangles: {PERFORM_TRIANGLES}')
 
