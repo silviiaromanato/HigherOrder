@@ -273,9 +273,9 @@ seed = 10           # Seed for reproducibility
 sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 if __name__ == '__main__': 
-    PERFORM_BOLD = False
+    PERFORM_BOLD = True
     PERFORM_SCAFFOLD = False
-    PERFORM_TRIANGLES = True
+    PERFORM_TRIANGLES = False
     print(f'We are going to perform BOLD: {PERFORM_BOLD}, scaffold: {PERFORM_SCAFFOLD}, triangles: {PERFORM_TRIANGLES}')
 
     # Load the Y behavioural dataset
@@ -345,14 +345,6 @@ if __name__ == '__main__':
             exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
 
     if PERFORM_TRIANGLES:
-        if os.path.exists('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_TRIANGLES_results.csv'):
-            PLS_results = pd.read_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_TRIANGLES_results.csv')
-            already_done = PLS_results.Movie.unique()
-            print('Already done are: ', already_done)
-        else:
-            already_done = []
-            print('Already done are: ', already_done)
-        list_movies = [movie for movie in list_movies if movie not in already_done]
         for movie_number, movie_name in enumerate(list_movies):
             print('\n' + ' -' * 10 + ' TRIANGLES FOR: ', movie_name, ' Movie number: ', movie_number, ' -' * 10)
             X_movie = compute_X(PATH_TRIANGLES, movie_name, method='triangles')
