@@ -262,37 +262,50 @@ def exp_var(S, Sp_vect, LC_pvals, name, movie_name, METHOD):
     plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{METHOD}_{movie_name}.png', dpi=300)
     print('The plot was saved in: ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{METHOD}_{movie_name}.png')
 
+nb = 30              # Number of participants
+nPer = 1000         # Number of permutations for significance testing
+nBoot = 1000        # Number of bootstrap iterations
+seed = 10           # Seed for reproducibility
+sl = 0.05          # Signficant level for statistical testing
+p_star = 0.05
+columns = ['DASS_dep', 'DASS_anx', 'DASS_str',	'bas_d', 'bas_f', 'bas_r', 'bis', 'BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
 
+if __name__ == '__main__': 
+    PATH = sys.argv[1]
+    movie_name = sys.argv[2]
+    method = sys.argv[3]
+    PATH_DATA = sys.argv[4]
+    
+    print('The path is: ', PATH)
+    print('The movie is: ', movie_name)
+    print('The method is: ', method)
 
-PATH = sys.argv[1]
-movie_name = sys.argv[2]
-method = sys.argv[3]
-print('The path is: ', PATH)
-print('The movie is: ', movie_name)
-print('The method is: ', method)
+    # Load the Y behavioural dataset
+    Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
+    print('The shape of the Y behavioural dataset is: ', Y.shape)
 
-print('\n' + ' -' * 10 + f' {method} FOR: ', movie_name, ' -' * 10)
-X_movie = compute_X(PATH, movie_name, method=method)
-X_movie = pd.DataFrame(X_movie)
-print('The shape of the X movie is: ', X_movie.shape)
+    print('\n' + ' -' * 10 + f' {method} FOR: ', movie_name, ' -' * 10)
+    X_movie = compute_X(PATH, movie_name, method=method)
+    X_movie = pd.DataFrame(X_movie)
+    print('The shape of the X movie is: ', X_movie.shape)
 
-# # Perform the PLSC Behavioural analysis
-# res = run_decomposition(X_movie, Y)
-# res_permu = permutation(res, nPer, seed, sl)
-# res_bootstrap = bootstrap(res, nBoot, seed)
-# print('The pvalues are: ', res_permu['P_val'])
+    # Perform the PLSC Behavioural analysis
+    res = run_decomposition(X_movie, Y)
+    res_permu = permutation(res, nPer, seed, sl)
+    res_bootstrap = bootstrap(res, nBoot, seed)
+    print('The pvalues are: ', res_permu['P_val'])
 
-# # Save the results
-# results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
-# data_cov_significant=results[results['P-value'] < p_star]
-# data_cov_significant.sort_values('P-value')
-# results['Movie']=movie_name
-# results['LC']=np.arange(1,13)
+    # Save the results
+    results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
+    data_cov_significant=results[results['P-value'] < p_star]
+    data_cov_significant.sort_values('P-value')
+    results['Movie']=movie_name
+    results['LC']=np.arange(1,13)
 
-# # Concatenate the results
-# PLS_results = pd.concat([PLS_results, results], axis=0)
-# print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
-# PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_SCAFFOLD_results.csv', index=False)
+    # Concatenate the results
+    PLS_results = pd.concat([PLS_results, results], axis=0)
+    print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
+    PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_SCAFFOLD_results.csv', index=False)
 
-# # Print the results
-# # exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
+    # Print the results
+    # exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
