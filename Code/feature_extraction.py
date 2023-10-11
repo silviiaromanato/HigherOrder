@@ -134,7 +134,7 @@ if __name__ == '__main__':
             #s_energy = np.array([sum(abs(x[i:i + window_length] ** 2)) for i in range(0, len(x), window_length)])
             #print('The energy is: ', s_energy) # ENERGY FOR THE ENTIRE MOVIE
 
-            ##################### other library #####################
+            """##################### other library #####################
             audio_segment = AudioSegment.from_file(filename)
             # Print attributes
             print(f"Channels: {audio_segment.channels}")
@@ -214,17 +214,19 @@ if __name__ == '__main__':
             df_chromagram = pd.DataFrame(chromagram, columns = ['chromagram_0', 'chromagram_1', 'chromagram_2', 
                                                             'chromagram_3', 'chromagram_4', 'chromagram_5', 'chromagram_6', 'chromagram_7',
                                                             'chromagram_8', 'chromagram_9', 'chromagram_10', 'chromagram_11'])
-            df_chromagram.reset_index(drop=True, inplace=True)
+            df_chromagram.reset_index(drop=True, inplace=True)"""
 
-            """##################### TEMPOGRAM ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
+            ##################### TEMPOGRAM ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
             hop_length = 512
             oenv = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
+            print('The onset strength is: ', oenv, oenv.shape)
             times = librosa.times_like(oenv, sr=sr, hop_length=hop_length) 
+            print('The times are: ', times, times.shape)
             tempo = librosa.beat.tempo(onset_envelope=oenv, sr=sr, hop_length=hop_length)[0]
             print(f"Tempogram: {tempo}", 'The  length is: ', tempo.shape)
             # save as a dataframe
             tempo = tempo.T
-            df_tempo = pd.DataFrame(tempo, columns = ['tempo'])"""
+            df_tempo = pd.DataFrame(tempo, columns = ['tempo'])
 
             # concatenate all the features on the cloumns of the dfs
             df_features = pd.concat([df_rms, df_zcrs, df_mfccs, df_chromagram], axis=1)
