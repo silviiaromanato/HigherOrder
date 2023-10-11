@@ -3,7 +3,7 @@ import h5py
 import pandas as pd
 from behavPLS import BehavPLS
 from plot import *
-from nilearn.masking import compute_brain_mask
+#from nilearn.masking import compute_brain_mask
 from configparser import ConfigParser
 from argparse import ArgumentParser
 from scipy.io import loadmat
