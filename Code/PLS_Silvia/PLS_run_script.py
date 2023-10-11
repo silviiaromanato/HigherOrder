@@ -81,10 +81,10 @@ def compute_X(PATH, movie, method, regions = None):
             if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
                 indices_yeo_all.append(idx_triangles)
         indices_yeo_all=np.array(indices_yeo_all)
-        length = len(indices_yeo_all)
+        length = int((length * (length-1) * (length-2)) / (3*2)))
         print(length)
 
-        current_tri = np.zeros((30, int((length * (length-1) * (length-2)) / (3*2))))
+        current_tri = np.zeros((30, length))
         for string in glob.glob(PATH+'*'):
             if (string.endswith(f'{movie}.hd5')):
                 try:
@@ -99,7 +99,9 @@ def compute_X(PATH, movie, method, regions = None):
                     else:
                         subjID -= 1
                 for t in range(0,len(file)):
-                    current_tri[subjID,:]+=np.array(file[str(t)][:])[indices_yeo_all]
+                    sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
+                    print('The shape of the submatrix is: ', sub_matrix)
+                    current_tri[subjID,:]+=sub_matrix
                     print('The shape of the current triangles X is: ', current_tri.shape)
                 current_tri[subjID]=current_tri[subjID]/len(file)
         X = current_tri.copy()
