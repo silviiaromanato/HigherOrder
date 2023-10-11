@@ -75,10 +75,10 @@ def compute_X(PATH, movie, method, regions = None):
 
     elif method == 'triangles':
         current_tri = np.zeros((30,int(114*113*112/6)))
-        for i in glob.glob(PATH+'*'):
-            if (i.endswith(f'{movie}.hd5')):
+        for string in glob.glob(PATH+'*'):
+            if (string.endswith(f'{movie}.hd5')):
                 try:
-                    file=h5py.File(i,'r',swmr=True)
+                    file=h5py.File(string,'r',swmr=True)
                 except:
                     continue
                 indices_yeo_all = []
@@ -87,7 +87,7 @@ def compute_X(PATH, movie, method, regions = None):
                     if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
                         indices_yeo_all.append(idx_triangles)
                 indices_yeo_all=np.array(indices_yeo_all)
-                subjID = int(i.split('/')[-1].split('_')[4][1:3]) - 1
+                subjID = int(string.split('/')[-1].split('_')[4][1:3]) - 1
                 if subjID > 10:
                     if subjID > 16:
                         subjID -= 2
