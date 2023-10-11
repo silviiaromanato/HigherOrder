@@ -81,9 +81,10 @@ def compute_X(PATH, movie, method, regions = None):
             if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
                 indices_yeo_all.append(idx_triangles)
         indices_yeo_all=np.array(indices_yeo_all)
-        print(indices_yeo_all)
+        length = len(indices_yeo_all)
+        print(length)
 
-        current_tri = np.zeros((30,len(indices_yeo_all) * (len(indices_yeo_all) -1) * (len(indices_yeo_all)-2) / (3*2)))
+        current_tri = np.zeros((30, int((length * (length-1) * (length-2)) / (3*2))))
         for string in glob.glob(PATH+'*'):
             if (string.endswith(f'{movie}.hd5')):
                 try:
