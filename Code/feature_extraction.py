@@ -192,6 +192,7 @@ if __name__ == '__main__':
             #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.npy', np.array(mfccs))
             print(f"MFCCs: {mfccs} and the length is {mfccs.shape}")
             # save as a dataframe
+            mfccs = mfccs.T
             df_mfccs = pd.DataFrame(mfccs, columns = ['mfccs_0', 'mfccs_1', 'mfccs_2', 'mfccs_3', 'mfccs_4',
                                                             'mfccs_5', 'mfccs_6', 'mfccs_7', 'mfccs_8', 'mfccs_9', 'mfccs_10',
                                                             'mfccs_11', 'mfccs_12', 'mfccs_13', 'mfccs_14', 'mfccs_15', 'mfccs_16',
@@ -209,6 +210,7 @@ if __name__ == '__main__':
             #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.npy', np.array(chromagram))
             print(f"Chromagram: {chromagram}", 'The length is: ', chromagram.shape)
             # save as a dataframe
+            chromagram = chromagram.T
             df_chromagram = pd.DataFrame(chromagram, columns = ['chromagram_0', 'chromagram_1', 'chromagram_2', 
                                                             'chromagram_3', 'chromagram_4', 'chromagram_5', 'chromagram_6', 'chromagram_7',
                                                             'chromagram_8', 'chromagram_9', 'chromagram_10', 'chromagram_11'])
@@ -221,6 +223,7 @@ if __name__ == '__main__':
             tempo = librosa.beat.tempo(onset_envelope=oenv, sr=sr, hop_length=hop_length)[0]
             print(f"Tempogram: {tempo}", 'The  length is: ', tempo.shape)
             # save as a dataframe
+            tempo = tempo.T
             df_tempo = pd.DataFrame(tempo, columns = ['tempo'])
 
             # concatenate all the features on the cloumns of the dfs
