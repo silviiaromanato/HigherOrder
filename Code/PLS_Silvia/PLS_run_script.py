@@ -2,7 +2,7 @@ import numpy as np
 import h5py 
 import pandas as pd
 from behavPLS import BehavPLS
-#sys.path.append('Code/PLSC_code/')
+# sys.path.append('Code/PLSC_code/')
 #from plot import *
 #from nilearn.masking import compute_brain_mask
 from configparser import ConfigParser
@@ -263,6 +263,8 @@ def exp_var(S, Sp_vect, LC_pvals, name, movie_name, METHOD):
 
 PATH = sys.argv[1]
 movie_name = sys.argv[2]
+print('The path is: ', PATH)
+print('The movie is: ', movie_name)
 
 # print('\n' + ' -' * 10 + ' SCAFFOLD FOR: ', movie_name, ' -' * 10)
 # X_movie = compute_X(PATH_SCAFFOLD, movie_name, method='scaffold')
