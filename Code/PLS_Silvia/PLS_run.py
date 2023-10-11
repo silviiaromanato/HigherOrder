@@ -272,10 +272,11 @@ nBoot = 1000        # Number of bootstrap iterations
 seed = 10           # Seed for reproducibility
 sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
+
 if __name__ == '__main__': 
-    PERFORM_BOLD = True
+    PERFORM_BOLD = False
     PERFORM_SCAFFOLD = False
-    PERFORM_TRIANGLES = False
+    PERFORM_TRIANGLES = True
     print(f'We are going to perform BOLD: {PERFORM_BOLD}, scaffold: {PERFORM_SCAFFOLD}, triangles: {PERFORM_TRIANGLES}')
 
     # Load the Y behavioural dataset
@@ -308,11 +309,10 @@ if __name__ == '__main__':
             # Concatenate the results
             PLS_results = pd.concat([PLS_results, results], axis=0)
             print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
-            PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_BOLD_results.csv', index=False)
-
+            
             # Print the results
             exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'BOLD')
-
+        PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_BOLD_results.csv', index=False)
         print('\n' + ' -' * 10 + ' Finished BOLD; starting SCAFFOLD ' + ' -' * 10)
 
     if PERFORM_SCAFFOLD:
