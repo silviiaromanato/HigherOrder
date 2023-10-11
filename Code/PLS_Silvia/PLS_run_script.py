@@ -326,9 +326,13 @@ if __name__ == '__main__':
     results['LC']=np.arange(1,13)
 
     # Concatenate the results
+    if region == None:
+        name_of_region = 'ALL'
+    else:
+        name_of_region = region
+    PLS_results = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{name_of_region}_results.csv')
     PLS_results = pd.concat([PLS_results, results], axis=0)
     print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
-    PLS_results.to_csv('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_SCAFFOLD_results.csv', index=False)
+    PLS_results.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{name_of_region}_results.csv', index=False)
 
-    # Print the results
-    # exp_var(res['S'], res_permu['Sp_vect'], res_permu['P_val'], "Discrete_Var", movie_number, METHOD = 'SCAFFOLD')
+    print(f'------------ The PLS for {method}, {movie_name} and {name_of_region} was performed!!! ------------')
