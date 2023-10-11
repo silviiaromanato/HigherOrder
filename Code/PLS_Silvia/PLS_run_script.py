@@ -15,6 +15,9 @@ from compute import *
 from matplotlib import pyplot as plt
 import sys 
 
+import warnings
+warnings.simplefilter('ignore', DeprecationWarning)
+
 def compute_X(PATH, movie, method):
     """
     Compute the X dataset for the PLS analysis
