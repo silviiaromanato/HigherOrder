@@ -94,11 +94,9 @@ def compute_X(PATH, movie, method, regions = None):
                     else:
                         subjID -= 1
                 for t in range(0,len(file)):
-                    try:
-                        current_tri[subjID,:]+=file[str(t)][:][indices_yeo_all]
-                    except:
-                        print(f"Object '{t}' does not exist in the HDF5 file.")
-                current_tri[subjID]=current_tri[subjID]/len(file)
+                    print(file[str(t)][:])
+                    current_tri[subjID,:]+=file[str(t)][:]
+                current_tri[subjID]=current_tri[subjID][indices_yeo_all]/len(file)
         X = current_tri.copy()
         print('The shape of X for TRIANGLES is: ', X.shape)
 
