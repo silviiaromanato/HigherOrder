@@ -81,7 +81,7 @@ def compute_X(PATH, movie, method, regions = None):
                     file=h5py.File(i,'r',swmr=True)
                 except:
                     continue
-                for idx_triangles,(i,j,k) in enumerate(combinations(np.arange(N),3)):
+                for idx_triangles,(i,j,k) in enumerate(combinations(np.arange(114),3)):
                     flag=[i in yeo_indices, j in yeo_indices, k in yeo_indices]
                     if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
                         indices_yeo_all.append(idx_triangles)
@@ -94,7 +94,7 @@ def compute_X(PATH, movie, method, regions = None):
                         subjID -= 1
                 for t in range(0,len(file)):
                     try:
-                        current_tri[subjID,:]+=file[str(t)][:]
+                        current_tri[subjID,:]+=file[str(t)][:][indices_yeo_all]
                     except:
                         print(f"Object '{t}' does not exist in the HDF5 file.")
                 current_tri[subjID]=current_tri[subjID]/len(file)
