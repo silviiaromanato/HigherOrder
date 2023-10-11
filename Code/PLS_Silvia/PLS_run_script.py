@@ -81,6 +81,7 @@ def compute_X(PATH, movie, method, regions = None):
                     file=h5py.File(i,'r',swmr=True)
                 except:
                     continue
+                indices_yeo_all = []
                 for idx_triangles,(i,j,k) in enumerate(combinations(np.arange(114),3)):
                     flag=[i in yeo_indices, j in yeo_indices, k in yeo_indices]
                     if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
