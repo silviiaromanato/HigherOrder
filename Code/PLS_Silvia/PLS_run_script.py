@@ -101,7 +101,7 @@ def compute_X(PATH, movie, method, regions = None):
                         subjID -= 1
                 for t in range(0,len(file)):
                     sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
-                    print('The shape of the submatrix is: ', sub_matrix)
+                    print('The shape of the submatrix is: ', sub_matrix.shape)
                     current_tri[subjID,:]+=sub_matrix
                     print('The shape of the current triangles X is: ', current_tri.shape)
                 current_tri[subjID]=current_tri[subjID]/len(file)
