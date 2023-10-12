@@ -338,11 +338,11 @@ if __name__ == '__main__':
 
     # Concatenate the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{name_of_region}_results.csv'
-    # if os.path.exists(PATH_SAVE):
-    #     PLS_results = pd.read_csv(PATH_SAVE)
-    #     PLS_results = pd.concat([PLS_results, results], axis=0)
-    # else:
-    PLS_results = pd.DataFrame(results)
+    if os.path.exists(PATH_SAVE):
+        PLS_results = pd.read_csv(PATH_SAVE)
+        PLS_results = pd.concat([PLS_results, results], axis=0)
+    else:
+        PLS_results = pd.DataFrame(results)
     print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
     PLS_results.to_csv(PATH_SAVE, index=False)
 
