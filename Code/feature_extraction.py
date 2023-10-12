@@ -42,7 +42,6 @@ def FrameCapture(MOVIE_PATH):
     while success:
         try:
             success, image = video.read()
-            print('The type of image is: ', type(image), 'and the shape is: ', image.shape)
 
             if success is False:
                 print("Error: Unable to load the image.")
