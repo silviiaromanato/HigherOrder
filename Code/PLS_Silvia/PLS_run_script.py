@@ -83,7 +83,6 @@ def compute_X(PATH, movie, method, regions = None):
         indices_yeo_all=np.array(indices_yeo_all)
         number_indices = len(yeo_indices)
         length = int((number_indices * (number_indices-1) * (number_indices-2)) / (3*2))
-        print(length)
 
         current_tri = np.zeros((30, length))
         for string in glob.glob(PATH+'*'):
