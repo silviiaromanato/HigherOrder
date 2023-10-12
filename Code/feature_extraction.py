@@ -32,65 +32,66 @@ def FrameCapture(MOVIE_PATH):
     count = 0
     success = 1
 
-    average_brightness = []
-    average_saturation = []
-    average_hue = []
-    average_red = []
-    average_green = []
-    average_blue = []
+    average_brightness_left = []
+    average_saturation_left = []
+    average_hue_left = []
+    average_brightness_right = []
+    average_saturation_right = []
+    average_hue_right = []
+
     while success:
         try:
             success, image = video.read()
+            print('The type of image is: ', type(image), 'and the shape is: ', image.shape)
+
             if success is False:
                 print("Error: Unable to load the image.")
             else:
+                                # divide the image in two parts: left and right
+                image_left = image[:, :int(image.shape[1]/2)]
+                image_right = image[:, int(image.shape[1]/2):]
                 count += 1
                 if count % 500 == 0:
                     print(f"Frame {count} processed")
 
-                # Convert to HSV
-                h_channel, s_channel, v_channel = convert_to_hsv(image)        
+                ############ left image ############
+                h_channel, s_channel, v_channel = convert_to_hsv(image_left)        
                 sum_v = np.sum(v_channel)
                 sum_s = np.sum(s_channel)
                 sum_h = np.sum(h_channel)
                 width, height = v_channel.shape
                 total_pixels = width * height
 
-                """# Compute the average RGB
-                image = Image.fromarray(image)
-                print('The type of image is: ', type(image, 'and the shape is: ', image.shape))
-                for x in range(0, width):
-                    for y in range(0, height):
-                        r, g, b = image.getpixel((x, y))
-                        r_total += r
-                        g_total += g
-                        b_total += b
+                average_brightness_left.append(sum_v / total_pixels)
+                average_saturation_left.append(sum_s / total_pixels)
+                average_hue_left.append(sum_h / total_pixels)
 
-                r_total = r_total / (width * height)
-                g_total = g_total / (width * height)
-                b_total = b_total / (width * height)"""
+                ############ right image ############
+                h_channel, s_channel, v_channel = convert_to_hsv(image_right)
+                sum_v = np.sum(v_channel)
+                sum_s = np.sum(s_channel)
+                sum_h = np.sum(h_channel)
+                width, height = v_channel.shape
+                total_pixels = width * height
 
-                average_brightness.append(sum_v / total_pixels)
-                average_saturation.append(sum_s / total_pixels)
-                average_hue.append(sum_h / total_pixels)
-                #average_red.append(r_total)
-                #average_green.append(g_total)
-                #average_blue.append(b_total)
+                average_brightness_right.append(sum_v / total_pixels)
+                average_saturation_right.append(sum_s / total_pixels)
+                average_hue_right.append(sum_h / total_pixels)
+
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    print('The average saturation of the movie is: ', np.mean(average_saturation))
-    print('The average brightness of the movie is: ', np.mean(average_brightness))
-    print('The average hue of the movie is: ', np.mean(average_hue))
-    #print('The average red of the movie is: ', np.mean(average_red))
-    #print('The average green of the movie is: ', np.mean(average_green))
-    #print('The average blue of the movie is: ', np.mean(average_blue))
+    print('The average saturation of the movie is: ', np.mean(average_brightness_left))
+    print('The average brightness of the movie is: ', np.mean(average_saturation_left))
+    print('The average hue of the movie is: ', np.mean(average_hue_left))
+    print('The average red of the movie is: ', np.mean(average_brightness_right))
+    print('The average green of the movie is: ', np.mean(average_saturation_right))
+    print('The average blue of the movie is: ', np.mean(average_hue_right))
 
     # convert the average brightness and saturation to a dataframe
-    df_movie = pd.DataFrame({'average_brightness': average_brightness, 'average_saturation': average_saturation, 
-                             'average_hue': average_hue, 
-                             #'average_red': average_red, 'average_green': average_green, 'average_blue': average_blue
-                                })
+    df_movie = pd.DataFrame({'average_brightness_left': average_brightness_left, 'average_saturation_left': average_saturation_left,
+                            'average_hue_left': average_hue_left, 'average_brightness_right': average_brightness_right,
+                            'average_saturation_right': average_saturation_right, 'average_hue_right': average_hue_right})
 
     return df_movie
 
@@ -99,14 +100,14 @@ if __name__ == '__main__':
         MOVIE_PATH = PATH_MOVIES + movie_name
         print(MOVIE_PATH)
 
-        """#################### IMAGES ####################
+        #################### IMAGES ####################
         if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv'):
             df_movie = FrameCapture(MOVIE_PATH)
             print(df_movie.head(30))
             df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv', index=False)
         else:    
             print(f'The movie images were already analyzed for movie {movie_name[:-4]}!')
-            df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv')"""
+            df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv')
 
         #################### AUDIO ####################
         if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energy_{movie_name[:-4]}.npy'):
@@ -127,23 +128,6 @@ if __name__ == '__main__':
             y, sr = librosa.load(filename, sr=22050)
             duration_seconds, duration_minutes = librosa.get_duration(y=y, sr=sr), librosa.get_duration(y=y, sr=sr) / 60
             print("Duration (seconds):", duration_seconds, " -- Duration (minutes):", duration_minutes)
-            max_slice = 1  # Maximum duration for each slice in seconds
-            window_length = int(max_slice * sr)  # Convert duration to samples
-
-            # ENERGY FOR EACH SLICE
-            #s_energy = np.array([sum(abs(x[i:i + window_length] ** 2)) for i in range(0, len(x), window_length)])
-            #print('The energy is: ', s_energy) # ENERGY FOR THE ENTIRE MOVIE
-
-            """##################### other library #####################
-            audio_segment = AudioSegment.from_file(filename)
-            # Print attributes
-            print(f"Channels: {audio_segment.channels}")
-            print(f"Sample width: {audio_segment.sample_width}") 
-            print(f"Frame rate (sample rate): {audio_segment.frame_rate}") 
-            print(f"Frame width: {audio_segment.frame_width}") 
-            print(f"Length (ms): {len(audio_segment)}")
-            print(f"Frame count: {audio_segment.frame_count()}") 
-            print(f"Intensity: {audio_segment.dBFS}")
             
             ##################### RMS ################### : total magnitude of the signal, LOUDNESS OF THE SIGNAL
             S, phase = librosa.magphase(librosa.stft(y))
@@ -214,19 +198,15 @@ if __name__ == '__main__':
             df_chromagram = pd.DataFrame(chromagram, columns = ['chromagram_0', 'chromagram_1', 'chromagram_2', 
                                                             'chromagram_3', 'chromagram_4', 'chromagram_5', 'chromagram_6', 'chromagram_7',
                                                             'chromagram_8', 'chromagram_9', 'chromagram_10', 'chromagram_11'])
-            df_chromagram.reset_index(drop=True, inplace=True)"""
+            df_chromagram.reset_index(drop=True, inplace=True)
 
             ##################### TEMPOGRAM ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
             hop_length = 512
             oenv = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
             print('The onset strength is: ', oenv, oenv.shape)
-            times = librosa.times_like(oenv, sr=sr, hop_length=hop_length) 
-            print('The times are: ', times, times.shape)
-            tempo = librosa.beat.tempo(onset_envelope=oenv, sr=sr, hop_length=hop_length)[0]
-            print(f"Tempogram: {tempo}", 'The  length is: ', tempo.shape)
             # save as a dataframe
-            tempo = tempo.T
-            df_tempo = pd.DataFrame(tempo, columns = ['tempo'])
+            oenv = oenv.T
+            df_tempo = pd.DataFrame(oenv, columns = ['tempo'])
 
             # concatenate all the features on the cloumns of the dfs
             df_features = pd.concat([df_rms, df_zcrs, df_mfccs, df_chromagram], axis=1)
