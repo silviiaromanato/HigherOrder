@@ -299,12 +299,6 @@ if __name__ == '__main__':
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
-
-    print('The path is: ', PATH)
-    print('The movie is: ', movie_name)
-    print('The method is: ', method)
-    print('The region is: ', region)
-
     # Load the areas from yeo
     yeo_dict = loading_yeo(PATH_YEO)
 
@@ -315,7 +309,6 @@ if __name__ == '__main__':
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
-    print('The shape of the Y behavioural dataset is: ', Y.shape)
 
     print('\n' + ' -' * 10 + f' for {method}, {movie_name} and {name_of_region} FOR: ', movie_name, ' -' * 10)
     X_movie = compute_X(PATH, movie_name, method=method, regions = region)
@@ -335,6 +328,9 @@ if __name__ == '__main__':
     results['Movie']=movie_name
     results['LC']=np.arange(1,13)
     results['Region'] = name_of_region
+    results['Covariance Explained'] = results['Covariance Explained'].astype(float)
+
+    print('The shape of the results is: ', results)
 
     # Concatenate the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{name_of_region}_results.csv'
@@ -343,6 +339,7 @@ if __name__ == '__main__':
         PLS_results = pd.concat([PLS_results, results], axis=0)
     else:
         PLS_results = pd.DataFrame(results)
+    
     print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
     PLS_results.to_csv(PATH_SAVE, index=False)
 
