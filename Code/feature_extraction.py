@@ -100,120 +100,104 @@ if __name__ == '__main__':
         print(MOVIE_PATH)
 
         #################### IMAGES ####################
-        if os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv'):
-            df_movie = FrameCapture(MOVIE_PATH)
-            print(df_movie.head(30))
-            df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv', index=False)
-        else:    
-            print(f'The movie images were already analyzed for movie {movie_name[:-4]}!')
-            df_movie = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv')
-
-        #################### AUDIO ####################
-        if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/energy_{movie_name[:-4]}.npy'):
+        df_movie = FrameCapture(MOVIE_PATH)
+        print(df_movie.head(30))
+        df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv', index=False)
             
-            ##################### AUDIO EXTRACTION #####################
-            print('Extracting the audio from the movie...')
-            video = mp.VideoFileClip(MOVIE_PATH)
-            video_duration = video.duration
-            start_time = 1  # Start time in seconds
-            end_time = video_duration  # End time, limited to video duration
-            clip = video.subclip(start_time, end_time)
-            clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name[:-4]}.wav")
-            filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name[:-4]}.wav"
-            print('The audio was extracted!')
+        ##################### AUDIO EXTRACTION #####################
+        print('Extracting the audio from the movie...')
+        video = mp.VideoFileClip(MOVIE_PATH)
+        video_duration = video.duration
+        start_time = 1  # Start time in seconds
+        end_time = video_duration  # End time, limited to video duration
+        clip = video.subclip(start_time, end_time)
+        clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name[:-4]}.wav")
+        filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name[:-4]}.wav"
+        print('The audio was extracted!')
 
-            ##################### READING THE AUDIO #####################
-            # Load the audio file
-            y, sr = librosa.load(filename, sr=22050)
-            duration_seconds, duration_minutes = librosa.get_duration(y=y, sr=sr), librosa.get_duration(y=y, sr=sr) / 60
-            print("Duration (seconds):", duration_seconds, " -- Duration (minutes):", duration_minutes)
-            
-            ##################### RMS ################### : total magnitude of the signal, LOUDNESS OF THE SIGNAL
-            S, phase = librosa.magphase(librosa.stft(y))
-            rms = librosa.feature.rms(S=S)
+        ##################### READING THE AUDIO #####################
+        # Load the audio file
+        y, sr = librosa.load(filename, sr=22050)
+        duration_seconds, duration_minutes = librosa.get_duration(y=y, sr=sr), librosa.get_duration(y=y, sr=sr) / 60
+        print("Duration (seconds):", duration_seconds, " -- Duration (minutes):", duration_minutes)
+        
+        ##################### RMS ################### : total magnitude of the signal, LOUDNESS OF THE SIGNAL
+        S, phase = librosa.magphase(librosa.stft(y))
+        rms = librosa.feature.rms(S=S)
 
-            fig, ax = plt.subplots(figsize=(15, 6), nrows=2, sharex=True) 
-            times = librosa.times_like(rms)
-            ax[0].semilogy(times, rms[0], label='RMS Energy')
-            ax[0].set(xticks=[])
-            ax[0].legend()
-            ax[0].label_outer() 
-            librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max), y_axis='log', x_axis='time', ax=ax[1]) 
-            ax[1].set(title='log Power spectrogram')
-            plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.png')
-            # SAVE THE RMS
-            #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.npy', np.array(rms))
-            print(f"RMS Energy: {rms}", 'The length is: ', rms.shape)
-            # exchange the dimension of the array in order to save it as a dataframe
-            rms = rms.T
-            # save as a dataframe
-            df_rms = pd.DataFrame(rms, columns = ['rms'])
-            df_rms.reset_index(drop=True, inplace=True)
+        fig, ax = plt.subplots(figsize=(15, 6), nrows=2, sharex=True) 
+        times = librosa.times_like(rms)
+        ax[0].semilogy(times, rms[0], label='RMS Energy')
+        ax[0].set(xticks=[])
+        ax[0].legend()
+        ax[0].label_outer() 
+        librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max), y_axis='log', x_axis='time', ax=ax[1]) 
+        ax[1].set(title='log Power spectrogram')
+        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.png')
+        # SAVE THE RMS
+        #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.npy', np.array(rms))
+        print(f"RMS Energy: {rms}", 'The length is: ', rms.shape)
+        # exchange the dimension of the array in order to save it as a dataframe
+        rms = rms.T
+        # save as a dataframe
+        df_rms = pd.DataFrame(rms, columns = ['rms'])
+        df_rms.reset_index(drop=True, inplace=True)
 
-            ##################### ZERO CROSSING RATE ################### : number of times that the signal crosses the horizontal axis
-            zcrs = librosa.feature.zero_crossing_rate(y)
-            print(f"Zero crossing rate: {sum(librosa.zero_crossings(y))}")
-            plt.figure(figsize=(15, 3)) 
-            plt.plot(zcrs[0])
-            plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.png')
-            #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.npy', np.array(zcrs))
-            print(f"Zero crossing rate: {zcrs}", 'The length is: ', zcrs.shape)
-            zcrs = zcrs.T
-            # save as a dataframe
-            df_zcrs = pd.DataFrame(zcrs, columns = ['zcrs'])
-            df_zcrs.reset_index(drop=True, inplace=True)
+        ##################### ZERO CROSSING RATE ################### : number of times that the signal crosses the horizontal axis
+        zcrs = librosa.feature.zero_crossing_rate(y)
+        print(f"Zero crossing rate: {sum(librosa.zero_crossings(y))}")
+        plt.figure(figsize=(15, 3)) 
+        plt.plot(zcrs[0])
+        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.png')
+        #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.npy', np.array(zcrs))
+        print(f"Zero crossing rate: {zcrs}", 'The length is: ', zcrs.shape)
+        zcrs = zcrs.T
+        # save as a dataframe
+        df_zcrs = pd.DataFrame(zcrs, columns = ['zcrs'])
+        df_zcrs.reset_index(drop=True, inplace=True)
 
-            ##################### Mel-Frequency Cepstral Coefficients (MFCCs) ################### : is a representation of the short- term power spectrum of a sound, 
-                                                                                                # based on some transformation in a Mel- scale. 
-                                                                                                # It is commonly used in speech recognition as people’s voices are usually on a 
-                                                                                                # certain range of frequency and different from one to another.
-            mfccs = librosa.feature.mfcc(y = y, sr=sr)
-            # Displaying the MFCCs:
-            plt.figure(figsize=(15, 3)) 
-            librosa.display.specshow(mfccs, sr=sr, x_axis='time')
-            plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.png')
-            #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.npy', np.array(mfccs))
-            print(f"MFCCs: {mfccs} and the length is {mfccs.shape}")
-            # save as a dataframe
-            mfccs = mfccs.T
-            df_mfccs = pd.DataFrame(mfccs, columns = ['mfccs_0', 'mfccs_1', 'mfccs_2', 'mfccs_3', 'mfccs_4',
-                                                            'mfccs_5', 'mfccs_6', 'mfccs_7', 'mfccs_8', 'mfccs_9', 'mfccs_10',
-                                                            'mfccs_11', 'mfccs_12', 'mfccs_13', 'mfccs_14', 'mfccs_15', 'mfccs_16',
-                                                            'mfccs_17', 'mfccs_18', 'mfccs_19'])
-            df_mfccs.reset_index(drop=True, inplace=True)
+        ##################### Mel-Frequency Cepstral Coefficients (MFCCs) ################### : is a representation of the short- term power spectrum of a sound, 
+                                                                                            # based on some transformation in a Mel- scale. 
+                                                                                            # It is commonly used in speech recognition as people’s voices are usually on a 
+                                                                                            # certain range of frequency and different from one to another.
+        mfccs = librosa.feature.mfcc(y = y, sr=sr)
+        plt.figure(figsize=(15, 3)) 
+        librosa.display.specshow(mfccs, sr=sr, x_axis='time')
+        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.png')
+        print(f"MFCCs: {mfccs} and the length is {mfccs.shape}")
+        mfccs = mfccs.T
+        df_mfccs = pd.DataFrame(mfccs, columns = ['mfccs_0', 'mfccs_1', 'mfccs_2', 'mfccs_3', 'mfccs_4',
+                                                        'mfccs_5', 'mfccs_6', 'mfccs_7', 'mfccs_8', 'mfccs_9', 'mfccs_10',
+                                                        'mfccs_11', 'mfccs_12', 'mfccs_13', 'mfccs_14', 'mfccs_15', 'mfccs_16',
+                                                        'mfccs_17', 'mfccs_18', 'mfccs_19'])
+        df_mfccs.reset_index(drop=True, inplace=True)
 
-            ##################### CHROMA ################### : dominant keys
-            hop_length = 512
-            chromagram = librosa.feature.chroma_stft(y = y, sr=sr, hop_length=hop_length)
-            fig, ax = plt.subplots(figsize=(15, 3))
-            img = librosa.display.specshow(chromagram, x_axis='time', y_axis='chroma', hop_length=hop_length, cmap='coolwarm') 
-            fig.colorbar(img, ax=ax)
-            ax.set(title='Chromagram')
-            plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.png')
-            #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.npy', np.array(chromagram))
-            print(f"Chromagram: {chromagram}", 'The length is: ', chromagram.shape)
-            # save as a dataframe
-            chromagram = chromagram.T
-            df_chromagram = pd.DataFrame(chromagram, columns = ['chromagram_0', 'chromagram_1', 'chromagram_2', 
-                                                            'chromagram_3', 'chromagram_4', 'chromagram_5', 'chromagram_6', 'chromagram_7',
-                                                            'chromagram_8', 'chromagram_9', 'chromagram_10', 'chromagram_11'])
-            df_chromagram.reset_index(drop=True, inplace=True)
+        ##################### CHROMA ################### : dominant keys
+        hop_length = 512
+        chromagram = librosa.feature.chroma_stft(y = y, sr=sr, hop_length=hop_length)
+        fig, ax = plt.subplots(figsize=(15, 3))
+        img = librosa.display.specshow(chromagram, x_axis='time', y_axis='chroma', hop_length=hop_length, cmap='coolwarm') 
+        fig.colorbar(img, ax=ax)
+        ax.set(title='Chromagram')
+        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.png')
+        #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.npy', np.array(chromagram))
+        print(f"Chromagram: {chromagram}", 'The length is: ', chromagram.shape)
+        # save as a dataframe
+        chromagram = chromagram.T
+        df_chromagram = pd.DataFrame(chromagram, columns = ['chromagram_0', 'chromagram_1', 'chromagram_2', 
+                                                        'chromagram_3', 'chromagram_4', 'chromagram_5', 'chromagram_6', 'chromagram_7',
+                                                        'chromagram_8', 'chromagram_9', 'chromagram_10', 'chromagram_11'])
+        df_chromagram.reset_index(drop=True, inplace=True)
 
-            ##################### TEMPOGRAM ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
-            hop_length = 512
-            oenv = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
-            print('The onset strength is: ', oenv, oenv.shape)
-            # save as a dataframe
-            oenv = oenv.T
-            df_tempo = pd.DataFrame(oenv, columns = ['tempo'])
+        ##################### TEMPOGRAM ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
+        hop_length = 512
+        oenv = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
+        print('The onset strength is: ', oenv, oenv.shape)
+        df_tempo = pd.DataFrame(oenv, columns = ['tempo'])
 
-            # concatenate all the features on the cloumns of the dfs
-            df_features = pd.concat([df_rms, df_zcrs, df_mfccs, df_chromagram], axis=1)
-
-            # save the dataframe
-            df_features.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_sound_{movie_name[:-4]}.csv', index=False)
-        else:
-            print(f'The energy was already extracted for {movie_name}!')
+        ##################### CONCATENATE ALL THE FEATURES ###################
+        df_features = pd.concat([df_rms, df_zcrs, df_mfccs, df_chromagram], axis=1)
+        df_features.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_sound_{movie_name[:-4]}.csv', index=False)
 
         print('\n')
         print(f'The code was run for movie {movie_name}!')
