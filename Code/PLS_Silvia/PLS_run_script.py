@@ -72,8 +72,8 @@ def compute_X(PATH, movie, method, regions = None):
                         subjID -= 1
                         
                 for t in range(1,len(file)+1):
-                    print("This is  the scaffold current without u and v", file[str(t)][:])
-                    scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
+                    print("This is  the scaffold current without u and v", file[str(t)][:][u,v])
+                    scaffold_current[subjID,:]+=file[str(t)][:][u,v][yeo_indices,:][:,yeo_indices]
                     print('The shape of the scaffold_current is: ', scaffold_current.shape)
                     print('scaffold_current is: ', scaffold_current)
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
