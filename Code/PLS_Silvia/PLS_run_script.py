@@ -52,7 +52,8 @@ def compute_X(PATH, movie, method, regions = None):
         print('The shape of X for BOLD is: ', X.shape)
     
     elif method == 'scaffold':
-        scaffold_current=np.zeros((30,int(114*113/2)))
+
+        scaffold_current=np.zeros((30,int(len(yeo_indices)*(len(yeo_indices)-1)/2)))
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
                 try:
@@ -72,8 +73,8 @@ def compute_X(PATH, movie, method, regions = None):
                         subjID -= 1
                         
                 for t in range(1,len(file)+1):
-                    print("This is  the scaffold current", file[str(t)][:][u,v], file[str(t)][:][u,v].shape)
-                    scaffold_current[subjID,:]+=file[str(t)][:][u,v][yeo_indices,:][:,yeo_indices]
+                    print("This is  the scaffold current", file[str(t)][:][yeo_indices,:][:,yeo_indices], file[str(t)][:][yeo_indices,:][:,yeo_indices].shape)
+                    scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices]
                     print('The shape of the scaffold_current is: ', scaffold_current.shape)
                     print('scaffold_current is: ', scaffold_current)
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
