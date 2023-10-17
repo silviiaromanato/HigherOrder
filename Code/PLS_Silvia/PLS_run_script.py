@@ -323,8 +323,8 @@ PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_
 def loading_yeo(path=PATH_YEO):
     ##Loading the yeoROIS
     yeoROIs=np.array([i[0]-1 for i in loadmat(path)['yeoROIs']])
-    yeoROI_dict={label_Yeo:np.where(yeoROIs==idx_Yeo)[0] for idx_Yeo,label_Yeo in enumerate(['VIS','SM','DA','VA','L','FP','DMN','SC','C'])}
-    del yeoROI_dict['C']
+    yeoROI_dict={label_Yeo:np.where(yeoROIs==idx_Yeo)[0] for idx_Yeo,label_Yeo in enumerate(['VIS','SM','DA','VA','L','FP','DMN'])}
+    yeoROI_dict['SC'] = np.arange(100, 114)
     return(yeoROI_dict)
 
 nb = 30              # Number of participants
