@@ -301,7 +301,6 @@ if __name__ == '__main__':
     region = sys.argv[5]
     # Load the areas from yeo
     yeo_dict = loading_yeo(PATH_YEO)
-    print('The yeoROI_dict is: ', yeo_dict)
 
     if region == None:
         name_of_region = 'ALL'
@@ -328,7 +327,7 @@ if __name__ == '__main__':
     data_cov_significant=results[results['P-value'] < p_star]
     data_cov_significant.sort_values('P-value')
     results['Movie']=movie_name
-    results['LC']=np.arange(1,13)
+    results['LC']=np.arange(1, results.shape[0]+1)
     results['Region'] = name_of_region
     results['Covariance Explained'] = results['Covariance Explained'].astype(float)
 
