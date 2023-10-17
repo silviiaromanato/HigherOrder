@@ -301,6 +301,7 @@ if __name__ == '__main__':
     region = sys.argv[5]
     # Load the areas from yeo
     yeo_dict = loading_yeo(PATH_YEO)
+    print('The yeoROI_dict is: ', yeo_dict)
 
     if region == None:
         name_of_region = 'ALL'
