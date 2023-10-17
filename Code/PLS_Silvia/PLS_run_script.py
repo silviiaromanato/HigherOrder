@@ -324,14 +324,13 @@ if __name__ == '__main__':
 
     # Save the results
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
+    print('The shape of the results is: ', results)
     data_cov_significant=results[results['P-value'] < p_star]
     data_cov_significant.sort_values('P-value')
     results['Movie']=movie_name
     results['LC']=np.arange(1,13)
     results['Region'] = name_of_region
     results['Covariance Explained'] = results['Covariance Explained'].astype(float)
-
-    print('The shape of the results is: ', results)
 
     # Concatenate the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{name_of_region}_results.csv'
