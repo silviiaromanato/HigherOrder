@@ -33,6 +33,7 @@ def compute_X(PATH, movie, method, regions = None):
     if regions != None:
         yeo_indices = yeo_dict[regions]
 
+    print('The yeo indices for the region are: ', yeo_indices)
     if method == 'bold':
         list_subjects = []
         for i in glob.glob(PATH+'*'):
