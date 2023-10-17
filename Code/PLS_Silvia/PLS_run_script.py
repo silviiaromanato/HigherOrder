@@ -59,7 +59,10 @@ def compute_X(PATH, movie, method, regions = None):
                     file=h5py.File(i,'r',swmr=True)
                 except:
                     continue
-                N=114
+                if regions is None:
+                    N=114
+                else:
+                    N=len(yeo_indices)
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
                 if subjID > 10:
@@ -67,22 +70,28 @@ def compute_X(PATH, movie, method, regions = None):
                         subjID -= 2
                     else:
                         subjID -= 1
+                        
                 for t in range(1,len(file)+1):
-                    scaffold_current[subjID,:]+=file[str(t)][:][u,v]
+                    scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
+                    print('The shape of the scaffold_current is: ', scaffold_current.shape)
+                    print('scaffold_current is: ', scaffold_current)
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
         X = scaffold_current.copy()
         print('The shape of X for SCAFFOLD is: ', X.shape)
 
     elif method == 'triangles':
 
-        indices_yeo_all = []
-        for idx_triangles,(i,j,k) in enumerate(combinations(np.arange(114),3)):
-            flag=[i in yeo_indices, j in yeo_indices, k in yeo_indices]
-            if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
-                indices_yeo_all.append(idx_triangles)
-        indices_yeo_all=np.array(indices_yeo_all)
-        number_indices = len(yeo_indices)
-        length = int((number_indices * (number_indices-1) * (number_indices-2)) / (3*2))
+        if regions is None:
+            yeo_indices_all = np.arange(114)
+        else:
+            indices_yeo_all = []
+            for idx_triangles,(i,j,k) in enumerate(combinations(np.arange(114),3)):
+                flag=[i in yeo_indices, j in yeo_indices, k in yeo_indices]
+                if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
+                    indices_yeo_all.append(idx_triangles)
+            indices_yeo_all=np.array(indices_yeo_all)
+            number_indices = len(yeo_indices)
+            length = int((number_indices * (number_indices-1) * (number_indices-2)) / (3*2))
 
         current_tri = np.zeros((30, length))
         for string in glob.glob(PATH+'*'):
@@ -105,7 +114,40 @@ def compute_X(PATH, movie, method, regions = None):
         X = current_tri.copy()
         print('The shape of X for TRIANGLES is: ', X.shape)
 
+    elif method == 'edges':
+        indices_yeo_all = []
+        for idx_edges,(i,j) in enumerate(combinations(np.arange(114),2)):
+            flag=[i in yeo_indices, j in yeo_indices]
+            if sum(flag) == 2:
+                indices_yeo_all.append(idx_edges)
+        indices_yeo_all=np.array(indices_yeo_all)
+        number_indices = len(yeo_indices)
+        length = int((number_indices * (number_indices-1)) / 2)
+    
+        current_edges = np.zeros((30, length))
+    
+        for string in glob.glob(PATH+'*'):
+            if (string.endswith(f'{movie}.hd5')):
+                try:
+                    file=h5py.File(string,'r',swmr=True)
+                except:
+                    continue
+                
+                subjID = int(string.split('/')[-1].split('_')[4][1:3]) - 1
+                if subjID > 10:
+                    if subjID > 16:
+                        subjID -= 2
+                    else:
+                        subjID -= 1
+                for t in range(0,len(file)):
+                    sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
+                    current_edges[subjID,:]+=sub_matrix
+                current_edges[subjID]=current_edges[subjID]/len(file)
+        X = current_edges.copy()
+        print('The shape of X for EDGES is: ', X.shape)
+
     return X
+
 
 def standa(X,Y):  
     X_normed = X.copy()
@@ -281,7 +323,6 @@ def loading_yeo(path=PATH_YEO):
     ##Loading the yeoROIS
     yeoROIs=np.array([i[0]-1 for i in loadmat(path)['yeoROIs']])
     yeoROI_dict={label_Yeo:np.where(yeoROIs==idx_Yeo)[0] for idx_Yeo,label_Yeo in enumerate(['VIS','SM','DA','VA','L','FP','DMN','SC','C'])}
-    yeoROI_dict['SC']=np.array(sorted(np.hstack((yeoROI_dict['SC'],yeoROI_dict['C']))))
     del yeoROI_dict['C']
     return(yeoROI_dict)
 
@@ -323,7 +364,6 @@ if __name__ == '__main__':
 
     # Save the results
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
-    print('The shape of the results is: ', results)
     data_cov_significant=results[results['P-value'] < p_star]
     data_cov_significant.sort_values('P-value')
     results['Movie']=movie_name
