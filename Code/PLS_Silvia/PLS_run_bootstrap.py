@@ -325,15 +325,14 @@ if __name__ == '__main__':
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
+    print('The region is: ', region)
 
     yeo_dict = loading_yeo(PATH_YEO)
-
-    name_of_region = 'ALL' if region is None else region
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
 
-    print('\n' + ' -' * 10 + f' for {method}, {movie_name} and {name_of_region} FOR: ', movie_name, ' -' * 10)
+    print('\n' + ' -' * 10 + f' for {method}, {movie_name} and {region} FOR: ', movie_name, ' -' * 10)
     
     X_movie = compute_X(PATH, movie_name, method=method, regions = region)
     X_movie = pd.DataFrame(X_movie)
@@ -352,11 +351,11 @@ if __name__ == '__main__':
     data_cov_significant.sort_values('P-value')
     results['Movie']=movie_name
     results['LC']=np.arange(1, results.shape[0]+1)
-    results['Region'] = name_of_region
+    results['Region'] = region
     results['Covariance Explained'] = results['Covariance Explained'].astype(float)
 
     # Concatenate the results
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{name_of_region}_results.csv'
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_results.csv'
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
         PLS_results = pd.concat([PLS_results, results], axis=0)
@@ -366,4 +365,4 @@ if __name__ == '__main__':
     print('The shape of the PLS results is: ', PLS_results.shape, ' and the number of significant LCs is: ', data_cov_significant.shape[0])
     PLS_results.to_csv(PATH_SAVE, index=False)
 
-    print('\n' + f"------------ The PLS for {method}, {movie_name} and {name_of_region} was performed!!! ------------")
+    print('\n' + f"------------ The PLS for {method}, {movie_name} and {region} was performed!!! ------------")
