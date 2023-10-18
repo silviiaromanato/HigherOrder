@@ -130,6 +130,7 @@ def compute_X(PATH, movie, method, regions = None):
                 u, v = np.triu_indices(n=N, k=1)
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
             else:
+                connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
                 u, v = np.triu_indices(n=N, k=1)
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 print('The shape of the edge file array is: ', edge_file_array.shape)
