@@ -29,7 +29,7 @@ def compute_X(PATH, movie, method, regions = None):
     - X: X dataset
     """
     yeo_dict = loading_yeo(PATH_YEO)
-    yeo_indices = yeo_dict[regions] if regions is not 'ALL' else None
+    yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
     N = 114 if region == 'ALL' else len(yeo_indices)
 
     if method == 'bold':
