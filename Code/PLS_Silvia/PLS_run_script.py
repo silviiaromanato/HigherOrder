@@ -130,7 +130,7 @@ def compute_X(PATH, movie, method, regions = None):
                 u, v = np.triu_indices(n=N, k=1)
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
             else:
-                u, v = np.triu_indices(n=N, k=1)[:,yeo_indices]
+                u, v = np.triu_indices(n=N, k=1)
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 print('The shape of the edge file array is: ', edge_file_array.shape)
             upper_triangular = edge_file_array[np.triu_indices_from(edge_file_array, k=1)]
