@@ -349,7 +349,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
     """
     print('Performing BOOSTRAPPING on 20 subjects for 100 rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
-    for i in range(2):
+    for i in range(100):
         print('The round is: ', i)
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
