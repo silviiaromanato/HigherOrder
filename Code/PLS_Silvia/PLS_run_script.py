@@ -128,7 +128,7 @@ def compute_X(PATH, movie, method, regions = None):
             if regions is None:
                 u, v = np.triu_indices(data_feature.shape[0], k=1)
                 print('The indices of the upper matrix are: ', u , v)
-                print('The  shape of the data feature is: ', data_feature.shape)
+                print('The  shape of the data feature is: ', data_feature[u,:], data_feature[v,:].T)
                 
                 edge_file_array = data_feature[u,:] * data_feature[v,:].T
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
