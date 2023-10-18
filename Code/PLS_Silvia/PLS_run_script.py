@@ -124,21 +124,16 @@ def compute_X(PATH, movie, method, regions = None):
                 list_subjects.append(i)
         mtx_upper_triangular = []
         for i, PATH_SUBJ in enumerate(list_subjects):
-            
+            data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
             if regions is None:
-                data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
+                connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
                 u, v = np.triu_indices(n=N, k=1)
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
-                connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
             else:
-                data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
-                print('The shape of the data feature is: ', data_feature.shape)
-                u, v = np.triu_indices(n=N, k=1)
+                u, v = np.triu_indices(n=N, k=1)[:,yeo_indices]
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 print('The shape of the edge file array is: ', edge_file_array.shape)
-                connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)[:,yeo_indices]
-                print('The shape of the connectivity matrix is: ', connectivity_matrix.shape)
-            upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
+            upper_triangular = edge_file_array[np.triu_indices_from(edge_file_array, k=1)]
             mtx_upper_triangular.append(upper_triangular)
         mtx_upper_triangular = np.array(mtx_upper_triangular)
         X = pd.DataFrame(mtx_upper_triangular)
