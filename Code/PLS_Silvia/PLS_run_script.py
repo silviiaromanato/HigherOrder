@@ -52,8 +52,8 @@ def compute_X(PATH, movie, method, regions = None):
         print('The shape of X for BOLD is: ', X.shape)
     
     elif method == 'scaffold':
-
-        scaffold_current=np.zeros((30,int(len(yeo_indices)*(len(yeo_indices)-1)/2)))
+        N = len(yeo_indices)
+        scaffold_current=np.zeros((30,int(N*(N-1)/2)))
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
                 try:
