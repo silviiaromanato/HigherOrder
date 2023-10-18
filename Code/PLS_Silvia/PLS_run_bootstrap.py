@@ -343,7 +343,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
     """
     print('Performing BOOSTRAPPING on 20 subjects for 100 rounds')
     results = []
-    for i in range(num_rounds):
+    for i in range(5):
         print('The round is: ', i)
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
