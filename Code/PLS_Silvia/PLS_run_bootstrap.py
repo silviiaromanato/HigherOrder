@@ -106,7 +106,7 @@ def compute_X(PATH, movie, method, regions = None):
                 if regions == 'ALL':
                     for t in range(0,len(file)):
                         sub_matrix = np.array(file[str(t)][:])
-                        current_tri[subjID,:]+=sub_matrix[u,v]
+                        current_tri[subjID,:]+=sub_matrix
                     current_tri[subjID]=current_tri[subjID]/len(file)
                 else:
                     for t in range(0,len(file)):
