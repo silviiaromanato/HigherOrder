@@ -328,7 +328,7 @@ if __name__ == '__main__':
 
     yeo_dict = loading_yeo(PATH_YEO)
 
-    name_of_region = 'ALL' if region i None else region
+    name_of_region = 'ALL' if region is None else region
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
