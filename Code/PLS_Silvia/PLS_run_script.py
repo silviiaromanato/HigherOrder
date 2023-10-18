@@ -53,6 +53,7 @@ def compute_X(PATH, movie, method, regions = None):
     
     elif method == 'scaffold':
         N = len(yeo_indices)
+        print('The number of regions is: ', N)
         scaffold_current=np.zeros((30,int(N*(N-1)/2)))
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
@@ -73,6 +74,7 @@ def compute_X(PATH, movie, method, regions = None):
                         subjID -= 1
                         
                 for t in range(1,len(file)+1):
+                    print(file[str(t)][:][yeo_indices,:][:,yeo_indices].shape, f'Should be of size {N} x {N}')
                     print("This is  the scaffold current", file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v], file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v].shape)
                     scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices]
                     print('The shape of the scaffold_current is: ', scaffold_current.shape)
