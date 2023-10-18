@@ -106,9 +106,7 @@ def compute_X(PATH, movie, method, regions = None):
             data_feature = np.array(data_feature)
             u, v = np.triu_indices(data_feature.shape[0], k=1)                
             edge_file_array = data_feature[u,:] * data_feature[v,:]
-            print('The shape of edge_file_array is: ', edge_file_array.shape)
             connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
-            print('The shape of connectivity_matrix is: ', connectivity_matrix.shape)
             if i == 0:
                 X = connectivity_matrix
             else:
@@ -134,3 +132,8 @@ if __name__ == '__main__':
     X_movie = compute_X(PATH, movie_name, method=method, regions = region)
     X_movie = pd.DataFrame(X_movie)
     print('The shape of the X movie is: ', X_movie.shape)
+
+    # save the X matrix in /media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/FMRI 
+    PATH_X = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/FMRI/' + f'X_{method}_{movie_name}_{region}.pkl'
+    pickle.dump(X_movie, open(PATH_X, 'wb'))
+    print('The X matrix has been saved in: ', PATH_X)
