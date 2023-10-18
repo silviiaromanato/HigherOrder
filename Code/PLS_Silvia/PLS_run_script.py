@@ -127,11 +127,8 @@ def compute_X(PATH, movie, method, regions = None):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
             data_feature = np.array(data_feature)
             if regions is None:
-                u, v = np.triu_indices(data_feature.shape[0], k=1)
-                print('The indices of the upper matrix are: ', u , v)
-                print('The  shape of the data feature is: ', data_feature[u,:], data_feature[v,:])
-                
-                edge_file_array = data_feature[u,:] * data_feature[v,:].T
+                u, v = np.triu_indices(data_feature.shape[0], k=1)                
+                edge_file_array = data_feature[u,:] * data_feature[v,:]
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
                 print('The shape of the connectivity matrix is: ', connectivity_matrix.shape)
             else:
