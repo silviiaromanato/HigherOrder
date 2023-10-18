@@ -101,20 +101,20 @@ def compute_X(PATH, movie, method, regions = None):
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 list_subjects.append(i)
-        mtx_upper_triangular = []
         for i, PATH_SUBJ in enumerate(list_subjects):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None).T
             data_feature = np.array(data_feature)
-            print('The shape of data_feature is: ', data_feature.shape)
             u, v = np.triu_indices(data_feature.shape[0], k=1)                
             edge_file_array = data_feature[u,:] * data_feature[v,:]
-            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+            print('The shape of edge_file_array is: ', edge_file_array.shape)
+            connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
             print('The shape of connectivity_matrix is: ', connectivity_matrix.shape)
-            upper_triangular = edge_file_array[np.triu_indices_from(edge_file_array, k=1)]
-            mtx_upper_triangular.append(upper_triangular)
-        mtx_upper_triangular = np.array(mtx_upper_triangular)
-        X = pd.DataFrame(mtx_upper_triangular)
-        print(f'The shape of X for BOLD for {region} is: ', X.shape)
+            if i == 0:
+                X = connectivity_matrix
+            else:
+                X += connectivity_matrix
+        X = X / len(list_subjects)
+        print(f'The shape of X for EDGES for {region} is: ', X.shape)
 
     return X
 
