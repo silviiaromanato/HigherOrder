@@ -49,6 +49,7 @@ def compute_X(PATH, movie, method, regions = None):
         scaffold_current=np.zeros((30,int(N*(N-1)/2)))
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
+                file=h5py.File(i,'r',swmr=True)
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
                 if subjID > 10:
@@ -57,6 +58,7 @@ def compute_X(PATH, movie, method, regions = None):
                     else:
                         subjID -= 1
                 for t in range(1,len(file)+1):
+                    print('The shape of the file is: ', file[str(t)][:].shape)
                     scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
         X = scaffold_current.copy()
@@ -80,7 +82,6 @@ def compute_X(PATH, movie, method, regions = None):
         for string in glob.glob(PATH+'*'):
             if (string.endswith(f'{movie}.hd5')):
                 file=h5py.File(string,'r',swmr=True)
-                print('The shape  of file is: ', file.shape)
                 subjID = int(string.split('/')[-1].split('_')[4][1:3]) - 1
                 if subjID > 10:
                     if subjID > 16:
