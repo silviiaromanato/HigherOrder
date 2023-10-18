@@ -336,7 +336,7 @@ if __name__ == '__main__':
     movie_name = sys.argv[2]
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
-    #region = sys.argv[5]
+    region = None#sys.argv[5]
     # Load the areas from yeo
     yeo_dict = loading_yeo(PATH_YEO)
 
