@@ -73,7 +73,7 @@ def compute_X(PATH, movie, method, regions = None):
                         subjID -= 1
                         
                 for t in range(1,len(file)+1):
-                    print("This is  the scaffold current", file[str(t)][:][yeo_indices,:][:,yeo_indices], file[str(t)][:][yeo_indices,:][:,yeo_indices].shape)
+                    print("This is  the scaffold current", file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v], file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v].shape)
                     scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices]
                     print('The shape of the scaffold_current is: ', scaffold_current.shape)
                     print('scaffold_current is: ', scaffold_current)
