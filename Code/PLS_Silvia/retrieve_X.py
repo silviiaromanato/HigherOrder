@@ -36,9 +36,7 @@ def compute_X(PATH, movie, method, regions = None):
                 list_subjects.append(i)
         for i, PATH_SUBJ in enumerate(list_subjects):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None).T
-            print(f'The shape of the data for subject {i} is: ', data_feature.shape)
             connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
-            print(f'The shape of the connectivity matrix for subject {i} is: ', connectivity_matrix.shape)
             connectivity_matrix = np.array(connectivity_matrix)
             if i == 0:
                 X = connectivity_matrix
@@ -51,11 +49,6 @@ def compute_X(PATH, movie, method, regions = None):
         scaffold_current=np.zeros((30,int(N*(N-1)/2)))
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
-                try:
-                    file = h5py.File(i, 'r', swmr=True)
-                except Exception as e:
-                    print(f"An error occurred while opening the file: {str(e)}")
-                    continue
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
                 if subjID > 10:
@@ -64,10 +57,7 @@ def compute_X(PATH, movie, method, regions = None):
                     else:
                         subjID -= 1
                 for t in range(1,len(file)+1):
-                    if regions == 'ALL':
-                        scaffold_current[subjID,:]+=file[str(t)][:][u,v]
-                    else:
-                        scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
+                    scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
         X = scaffold_current.copy()
         print('The shape of X for SCAFFOLD is: ', X.shape)
@@ -89,27 +79,20 @@ def compute_X(PATH, movie, method, regions = None):
         current_tri = np.zeros((30, length))
         for string in glob.glob(PATH+'*'):
             if (string.endswith(f'{movie}.hd5')):
-                try:
-                    file=h5py.File(string,'r',swmr=True)
-                except:
-                    continue
-                
+                file=h5py.File(string,'r',swmr=True)
+                print('The shape  of file is: ', file.shape)
                 subjID = int(string.split('/')[-1].split('_')[4][1:3]) - 1
                 if subjID > 10:
                     if subjID > 16:
                         subjID -= 2
                     else:
                         subjID -= 1
-                if regions == 'ALL':
-                    for t in range(0,len(file)):
-                        sub_matrix = np.array(file[str(t)][:])
-                        current_tri[subjID,:]+=sub_matrix
-                    current_tri[subjID]=current_tri[subjID]/len(file)
-                else:
-                    for t in range(0,len(file)):
-                        sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
-                        current_tri[subjID,:]+=sub_matrix
-                    current_tri[subjID]=current_tri[subjID]/len(file)
+                for t in range(0,len(file)):
+                    sub_matrix = np.array(file[str(t)][:])
+                    print('The shape of sub_matrix is: ', sub_matrix.shape)
+                    current_tri[subjID,:]+=sub_matrix
+                current_tri[subjID]=current_tri[subjID]/len(file)
+                print('The shape of current_tri is: ', current_tri.shape)
         X = current_tri.copy()
         print('The shape of X for TRIANGLES is: ', X.shape)
 
@@ -120,16 +103,13 @@ def compute_X(PATH, movie, method, regions = None):
                 list_subjects.append(i)
         mtx_upper_triangular = []
         for i, PATH_SUBJ in enumerate(list_subjects):
-            data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
+            data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None).T
             data_feature = np.array(data_feature)
-            if regions == 'ALL':
-                u, v = np.triu_indices(data_feature.shape[0], k=1)                
-                edge_file_array = data_feature[u,:] * data_feature[v,:]
-                connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
-            else:
-                u, v = np.triu_indices(n=data_feature.shape[0], k=1)
-                edge_file_array = data_feature[u,:] * data_feature[v,:]
-                connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
+            print('The shape of data_feature is: ', data_feature.shape)
+            u, v = np.triu_indices(data_feature.shape[0], k=1)                
+            edge_file_array = data_feature[u,:] * data_feature[v,:]
+            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+            print('The shape of connectivity_matrix is: ', connectivity_matrix.shape)
             upper_triangular = edge_file_array[np.triu_indices_from(edge_file_array, k=1)]
             mtx_upper_triangular.append(upper_triangular)
         mtx_upper_triangular = np.array(mtx_upper_triangular)
