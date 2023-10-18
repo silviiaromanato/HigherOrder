@@ -52,7 +52,10 @@ def compute_X(PATH, movie, method, regions = None):
         print('The shape of X for BOLD is: ', X.shape)
     
     elif method == 'scaffold':
-        N = len(yeo_indices)
+        if regions is None:
+            N = 114
+        else:
+            N = len(yeo_indices)
         print('The number of regions is: ', N)
         scaffold_current=np.zeros((30,int(N*(N-1)/2)))
         for i in glob.glob(PATH+'*'):
@@ -61,10 +64,6 @@ def compute_X(PATH, movie, method, regions = None):
                     file=h5py.File(i,'r',swmr=True)
                 except:
                     continue
-                if regions is None:
-                    N=114
-                else:
-                    N=len(yeo_indices)
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
                 if subjID > 10:
@@ -73,7 +72,10 @@ def compute_X(PATH, movie, method, regions = None):
                     else:
                         subjID -= 1
                 for t in range(1,len(file)+1):
-                    scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
+                    if regions is None:
+                        scaffold_current[subjID,:]+=file[str(t)][:][u,v]
+                    else:
+                        scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
         X = scaffold_current.copy()
         print('The shape of X for SCAFFOLD is: ', X.shape)
@@ -334,6 +336,7 @@ if __name__ == '__main__':
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = None#sys.argv[5]
+    bootstrap = sys.argv[6]
     # Load the areas from yeo
     yeo_dict = loading_yeo(PATH_YEO)
 
