@@ -78,7 +78,7 @@ def compute_X(PATH, movie, method, regions = None):
     elif method == 'triangles':
 
         if regions == 'ALL':
-            yeo_indices_all = np.arange(114)
+            indices_yeo_all = np.arange(114)
             length = int((114 * (114-1) * (114-2)) / (3*2))
         else:
             indices_yeo_all = []
