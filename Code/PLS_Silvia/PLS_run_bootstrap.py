@@ -30,7 +30,7 @@ def compute_X(PATH, movie, method, regions = None):
     """
     yeo_dict = loading_yeo(PATH_YEO)
     yeo_indices = yeo_dict[regions] if regions is not None else None
-    N = 114 if region is None else len(yeo_indices)
+    N = 114 if region == 'ALL' else len(yeo_indices)
 
     if method == 'bold':
         list_subjects = []
@@ -40,7 +40,7 @@ def compute_X(PATH, movie, method, regions = None):
         mtx_upper_triangular = []
         for i, PATH_SUBJ in enumerate(list_subjects):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
-            if regions is None:
+            if regions == 'ALL':
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
             else:
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
@@ -67,7 +67,7 @@ def compute_X(PATH, movie, method, regions = None):
                     else:
                         subjID -= 1
                 for t in range(1,len(file)+1):
-                    if regions is None:
+                    if regions == 'ALL':
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
@@ -77,7 +77,7 @@ def compute_X(PATH, movie, method, regions = None):
 
     elif method == 'triangles':
 
-        if regions is None:
+        if regions == 'ALL':
             yeo_indices_all = np.arange(114)
         else:
             indices_yeo_all = []
@@ -119,7 +119,7 @@ def compute_X(PATH, movie, method, regions = None):
         for i, PATH_SUBJ in enumerate(list_subjects):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
             data_feature = np.array(data_feature)
-            if regions is None:
+            if regions == 'ALL':
                 u, v = np.triu_indices(data_feature.shape[0], k=1)                
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
