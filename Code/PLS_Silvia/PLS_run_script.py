@@ -132,6 +132,7 @@ def compute_X(PATH, movie, method, regions = None):
                 connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
             else:
                 data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
+                print('The shape of the data feature is: ', data_feature.shape)
                 u, v = np.triu_indices(n=N, k=1)
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 print('The shape of the edge file array is: ', edge_file_array.shape)
