@@ -131,7 +131,7 @@ def compute_X(PATH, movie, method, regions = None):
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
             else:
-                data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)[yeo_indices,:][:,yeo_indices]
+                data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)[:,yeo_indices]
                 u, v = np.triu_indices(n=N, k=1)
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
