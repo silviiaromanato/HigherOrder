@@ -29,9 +29,8 @@ def compute_X(PATH, movie, method, regions = None):
     - X: X dataset
     """
     yeo_dict = loading_yeo(PATH_YEO)
-
-    if regions != None:
-        yeo_indices = yeo_dict[regions]
+    yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
+    N = 114 if region == 'ALL' else len(yeo_indices)
 
     if method == 'bold':
         list_subjects = []
@@ -41,7 +40,7 @@ def compute_X(PATH, movie, method, regions = None):
         mtx_upper_triangular = []
         for i, PATH_SUBJ in enumerate(list_subjects):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
-            if regions is None:
+            if regions == 'ALL':
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
             else:
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
@@ -52,17 +51,13 @@ def compute_X(PATH, movie, method, regions = None):
         print('The shape of X for BOLD is: ', X.shape)
     
     elif method == 'scaffold':
-        if regions is None:
-            N = 114
-        else:
-            N = len(yeo_indices)
-        print('The number of regions is: ', N)
         scaffold_current=np.zeros((30,int(N*(N-1)/2)))
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
                 try:
-                    file=h5py.File(i,'r',swmr=True)
-                except:
+                    file = h5py.File(i, 'r', swmr=True)
+                except Exception as e:
+                    print(f"An error occurred while opening the file: {str(e)}")
                     continue
                 u,v=np.triu_indices(n=N,k=1)
                 subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
@@ -72,7 +67,7 @@ def compute_X(PATH, movie, method, regions = None):
                     else:
                         subjID -= 1
                 for t in range(1,len(file)+1):
-                    if regions is None:
+                    if regions == 'ALL':
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
@@ -82,8 +77,8 @@ def compute_X(PATH, movie, method, regions = None):
 
     elif method == 'triangles':
 
-        if regions is None:
-            yeo_indices_all = np.arange(114)
+        if regions == 'ALL':
+            length = int((114 * (114-1) * (114-2)) / (3*2))
         else:
             indices_yeo_all = []
             for idx_triangles,(i,j,k) in enumerate(combinations(np.arange(114),3)):
@@ -108,18 +103,20 @@ def compute_X(PATH, movie, method, regions = None):
                         subjID -= 2
                     else:
                         subjID -= 1
-                for t in range(0,len(file)):
-                    sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
-                    current_tri[subjID,:]+=sub_matrix
-                current_tri[subjID]=current_tri[subjID]/len(file)
+                if regions == 'ALL':
+                    for t in range(0,len(file)):
+                        sub_matrix = np.array(file[str(t)][:])
+                        current_tri[subjID,:]+=sub_matrix
+                    current_tri[subjID]=current_tri[subjID]/len(file)
+                else:
+                    for t in range(0,len(file)):
+                        sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
+                        current_tri[subjID,:]+=sub_matrix
+                    current_tri[subjID]=current_tri[subjID]/len(file)
         X = current_tri.copy()
         print('The shape of X for TRIANGLES is: ', X.shape)
 
     elif method == 'edges':
-        if region is None:
-            N = 114
-        else:
-            N = len(yeo_indices)
         list_subjects = []
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
@@ -128,7 +125,7 @@ def compute_X(PATH, movie, method, regions = None):
         for i, PATH_SUBJ in enumerate(list_subjects):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
             data_feature = np.array(data_feature)
-            if regions is None:
+            if regions == 'ALL':
                 u, v = np.triu_indices(data_feature.shape[0], k=1)                
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
@@ -247,9 +244,7 @@ def myPLS_bootstrapping(X0,Y0,U,V, nBoots, seed=1):
 def bootstrap(res_original,nBoot,seed): 
     print("... Bootstrap...")
     res={}
-    res= myPLS_bootstrapping(res_original['X'],res_original['Y'] , res_original['U'],res_original['V'], 
-                                      nBoot, seed)
-
+    res= myPLS_bootstrapping(res_original['X'],res_original['Y'], res_original['U'],res_original['V'], nBoot, seed)
     return res
 
 def exp_var(S, Sp_vect, LC_pvals, name, movie_name, METHOD): 
@@ -322,6 +317,52 @@ def loading_yeo(path=PATH_YEO):
     yeoROI_dict['SC'] = np.arange(100, 114)
     return(yeoROI_dict)
 
+def run_pls(X_movie, Y):
+    res = run_decomposition(X_movie, Y)
+    res_permu = permutation(res, nPer, seed, sl)
+    #res_bootstrap = bootstrap(res, nBoot, seed)
+    print('The pvalues are: ', res_permu['P_val'])
+
+    # Save the results
+    results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
+    data_cov_significant=results[results['P-value'] < p_star]
+    data_cov_significant.sort_values('P-value')
+    results['Movie']=movie_name
+    results['LC']=np.arange(1, results.shape[0]+1)
+    results['Region'] = region
+    results['Covariance Explained'] = results['Covariance Explained'].astype(float)
+    return data_cov_significant
+
+def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
+    """
+    Compute the bootstrap for the subjects
+
+    -------------------------------------
+    Input:
+    - param X_movie: X dataset
+    - param Y: Y dataset
+    - param sample_size: number of subjects to sample
+    - param num_rounds: number of rounds to perform
+    -------------------------------------
+    Output:
+    - results: results of the boostrap
+    """
+    print('Performing BOOSTRAPPING on 20 subjects for 100 rounds')
+    results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
+    for i in range(100):
+        print('The round is: ', i)
+        idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
+        X_movie_sample = X_movie.iloc[idx,:]
+        Y_sample = Y.iloc[idx,:]
+        pls = run_pls(X_movie_sample, Y_sample)
+        print('The shape of the pls is: ', pls)
+        # convert PLS to a dataframe
+        pls = pd.DataFrame(pls)
+
+        # concatenate on the veritcal axis
+        results = pd.concat([results, pls], axis=0)
+    return results
+
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
 nBoot = 1000        # Number of bootstrap iterations
@@ -336,19 +377,16 @@ if __name__ == '__main__':
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
-    #bootstrap = sys.argv[6]
-    # Load the areas from yeo
+
     yeo_dict = loading_yeo(PATH_YEO)
 
-    if region == None:
-        name_of_region = 'ALL'
-    else:
-        name_of_region = region
+    name_of_region = 'ALL' if region == 'ALL' else region
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
 
     print('\n' + ' -' * 10 + f' for {method}, {movie_name} and {name_of_region} FOR: ', movie_name, ' -' * 10)
+
     X_movie = compute_X(PATH, movie_name, method=method, regions = region)
     X_movie = pd.DataFrame(X_movie)
     print('The shape of the X movie is: ', X_movie.shape)
