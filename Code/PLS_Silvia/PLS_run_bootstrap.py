@@ -78,7 +78,6 @@ def compute_X(PATH, movie, method, regions = None):
     elif method == 'triangles':
 
         if regions == 'ALL':
-            indices_yeo_all = np.arange(114)
             length = int((114 * (114-1) * (114-2)) / (3*2))
         else:
             indices_yeo_all = []
@@ -104,10 +103,16 @@ def compute_X(PATH, movie, method, regions = None):
                         subjID -= 2
                     else:
                         subjID -= 1
-                for t in range(0,len(file)):
-                    sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
-                    current_tri[subjID,:]+=sub_matrix
-                current_tri[subjID]=current_tri[subjID]/len(file)
+                if regions == 'ALL':
+                    for t in range(0,len(file)):
+                        sub_matrix = np.array(file[str(t)][:])
+                        current_tri[subjID,:]+=sub_matrix[u,v]
+                    current_tri[subjID]=current_tri[subjID]/len(file)
+                else:
+                    for t in range(0,len(file)):
+                        sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
+                        current_tri[subjID,:]+=sub_matrix
+                    current_tri[subjID]=current_tri[subjID]/len(file)
         X = current_tri.copy()
         print('The shape of X for TRIANGLES is: ', X.shape)
 
