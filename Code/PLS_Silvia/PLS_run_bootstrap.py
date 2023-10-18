@@ -325,7 +325,7 @@ def run_pls(X_movie, Y):
     results['LC']=np.arange(1, results.shape[0]+1)
     results['Region'] = region
     results['Covariance Explained'] = results['Covariance Explained'].astype(float)
-    return results, data_cov_significant
+    return data_cov_significant
 
 def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
     """
