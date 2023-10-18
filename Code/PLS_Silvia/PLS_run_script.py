@@ -127,10 +127,12 @@ def compute_X(PATH, movie, method, regions = None):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
             if regions is None:
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+                print('The shape of the connectivity matrix is: ', connectivity_matrix.shape)
                 u, v = np.triu_indices(n=N, k=1)
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
             else:
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
+                print('The shape of the connectivity matrix is: ', connectivity_matrix.shape)
                 u, v = np.triu_indices(n=N, k=1)
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 print('The shape of the edge file array is: ', edge_file_array.shape)
@@ -334,7 +336,7 @@ if __name__ == '__main__':
     movie_name = sys.argv[2]
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
-    region = sys.argv[5]
+    #region = sys.argv[5]
     # Load the areas from yeo
     yeo_dict = loading_yeo(PATH_YEO)
 
