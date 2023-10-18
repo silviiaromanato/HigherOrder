@@ -348,8 +348,8 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
         Y_sample = Y.iloc[idx,:]
-        pls = run_pls(X_movie_sample, Y_sample)
-        # concat the results
+        pls = pd.DataFrame(run_pls(X_movie_sample, Y_sample), columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
+        # concatenate on the veritcal axis
         results = pd.concat([results, pls], axis=0)
     return results
 
