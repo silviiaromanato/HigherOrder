@@ -343,7 +343,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
     """
     print('Performing BOOSTRAPPING on 20 subjects for 100 rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
-    for i in range(5):
+    for i in range(2):
         print('The round is: ', i)
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
@@ -390,11 +390,8 @@ if __name__ == '__main__':
 
     # Save the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_bootstrap_results.csv'
-    if os.path.exists(PATH_SAVE):
-        PLS_results = pd.read_csv(PATH_SAVE)
-        PLS_results = pd.concat([PLS_results, results], axis=0)
-    else:
-        PLS_results = pd.DataFrame(results)
+    PLS_results = pd.DataFrame()
+    PLS_results = pd.concat([PLS_results, results], axis=0)
     PLS_results.to_csv(PATH_SAVE, index=False)
     print('The shape of the PLS results is: ', PLS_results.shape)
 
