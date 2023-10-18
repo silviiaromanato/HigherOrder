@@ -134,6 +134,7 @@ def compute_X(PATH, movie, method, regions = None):
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 print('The shape of the edge file array is: ', edge_file_array.shape)
             upper_triangular = edge_file_array[np.triu_indices_from(edge_file_array, k=1)]
+            print('The shape of the upper triangular is: ', upper_triangular.shape)
             mtx_upper_triangular.append(upper_triangular)
         mtx_upper_triangular = np.array(mtx_upper_triangular)
         X = pd.DataFrame(mtx_upper_triangular)
