@@ -314,9 +314,8 @@ def loading_yeo(path=PATH_YEO):
 def run_pls(X_movie, Y):
     res = run_decomposition(X_movie, Y)
     res_permu = permutation(res, nPer, seed, sl)
-    res_bootstrap = bootstrap(res, nBoot, seed)
+    #res_bootstrap = bootstrap(res, nBoot, seed)
     print('The pvalues are: ', res_permu['P_val'])
-    print('The ouput of the boostrap is:', res_bootstrap.keys(), ' and the shape of the U is: ', res_bootstrap['bsr_u'].shape)
 
     # Save the results
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
@@ -342,6 +341,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
     Output:
     - results: results of the boostrap
     """
+    print('Performing BOOSTRAPPING on 20 subjects for 100 rounds')
     results = []
     for i in range(num_rounds):
         print('The round is: ', i)
