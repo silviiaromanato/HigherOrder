@@ -342,16 +342,15 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
     - results: results of the boostrap
     """
     print('Performing BOOSTRAPPING on 20 subjects for 100 rounds')
-    results = []
+    results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
     for i in range(5):
         print('The round is: ', i)
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
         Y_sample = Y.iloc[idx,:]
-        results.append(run_pls(X_movie_sample, Y_sample))
-
-    # stack the results vertically one on top of the other
-    results = np.vstack(results)
+        pls = run_pls(X_movie_sample, Y_sample)
+        # concat the results
+        results = pd.concat([results, pls], axis=0)
     return results
 
 
