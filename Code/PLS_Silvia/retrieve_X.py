@@ -34,19 +34,17 @@ def compute_X(PATH, movie, method, regions = None):
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 list_subjects.append(i)
-        mtx_upper_triangular = []
         for i, PATH_SUBJ in enumerate(list_subjects):
-            data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
+            data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None).T
             print(f'The shape of the data for subject {i} is: ', data_feature.shape)
-            if regions == 'ALL':
-                connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
-                print(f'The shape of the connectivity matrix for subject {i} is: ', connectivity_matrix.shape)
+            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+            print(f'The shape of the connectivity matrix for subject {i} is: ', connectivity_matrix.shape)
+            connectivity_matrix = np.array(connectivity_matrix)
+            if i == 0:
+                X = connectivity_matrix
             else:
-                connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
-            upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
-            mtx_upper_triangular.append(upper_triangular)
-        mtx_upper_triangular = np.array(mtx_upper_triangular)
-        X = pd.DataFrame(mtx_upper_triangular)
+                X += connectivity_matrix
+        X = X / len(list_subjects)
         print('The shape of X for BOLD is: ', X.shape)
     
     elif method == 'scaffold':
