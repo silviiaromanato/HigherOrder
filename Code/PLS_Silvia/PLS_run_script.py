@@ -131,10 +131,12 @@ def compute_X(PATH, movie, method, regions = None):
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
             else:
-                data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)[:,yeo_indices]
+                data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
                 u, v = np.triu_indices(n=N, k=1)
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
-                connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
+                print('The shape of the edge file array is: ', edge_file_array.shape)
+                connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)[:,yeo_indices]
+                print('The shape of the connectivity matrix is: ', connectivity_matrix.shape)
             upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
             mtx_upper_triangular.append(upper_triangular)
         mtx_upper_triangular = np.array(mtx_upper_triangular)
