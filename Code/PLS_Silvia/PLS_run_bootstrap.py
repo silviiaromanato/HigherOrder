@@ -327,10 +327,10 @@ def run_pls(X_movie, Y):
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
     data_cov_significant=results[results['P-value'] < p_star]
     data_cov_significant.sort_values('P-value')
-    results['Movie']=movie_name
-    results['LC']=np.arange(1, results.shape[0]+1)
-    results['Region'] = region
-    results['Covariance Explained'] = results['Covariance Explained'].astype(float)
+    data_cov_significant['Movie']=movie_name
+    data_cov_significant['LC']=np.arange(1, results.shape[0]+1)
+    data_cov_significant['Region'] = region
+    data_cov_significant['Covariance Explained'] = data_cov_significant['Covariance Explained'].astype(float)
     return data_cov_significant
 
 def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
@@ -355,7 +355,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
         X_movie_sample = X_movie.iloc[idx,:]
         Y_sample = Y.iloc[idx,:]
         pls = run_pls(X_movie_sample, Y_sample)
-        print('The shape of the pls is: ', pls)
+        print('The dataframe output is: ', pls)
         # convert PLS to a dataframe
         pls = pd.DataFrame(pls)
 
@@ -399,6 +399,6 @@ if __name__ == '__main__':
     PLS_results = pd.DataFrame()
     PLS_results = pd.concat([PLS_results, results], axis=0)
     PLS_results.to_csv(PATH_SAVE, index=False)
-    print('The shape of the PLS results is: ', PLS_results.shape)
+    print('The shape of the PLS results is: ', PLS_results)
 
     print('\n' + f"------------ The PLS for {method}, {movie_name} and {region} was performed!!! ------------")
