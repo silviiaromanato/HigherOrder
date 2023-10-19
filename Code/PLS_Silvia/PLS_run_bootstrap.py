@@ -353,7 +353,6 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
         X_movie_sample = X_movie.iloc[idx,:]
         Y_sample = Y.iloc[idx,:]
         pls = run_pls(X_movie_sample, Y_sample, region)
-        print('The dataframe output is: ', pls)
         # convert PLS to a dataframe
         pls = pd.DataFrame(pls)
 
@@ -377,7 +376,7 @@ if __name__ == '__main__':
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
-    num_rounds = 2
+    num_rounds = sys.argv[6]
     print('The region is: ', region)
 
     yeo_dict = loading_yeo(PATH_YEO)
@@ -388,11 +387,9 @@ if __name__ == '__main__':
     
     X_movie = compute_X(PATH, movie_name, method=method, regions = region)
     X_movie = pd.DataFrame(X_movie)
-    print('The shape of the X movie is: ', X_movie.shape)
 
     # Boostrapping PLS for all the movies for the method and region chosen.
     results = boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = num_rounds)
-    print('The shape of the results is: ', results.shape)
 
     # Save the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_bootstrap_results.csv'
