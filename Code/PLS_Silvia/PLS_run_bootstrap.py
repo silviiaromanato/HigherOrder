@@ -376,7 +376,7 @@ if __name__ == '__main__':
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
-    num_rounds = sys.argv[6]
+    num_rounds = int(sys.argv[6])
     print('The region is: ', region)
 
     yeo_dict = loading_yeo(PATH_YEO)
