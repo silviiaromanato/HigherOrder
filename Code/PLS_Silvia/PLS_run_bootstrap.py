@@ -347,7 +347,7 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
     """
     print('Performing BOOSTRAPPING on 20 subjects for 100 rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
-    for i in range(100):
+    for i in range(num_rounds):
         print('The round is: ', i)
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
@@ -369,6 +369,7 @@ seed = 10           # Seed for reproducibility
 sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 columns = ['DASS_dep', 'DASS_anx', 'DASS_str',	'bas_d', 'bas_f', 'bas_r', 'bis', 'BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
+num_rounds = 2
 
 if __name__ == '__main__': 
     PATH = sys.argv[1]
@@ -389,7 +390,7 @@ if __name__ == '__main__':
     print('The shape of the X movie is: ', X_movie.shape)
 
     # Boostrapping PLS for all the movies for the method and region chosen.
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100)
+    results = boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = num_rounds)
     print('The shape of the results is: ', results.shape)
 
     # Save the results
