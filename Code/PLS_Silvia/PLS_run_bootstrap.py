@@ -345,7 +345,7 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
     Output:
     - results: results of the boostrap
     """
-    print('Performing BOOSTRAPPING on 20 subjects for 100 rounds')
+    print(f'Performing BOOSTRAPPING on 20 subjects for {num_rounds} rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
     for i in range(num_rounds):
         print('The round is: ', i)
@@ -369,7 +369,7 @@ seed = 10           # Seed for reproducibility
 sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 columns = ['DASS_dep', 'DASS_anx', 'DASS_str',	'bas_d', 'bas_f', 'bas_r', 'bis', 'BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
-num_rounds = 2
+
 
 if __name__ == '__main__': 
     PATH = sys.argv[1]
@@ -377,6 +377,7 @@ if __name__ == '__main__':
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
+    num_rounds = 2
     print('The region is: ', region)
 
     yeo_dict = loading_yeo(PATH_YEO)
