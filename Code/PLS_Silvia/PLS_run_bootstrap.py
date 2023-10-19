@@ -317,7 +317,7 @@ def loading_yeo(path=PATH_YEO):
     yeoROI_dict['SC'] = np.arange(100, 114)
     return(yeoROI_dict)
 
-def run_pls(X_movie, Y):
+def run_pls(X_movie, Y, region):
     res = run_decomposition(X_movie, Y)
     res_permu = permutation(res, nPer, seed, sl)
     #res_bootstrap = bootstrap(res, nBoot, seed)
@@ -325,15 +325,13 @@ def run_pls(X_movie, Y):
 
     # Save the results
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
-    data_cov_significant=results[results['P-value'] < p_star]
-    data_cov_significant.sort_values('P-value')
-    data_cov_significant['Movie']=movie_name
-    data_cov_significant['LC']=np.arange(1, results.shape[0]+1)
-    data_cov_significant['Region'] = region
-    data_cov_significant['Covariance Explained'] = data_cov_significant['Covariance Explained'].astype(float)
-    return data_cov_significant
+    results['Movie']=movie_name
+    results['LC']=np.arange(1, results.shape[0]+1)
+    results['Region'] = region
+    results['Covariance Explained'] = results['Covariance Explained'].astype(float)
+    return results
 
-def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
+def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
     """
     Compute the bootstrap for the subjects
 
@@ -354,7 +352,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
         Y_sample = Y.iloc[idx,:]
-        pls = run_pls(X_movie_sample, Y_sample)
+        pls = run_pls(X_movie_sample, Y_sample, region)
         print('The dataframe output is: ', pls)
         # convert PLS to a dataframe
         pls = pd.DataFrame(pls)
@@ -391,7 +389,7 @@ if __name__ == '__main__':
     print('The shape of the X movie is: ', X_movie.shape)
 
     # Boostrapping PLS for all the movies for the method and region chosen.
-    results = boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100)
+    results = boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100)
     print('The shape of the results is: ', results.shape)
 
     # Save the results
