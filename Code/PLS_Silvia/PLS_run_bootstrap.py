@@ -390,7 +390,7 @@ if __name__ == '__main__':
     if movie_name in movies_done:
         print('The movie was already done. We will not perform the boostrapping')
         sys.exit()
-        
+
     yeo_dict = loading_yeo(PATH_YEO)
 
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
