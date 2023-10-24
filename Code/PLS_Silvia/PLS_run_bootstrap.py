@@ -410,7 +410,7 @@ if __name__ == '__main__':
         PLS_results = pd.read_csv(PATH_SAVE)
     else:
         PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
-        
+
     print('The shape of the PLS results is: ', PLS_results.shape)
     movies_done = PLS_results['Movie'].unique()
     print('The movies that PLS was trained on are: ', movies_done)
@@ -419,15 +419,10 @@ if __name__ == '__main__':
     movie_making = results['Movie'].unique()[0]
     print('The movie that is being added is: ', movie_making)
 
-    if movie_making in movies_done:
-        print('The movie was already done. It will be replaced')
-        PLS_results = PLS_results[PLS_results['Movie'] != movie_making]
-        print('The shape of the PLS results is: ', PLS_results.shape)
-    else:
-        print('The movie was not done. It will be added')
-        PLS_results = pd.concat([PLS_results, results], axis=0)
-        print('The shape of the PLS results is: ', PLS_results)
-    
+    print('The movie was not done. It will be added')
+    PLS_results = pd.concat([PLS_results, results], axis=0)
+    print('The shape of the PLS results is: ', PLS_results)
+
     PLS_results.to_csv(PATH_SAVE, index=False)
 
     print('\n' + f"------------ The PLS for {method}, {movie_name} and {region} was performed!!! ------------")
