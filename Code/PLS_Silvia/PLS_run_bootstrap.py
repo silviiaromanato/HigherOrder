@@ -380,7 +380,7 @@ if __name__ == '__main__':
     print('The region is: ', region)
 
     # Load the boostrapped results from the same region ad movie
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_bootstrap_results.csv'
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_boostrap/PLS_{method}_{region}_bootstrap_results.csv'
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
         print('The shape of the PLS results is: ', PLS_results.shape)
@@ -405,7 +405,7 @@ if __name__ == '__main__':
     results = boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = num_rounds)
 
     # Save the results
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_bootstrap_results.csv'
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_boostrap/PLS_{method}_{region}_bootstrap_results.csv'
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
     else:
