@@ -379,6 +379,14 @@ if __name__ == '__main__':
     num_rounds = int(sys.argv[6])
     print('The region is: ', region)
 
+    # Load the boostrapped results from the same region ad movie
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_bootstrap_results.csv'
+    PLS_results = pd.read_csv(PATH_SAVE)
+    print('The shape of the PLS results is: ', PLS_results.shape)
+    movies_done = PLS_results['Movie'].unique()
+    print('The movies that PLS was trained on are: ', movies_done)
+    print('Each movie has the following number of LCs: ', PLS_results.groupby('Movie').count()['LC'])
+
     yeo_dict = loading_yeo(PATH_YEO)
 
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
@@ -395,10 +403,22 @@ if __name__ == '__main__':
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_bootstrap_results.csv'
     PLS_results = pd.read_csv(PATH_SAVE)
     print('The shape of the PLS results is: ', PLS_results.shape)
-    print('The movies that PLS was trained on are: ', PLS_results['Movie'].unique())
+    movies_done = PLS_results['Movie'].unique()
+    print('The movies that PLS was trained on are: ', movies_done)
     print('Each movie has the following number of LCs: ', PLS_results.groupby('Movie').count()['LC'])
-    PLS_results = pd.concat([PLS_results, results], axis=0)
+
+    movie_making = results['Movie'].unique()[0]
+    print('The movie that is being added is: ', movie_making)
+
+    if movie_making in movies_done:
+        print('The movie was already done. It will be replaced')
+        PLS_results = PLS_results[PLS_results['Movie'] != movie_making]
+        print('The shape of the PLS results is: ', PLS_results.shape)
+    else:
+        print('The movie was not done. It will be added')
+        PLS_results = pd.concat([PLS_results, results], axis=0)
+        print('The shape of the PLS results is: ', PLS_results)
+    
     PLS_results.to_csv(PATH_SAVE, index=False)
-    print('The shape of the PLS results is: ', PLS_results)
 
     print('\n' + f"------------ The PLS for {method}, {movie_name} and {region} was performed!!! ------------")
