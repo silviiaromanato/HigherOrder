@@ -381,15 +381,16 @@ if __name__ == '__main__':
 
     # Load the boostrapped results from the same region ad movie
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_bootstrap_results.csv'
-    PLS_results = pd.read_csv(PATH_SAVE)
-    print('The shape of the PLS results is: ', PLS_results.shape)
-    movies_done = PLS_results['Movie'].unique()
-    print('The movies that PLS was trained on are: ', movies_done)
-    print('Each movie has the following number of LCs: ', PLS_results.groupby('Movie').count()['LC'])
+    if os.path.exists(PATH_SAVE):
+        PLS_results = pd.read_csv(PATH_SAVE)
+        print('The shape of the PLS results is: ', PLS_results.shape)
+        movies_done = PLS_results['Movie'].unique()
+        print('The movies that PLS was trained on are: ', movies_done)
+        print('Each movie has the following number of LCs: ', PLS_results.groupby('Movie').count()['LC'])
 
-    if movie_name in movies_done:
-        print('The movie was already done. We will not perform the boostrapping')
-        sys.exit()
+        if movie_name in movies_done:
+            print('The movie was already done. We will not perform the boostrapping')
+            sys.exit()
 
     yeo_dict = loading_yeo(PATH_YEO)
 
@@ -405,7 +406,11 @@ if __name__ == '__main__':
 
     # Save the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_bootstrap_results.csv'
-    PLS_results = pd.read_csv(PATH_SAVE)
+    if os.path.exists(PATH_SAVE):
+        PLS_results = pd.read_csv(PATH_SAVE)
+    else:
+        PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
+        
     print('The shape of the PLS results is: ', PLS_results.shape)
     movies_done = PLS_results['Movie'].unique()
     print('The movies that PLS was trained on are: ', movies_done)
