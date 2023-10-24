@@ -381,6 +381,7 @@ if __name__ == '__main__':
 
     # Load the boostrapped results from the same region ad movie
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_boostrap/PLS_{method}_{region}_bootstrap_results.csv'
+    print('The path of the PLS results is: ', PATH_SAVE, 'It exists?', os.path.exists(PATH_SAVE))
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
         print('The shape of the PLS results is: ', PLS_results.shape)
