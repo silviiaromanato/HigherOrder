@@ -387,6 +387,10 @@ if __name__ == '__main__':
     print('The movies that PLS was trained on are: ', movies_done)
     print('Each movie has the following number of LCs: ', PLS_results.groupby('Movie').count()['LC'])
 
+    if movie_name in movies_done:
+        print('The movie was already done. We will not perform the boostrapping')
+        sys.exit()
+        
     yeo_dict = loading_yeo(PATH_YEO)
 
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
