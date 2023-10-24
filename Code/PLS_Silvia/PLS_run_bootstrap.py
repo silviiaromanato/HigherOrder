@@ -393,7 +393,10 @@ if __name__ == '__main__':
 
     # Save the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_bootstrap_results.csv'
-    PLS_results = pd.DataFrame()
+    PLS_results = pd.read_csv(PATH_SAVE)
+    print('The shape of the PLS results is: ', PLS_results.shape)
+    print('The movies that PLS was trained on are: ', PLS_results['Movie'].unique())
+    print('Each movie has the following number of LCs: ', PLS_results.groupby('Movie').count()['LC'])
     PLS_results = pd.concat([PLS_results, results], axis=0)
     PLS_results.to_csv(PATH_SAVE, index=False)
     print('The shape of the PLS results is: ', PLS_results)
