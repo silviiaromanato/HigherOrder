@@ -85,7 +85,7 @@ if __name__ == '__main__':
         print('Each movie has the following number of LCs: ', PLS_results.groupby('Movie').count()['LC'])
 
         if movie_name in movies_done:
-            print('The movie was already done. We will not perform the boostrapping')
+            print('The movie was already done. We will not perform the PLS.')
             sys.exit()
 
     yeo_dict = loading_yeo(PATH_YEO)
@@ -127,8 +127,6 @@ if __name__ == '__main__':
     movie_making = results['Movie'].unique()[0]
     print('The movie that is being added is: ', movie_making)
 
-    if movie_making.isin(movies_done)
-    print('The movie was not done. It will be added')
     PLS_results = pd.concat([PLS_results, results], axis=0)
     print('The shape of the PLS results is: ', PLS_results)
     PLS_results.to_csv(PATH_SAVE, index=False)
