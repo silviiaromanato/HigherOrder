@@ -6,6 +6,8 @@ from compute import *
 from matplotlib import pyplot as plt
 from itertools import combinations
 
+PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
+
 def compute_X(PATH, movie, method, regions = None):
     """
     Compute the X dataset for the PLS analysis
