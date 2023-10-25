@@ -123,6 +123,7 @@ def compute_X(PATH, movie, method, regions = None):
                 print('The shape of the dataframe is: ', data_feature.shape, 'should be TxN.')
                 u, v = np.triu_indices(data_feature.shape[1], k=1)                
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
+                print('The shape of the edge_file_array is: ', edge_file_array)
                 connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
             else:
                 data_feature_reduced = data_feature[yeo_indices,:]
