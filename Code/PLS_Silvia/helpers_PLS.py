@@ -120,21 +120,17 @@ def compute_X(PATH, movie, method, regions = None):
             data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
             data_feature = np.array(data_feature)
             if regions == 'ALL':
-                print('The shape of the dataframe is: ', data_feature.shape, 'should be TxN.')
                 u, v = np.triu_indices(data_feature.shape[1], k=1)                
                 edge_file_array = data_feature[:,u] * data_feature[:,v]
-                print('The shape of the edge_file_array is: ', edge_file_array.shape)
                 connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
             else:
                 data_feature_reduced = data_feature[yeo_indices,:]
                 u, v = np.triu_indices(n=data_feature_reduced.shape[1], k=1)
                 edge_file_array = data_feature_reduced[:,u] * data_feature_reduced[:,v]
                 connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
-            print('The shape of the connectivity matrix is: ', connectivity_matrix.shape)
             upper_triangular =  connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
             mtx_upper_triangular.append(upper_triangular)
         mtx_upper_triangular = np.array(mtx_upper_triangular)
-        print('The shape of the mtx_upper_triangular is: ', mtx_upper_triangular.shape)
         X = pd.DataFrame(mtx_upper_triangular)
         print(f'The shape of X for EDGES for {regions} is: ', X.shape)
 
