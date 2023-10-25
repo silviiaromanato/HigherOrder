@@ -5,6 +5,8 @@ import glob
 from compute import *
 from matplotlib import pyplot as plt
 from itertools import combinations
+from scipy.io import loadmat
+
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 
