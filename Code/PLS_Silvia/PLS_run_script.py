@@ -114,8 +114,6 @@ if __name__ == '__main__':
     results['Region'] = region
     results['Covariance Explained'] = results['Covariance Explained'].astype(float)
 
-    # Save the results
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_bootstrap/PLS_{method}_{region}_bootstrap_results.csv'
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
     else:
