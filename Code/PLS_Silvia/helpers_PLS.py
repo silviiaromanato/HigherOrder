@@ -121,12 +121,12 @@ def compute_X(PATH, movie, method, regions = None):
             data_feature = np.array(data_feature)
             if regions == 'ALL':
                 print('The shape of the dataframe is: ', data_feature.shape, 'should be TxN.')
-                u, v = np.triu_indices(data_feature.shape[0], k=1)                
+                u, v = np.triu_indices(data_feature.shape[1], k=1)                
                 edge_file_array = data_feature[u,:] * data_feature[v,:]
                 connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
             else:
                 data_feature_reduced = data_feature[yeo_indices,:]
-                u, v = np.triu_indices(n=data_feature_reduced.shape[0], k=1)
+                u, v = np.triu_indices(n=data_feature_reduced.shape[1], k=1)
                 edge_file_array = data_feature_reduced[u,:] * data_feature_reduced[v,:]
                 connectivity_matrix = np.corrcoef(edge_file_array, rowvar=False)
             print('The shape of the connectivity matrix is: ', connectivity_matrix.shape)
