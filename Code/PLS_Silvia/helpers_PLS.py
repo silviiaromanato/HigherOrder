@@ -298,3 +298,10 @@ def exp_var(S, Sp_vect, LC_pvals, name, movie_name, METHOD):
 
     plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{METHOD}_{movie_name}.png', dpi=300)
     print('The plot was saved in: ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Images/explained_covariance_movie_{METHOD}_{movie_name}.png')
+
+def loading_yeo(path=PATH_YEO):
+    ##Loading the yeoROIS
+    yeoROIs=np.array([i[0]-1 for i in loadmat(path)['yeoROIs']])
+    yeoROI_dict={label_Yeo:np.where(yeoROIs==idx_Yeo)[0] for idx_Yeo,label_Yeo in enumerate(['VIS','SM','DA','VA','L','FP','DMN'])}
+    yeoROI_dict['SC'] = np.arange(100, 114)
+    return(yeoROI_dict)

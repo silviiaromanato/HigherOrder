@@ -56,12 +56,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
         results = pd.concat([results, pls], axis=0)
     return results
 
-def loading_yeo(path=PATH_YEO):
-    ##Loading the yeoROIS
-    yeoROIs=np.array([i[0]-1 for i in loadmat(path)['yeoROIs']])
-    yeoROI_dict={label_Yeo:np.where(yeoROIs==idx_Yeo)[0] for idx_Yeo,label_Yeo in enumerate(['VIS','SM','DA','VA','L','FP','DMN'])}
-    yeoROI_dict['SC'] = np.arange(100, 114)
-    return(yeoROI_dict)
+
 
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
