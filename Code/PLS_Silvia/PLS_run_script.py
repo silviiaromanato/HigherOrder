@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
 
     # Load the boostrapped results from the same region ad movie
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_results.csv'
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLS_{method}_{region}_results.csv'
     print('The path of the PLS results is: ', PATH_SAVE, 'It exists?', os.path.exists(PATH_SAVE))
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
@@ -127,6 +127,7 @@ if __name__ == '__main__':
     movie_making = results['Movie'].unique()[0]
     print('The movie that is being added is: ', movie_making)
 
+    if movie_making.isin(movies_done)
     print('The movie was not done. It will be added')
     PLS_results = pd.concat([PLS_results, results], axis=0)
     print('The shape of the PLS results is: ', PLS_results)
