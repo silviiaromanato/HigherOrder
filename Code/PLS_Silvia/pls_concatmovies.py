@@ -73,7 +73,10 @@ def compute_X(PATH, list_movies, regions = None):
     # create a dataframe from the dictionary
     data_subjects = pd.DataFrame.from_dict(dict_movies) # shape (30, 15)
     data_subjects.reset_index(drop=True, inplace=True)
-    
+    # print the index and the columns of the dataframe
+    print('The index of the dataframe is: ', data_subjects.index)
+    print('The columns of the dataframe are: ', data_subjects.columns)
+
     for subject in range(data_subjects.shape[0]):
         list_df = []
         for movie in data_subjects.columns:
