@@ -83,10 +83,13 @@ def compute_X(PATH, list_movies, regions = None):
         list_datafeatures.append(data_features_concat)
     print('The length of list_datafeatures is: ', len(list_datafeatures))
     print('The shape of list_datafeatures[0] is: ', list_datafeatures[0].shape)
-    
+
     mtx_upper_triangular = []
     for data_feature in list_datafeatures:
-        connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+        if regions == 'ALL':
+            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+        else:
+            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
         upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
         mtx_upper_triangular.append(upper_triangular)
     mtx_upper_triangular = np.array(mtx_upper_triangular)
@@ -121,7 +124,7 @@ if __name__ == '__main__':
     X_movie = pd.DataFrame(X_movie)
 
     PLS_results = run_pls(X_movie, Y)
-    print('The head of PLS_results is: ', PLS_results.head(), 'and has shape: ', PLS_results.shape)
+    print('The head of PLS_results is: ', PLS_results.shape)
     PLS_results.to_csv(PATH_SAVE, index=False)
 
     print('\n' + f"------------ The PLS for {method} and {region} for all the movies concatenated was performed!!! ------------")
