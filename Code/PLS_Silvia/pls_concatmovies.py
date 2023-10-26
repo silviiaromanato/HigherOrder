@@ -61,9 +61,10 @@ def compute_X(PATH, list_movies, regions = None):
     N = 114 if regions == 'ALL' else len(yeo_indices)
 
     # create a dictionary called list_subjects where the key is a string of a number and  the value is a list
-    list_movies = {}
+    dict_movies = {}
     for movie in list_movies:
         list_X = []
+        print(movie)
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 list_X.append(i)
@@ -71,11 +72,11 @@ def compute_X(PATH, list_movies, regions = None):
         print('The list of subjects is: ', list_X)
         print('The length of the list of subjects is: ', len(list_X))
         print('The movies is: ', movie)
-        list_movies[movie] = list_X
+        dict_movies[movie] = list_X
 
-    print('The list of movies is: ', list_movies)
+    print('The list of movies is: ', dict_movies)
     # create a dataframe from the dictionary
-    data_movies = pd.DataFrame.from_dict(list_movies)
+    data_movies = pd.DataFrame.from_dict(dict_movies)
     print('The shape of the data_movies is: ', data_movies.shape, data_movies.head)
     data_subjects = data_movies.transpose()
     print('The shape of the data_subjects is: ', data_subjects.shape, data_subjects.head)
