@@ -70,7 +70,6 @@ def compute_X(PATH, list_movies, regions = None):
         print('The list of subjects is: ', list_X[0], 'length: ', len(list_X))
         dict_movies[movie] = list_X
 
-    print('The list of movies is: ', dict_movies)
     # create a dataframe from the dictionary
     data_subjects = pd.DataFrame.from_dict(dict_movies)
     print('The shape of the data_subjects is: ', data_subjects.shape, data_subjects.head())
