@@ -9,6 +9,7 @@ import warnings
 warnings.simplefilter('ignore', DeprecationWarning)
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
+list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Rest', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
 
 def run_pls(X_movie, Y):
     res = run_decomposition(X_movie, Y)
@@ -53,7 +54,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
         results = pd.concat([results, pls], axis=0)
     return results
 
-def compute_X(PATH, list_movies, method, regions = None):
+def compute_X(PATH, list_movies, regions = None):
     
     yeo_dict = loading_yeo(PATH_YEO)
     yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
@@ -112,7 +113,7 @@ if __name__ == '__main__':
     list_X = []
     for movie_name in list_movies:
         print('\n' + ' -' * 10 + f' for {method}, {movie_name} and {region} FOR: ', movie_name, ' -' * 10)
-        compute_X(PATH, movie_name, method=method, regions = region)
+        compute_X(PATH, list_movies, regions = region)
         #X_movie = pd.DataFrame(X_movie)
         #print(f'The shape of the X {movie_name} is: ', X_movie.shape)
         #list_X.append(X_movie)
