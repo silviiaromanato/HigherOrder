@@ -80,7 +80,6 @@ def compute_X(PATH, list_movies, regions = None):
             data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep=' ', header=None)
             list_df.append(data_features)
         data_features_concat = pd.concat(list_df, axis=0)
-        print('The shape of the data_features_concat is: ', data_features_concat.shape, 'Tx114')
         list_datafeatures.append(data_features_concat)
 
     mtx_upper_triangular = []
@@ -116,15 +115,9 @@ if __name__ == '__main__':
     yeo_dict = loading_yeo(PATH_YEO)
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
 
-    list_X = []
-    for movie_name in list_movies:
-        print('\n' + ' -' * 10 + f' for {method}, {movie_name} and {region} FOR: ', movie_name, ' -' * 10)
-        X = compute_X(PATH, list_movies, regions = region)
-        X_movie = pd.DataFrame(X_movie)
-        print(f'The shape of the X {movie_name} is: ', X_movie.shape)
-        list_X.append(X_movie)
+    X_movie = compute_X(PATH, list_movies, regions = region)
+    X_movie = pd.DataFrame(X_movie)
 
-    X_movie = pd.concat(list_X, axis=1)
     print('The  shape of the concatenated X is: ', X_movie.shape)
     PLS_results = run_pls(X_movie, Y)
     print('The head of PLS_results is: ', PLS_results.head(), 'and has shape: ', PLS_results.shape)
