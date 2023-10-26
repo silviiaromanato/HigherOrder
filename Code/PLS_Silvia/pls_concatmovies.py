@@ -123,7 +123,7 @@ if __name__ == '__main__':
     X_movie = compute_X(PATH, list_movies, regions = region)
     X_movie = pd.DataFrame(X_movie)
 
-    PLS_results = run_pls(X_movie, Y)
+    PLS_results = boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 10)
     print('The head of PLS_results is: ', PLS_results.shape)
     PLS_results.to_csv(PATH_SAVE, index=False)
 
