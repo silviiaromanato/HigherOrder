@@ -68,8 +68,10 @@ def compute_X(PATH, list_movies, method, regions = None):
                 list_X.append(i)
         list_movies[movie] = list_X
 
+    print('The list of movies is: ', list_movies)
     # create a dataframe from the dictionary
-    data_movies = pd.DataFrame.from_dict(list_movies, orient='index')
+    data_movies = pd.DataFrame.from_dict(list_movies)
+    print('The shape of the data_movies is: ', data_movies.shape, data_movies.head)
     data_subjects = data_movies.transpose()
     print('The shape of the data_subjects is: ', data_subjects.shape, data_subjects.head)
 
