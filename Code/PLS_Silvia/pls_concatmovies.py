@@ -82,7 +82,7 @@ if __name__ == '__main__':
         print(f'The shape of the X {movie_name} is: ', X_movie.shape)
         list_X.append(X_movie)
 
-    X_movie = pd.concat(list_X, axis=0)
+    X_movie = pd.concat(list_X, axis=1)
     print('The  shape of the concatenated X is: ', X_movie.shape)
     PLS_results = run_pls(X_movie, Y)
     print('The head of PLS_results is: ', PLS_results.head(), 'and has shape: ', PLS_results.shape)
