@@ -82,8 +82,9 @@ def compute_X(PATH, list_movies, regions = None):
         for movie in data_subjects.columns:
             print('The movie is: ', movie)
             print('The subject is: ', subject)
-            print(data_subjects[subject][movie])
-            data_features = pd.read_csv(data_subjects[subject][movie], sep='\t', header=None)
+            # print(data_subjects.iloc[subject, movie])
+            print('The path of the movie is: ', data_subjects.iloc[subject, movie])
+            data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep='\t', header=None)
             list_df.append(data_features)
         data_features_concat = pd.concat(list_df, axis=1)
         print(data_features_concat, data_features_concat.shape)
