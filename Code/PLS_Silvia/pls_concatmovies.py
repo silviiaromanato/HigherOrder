@@ -67,15 +67,11 @@ def compute_X(PATH, list_movies, regions = None):
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 list_X.append(i)
-        print('The list of the movies per subject is: ', list_X[0], 'length: ', len(list_X))
         dict_movies[movie] = list_X
 
     # create a dataframe from the dictionary
     data_subjects = pd.DataFrame.from_dict(dict_movies) # shape (30, 15)
     data_subjects.reset_index(drop=True, inplace=True)
-    # print the index and the columns of the dataframe
-    print('The index of the dataframe is: ', data_subjects.index)
-    print('The columns of the dataframe are: ', data_subjects.columns)
 
     list_datafeatures = []
     for subject in range(data_subjects.shape[0]):
