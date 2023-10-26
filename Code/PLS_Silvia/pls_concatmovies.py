@@ -53,6 +53,35 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
         results = pd.concat([results, pls], axis=0)
     return results
 
+def compute_X(PATH, list_movies, method, regions = None):
+    
+    yeo_dict = loading_yeo(PATH_YEO)
+    yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
+    N = 114 if regions == 'ALL' else len(yeo_indices)
+
+    # create a dictionary called list_subjects where the key is a string of a number and  the value is a list
+    list_movies = {}
+    for movie in list_movies:
+        list_X = []
+        for i in glob.glob(PATH+'*'):
+            if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
+                list_X.append(i)
+        list_movies[movie] = list_X
+
+    # create a dataframe from the dictionary
+    data_movies = pd.DataFrame.from_dict(list_movies, orient='index')
+    data_subjects = data_movies.transpose()
+    print('The shape of the data_subjects is: ', data_subjects.shape, data_subjects.head)
+
+    # iterate over the first line of the dataframe
+    for subject in range(data_subjects.shape[0]):
+        list_df = []
+        for movie in data_subjects.columns:
+            data_features = pd.read_csv(data_subjects[subject][movie], sep='\t', header=None)
+            list_df.append(data_features)
+        data_features_concat = pd.concat(list_df, axis=1)
+        print(data_features_concat, data_features_concat.shape)
+
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
 nBoot = 1000        # Number of bootstrap iterations
@@ -77,16 +106,16 @@ if __name__ == '__main__':
     list_X = []
     for movie_name in list_movies:
         print('\n' + ' -' * 10 + f' for {method}, {movie_name} and {region} FOR: ', movie_name, ' -' * 10)
-        X_movie = compute_X(PATH, movie_name, method=method, regions = region)
-        X_movie = pd.DataFrame(X_movie)
-        print(f'The shape of the X {movie_name} is: ', X_movie.shape)
-        list_X.append(X_movie)
+        compute_X(PATH, movie_name, method=method, regions = region)
+        #X_movie = pd.DataFrame(X_movie)
+        #print(f'The shape of the X {movie_name} is: ', X_movie.shape)
+        #list_X.append(X_movie)
 
-    X_movie = pd.concat(list_X, axis=1)
-    print('The  shape of the concatenated X is: ', X_movie.shape)
-    PLS_results = run_pls(X_movie, Y)
-    print('The head of PLS_results is: ', PLS_results.head(), 'and has shape: ', PLS_results.shape)
-    # Save the PLS
-    PLS_results.to_csv(PATH_SAVE, index=False)
+    # X_movie = pd.concat(list_X, axis=1)
+    # print('The  shape of the concatenated X is: ', X_movie.shape)
+    # PLS_results = run_pls(X_movie, Y)
+    # print('The head of PLS_results is: ', PLS_results.head(), 'and has shape: ', PLS_results.shape)
+    # # Save the PLS
+    # PLS_results.to_csv(PATH_SAVE, index=False)
 
     print('\n' + f"------------ The PLS for {method} and {region} for all the movies concatenated was performed!!! ------------")
