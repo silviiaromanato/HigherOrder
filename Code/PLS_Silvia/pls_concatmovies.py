@@ -64,22 +64,16 @@ def compute_X(PATH, list_movies, regions = None):
     dict_movies = {}
     for movie in list_movies:
         list_X = []
-        print(movie)
         for i in glob.glob(PATH+'*'):
             if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 list_X.append(i)
-                print(i)
-        print('The list of subjects is: ', list_X)
-        print('The length of the list of subjects is: ', len(list_X))
-        print('The movies is: ', movie)
+        print('The list of subjects is: ', list_X[0], 'length: ', len(list_X))
         dict_movies[movie] = list_X
 
     print('The list of movies is: ', dict_movies)
     # create a dataframe from the dictionary
-    data_movies = pd.DataFrame.from_dict(dict_movies)
-    print('The shape of the data_movies is: ', data_movies.shape, data_movies.head)
-    data_subjects = data_movies.transpose()
-    print('The shape of the data_subjects is: ', data_subjects.shape, data_subjects.head)
+    data_subjects = pd.DataFrame.from_dict(dict_movies)
+    print('The shape of the data_subjects is: ', data_subjects.shape, data_subjects.head())
 
     # iterate over the first line of the dataframe
     for subject in range(data_subjects.shape[0]):
