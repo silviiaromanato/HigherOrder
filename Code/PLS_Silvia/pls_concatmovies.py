@@ -63,10 +63,10 @@ columns = ['DASS_dep', 'DASS_anx', 'DASS_str',	'bas_d', 'bas_f', 'bas_r', 'bis',
 
 if __name__ == '__main__': 
     PATH = sys.argv[1]
-    # movie_name = sys.argv[2]
-    method = 'bold'
-    PATH_DATA = sys.argv[4]
-    region = sys.argv[5]
+    PATH_DATA = sys.argv[2]
+    region = sys.argv[3]
+    number_of_rounds = sys.argv[4]
+    method = "bold"
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Rest', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLS_bold_{region}_concatmovies.csv'
     print('The path of the PLS results is: ', PATH_SAVE, 'It exists?', os.path.exists(PATH_SAVE))
