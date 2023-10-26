@@ -79,7 +79,7 @@ def compute_X(PATH, list_movies, regions = None):
 
     for subject in range(data_subjects.shape[0]):
         list_df = []
-        for movie in data_subjects.columns:
+        for movie in range(data_subjects.shape[1]):
             print('The movie is: ', movie)
             print('The subject is: ', subject)
             # print(data_subjects.iloc[subject, movie])
