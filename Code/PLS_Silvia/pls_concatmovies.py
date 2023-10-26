@@ -77,17 +77,27 @@ def compute_X(PATH, list_movies, regions = None):
     print('The index of the dataframe is: ', data_subjects.index)
     print('The columns of the dataframe are: ', data_subjects.columns)
 
+    list_datafeatures = []
     for subject in range(data_subjects.shape[0]):
         list_df = []
         for movie in range(data_subjects.shape[1]):
             data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep=' ', header=None)
-            print('The  shape of the data_features is: ', data_features.shape)
             list_df.append(data_features)
-        print('The shape of the list_df is: ', len(list_df))
-        print('The shape of the first element of the list_df is: ', list_df[0].shape)
         data_features_concat = pd.concat(list_df, axis=0)
-        print('The shape of the data_features_concat is: ', data_features_concat.shape)
-        print(data_features_concat.head())
+        print('The shape of the data_features_concat is: ', data_features_concat.shape, 'Tx114')
+        list_datafeatures.append(data_features_concat)
+
+    mtx_upper_triangular = []
+    for data_feature in list_datafeatures:
+        connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+        upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
+        mtx_upper_triangular.append(upper_triangular)
+    mtx_upper_triangular = np.array(mtx_upper_triangular)
+    X = pd.DataFrame(mtx_upper_triangular)
+    print('The shape of X for BOLD is: ', X.shape)
+
+    return X
+
 
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
@@ -113,16 +123,16 @@ if __name__ == '__main__':
     list_X = []
     for movie_name in list_movies:
         print('\n' + ' -' * 10 + f' for {method}, {movie_name} and {region} FOR: ', movie_name, ' -' * 10)
-        compute_X(PATH, list_movies, regions = region)
-        #X_movie = pd.DataFrame(X_movie)
-        #print(f'The shape of the X {movie_name} is: ', X_movie.shape)
-        #list_X.append(X_movie)
+        X = compute_X(PATH, list_movies, regions = region)
+        X_movie = pd.DataFrame(X_movie)
+        print(f'The shape of the X {movie_name} is: ', X_movie.shape)
+        list_X.append(X_movie)
 
-    # X_movie = pd.concat(list_X, axis=1)
-    # print('The  shape of the concatenated X is: ', X_movie.shape)
-    # PLS_results = run_pls(X_movie, Y)
-    # print('The head of PLS_results is: ', PLS_results.head(), 'and has shape: ', PLS_results.shape)
-    # # Save the PLS
-    # PLS_results.to_csv(PATH_SAVE, index=False)
+    X_movie = pd.concat(list_X, axis=1)
+    print('The  shape of the concatenated X is: ', X_movie.shape)
+    PLS_results = run_pls(X_movie, Y)
+    print('The head of PLS_results is: ', PLS_results.head(), 'and has shape: ', PLS_results.shape)
+    # Save the PLS
+    PLS_results.to_csv(PATH_SAVE, index=False)
 
     print('\n' + f"------------ The PLS for {method} and {region} for all the movies concatenated was performed!!! ------------")
