@@ -81,10 +81,11 @@ def compute_X(PATH, list_movies, regions = None):
         list_df = []
         for movie in range(data_subjects.shape[1]):
             data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep='\t', header=None)
+            print('The  shape of the data_features is: ', data_features.shape)
             list_df.append(data_features)
         print('The shape of the list_df is: ', len(list_df))
         print('The shape of the first element of the list_df is: ', list_df[0].shape)
-        data_features_concat = pd.concat(list_df, axis=1)
+        data_features_concat = pd.concat(list_df, axis=0)
         print('The shape of the data_features_concat is: ', data_features_concat.shape)
         print(data_features_concat.head())
 
