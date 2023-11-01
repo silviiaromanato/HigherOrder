@@ -229,14 +229,14 @@ if __name__ == '__main__':
 
     ##################### Spectral flux ################### : is the speed or pace of a given piece and derives directly from the average beat duration.
     
-    if 'spectral flux' in type_list:
+    if 'spectralflux' in type_list:
         hop_length = 512
         onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
         print('The onset strength is: ', onset_env, onset_env.shape)
         df_sf = pd.DataFrame(onset_env, columns = ['tempo'])
         df_sf.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/spectral_flux_{movie_name}.csv', index=False)
 
-        df['spectral flux'] = df_sf
+        df['spectralflux'] = df_sf
 
     ##################### CONCATENATE ALL THE FEATURES ###################
     # df_features = pd.DataFrame()
