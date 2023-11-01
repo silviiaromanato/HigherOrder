@@ -15,8 +15,8 @@ def correlation_mtx_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 
     length = emo.shape[0]
 
     movie_name_with_ = re.sub(r"(\w)([A-Z])", r"\1_\2", movie_name)
-    df_sound = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
-    df_images = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
+    df_sound = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
+    df_images = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
 
     window_size1 = df_images.shape[0] // length
     images_mean = np.apply_along_axis(lambda x: np.convolve(x, np.ones(window_size1), mode='valid') / window_size1, axis=0, arr=df_images)
@@ -73,7 +73,7 @@ def Correlation_features(df_sound, df_brightness, movie_name):
     ############### CORRELATION ################
     df = df.T
     corr_features = df.corr()
-    corr_features.to_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Output/corr_{movie_name}_features.csv')
+    corr_features.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/corr_{movie_name}_features.csv')
 
     return corr_features
 
