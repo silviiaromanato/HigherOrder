@@ -90,9 +90,10 @@ if __name__ == '__main__':
     movie_name = sys.argv[1]
     PATH_MOVIES = sys.argv[2]
     type_list = sys.argv[3]
-    plots = sys.argv[4]
+    plots = False
     print('The movie name is: ', movie_name)
     print('The path of the movies is: ', PATH_MOVIES)
+    print('The type is list is: ', type_list)
 
     MOVIE_PATH = PATH_MOVIES + movie_name
     print(MOVIE_PATH)
