@@ -102,9 +102,8 @@ if __name__ == '__main__':
         
     ##################### AUDIO EXTRACTION #####################
     print('Extracting the audio from the movie...')
-    movie_name = movie_name[:-4]
-    print(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name[:-4]}.wav')
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name[:-4]}.wav'):
+    print(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name}.wav')
+    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name}.wav'):
         video = mp.VideoFileClip(MOVIE_PATH)
         video_duration = video.duration
         start_time = 1  # Start time in seconds
