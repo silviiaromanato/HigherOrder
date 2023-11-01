@@ -10,6 +10,7 @@ from pydub import AudioSegment
 from PIL import Image
 import scipy.io.wavfile as wavfile
 import sys
+import re
 
 def convert_to_hsv(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -95,7 +96,7 @@ if __name__ == '__main__':
     print('The path of the movies is: ', PATH_MOVIES)
     print('The type is list is: ', type_list)
 
-    MOVIE_PATH = PATH_MOVIES + movie_name
+    MOVIE_PATH = PATH_MOVIES + re.sub(r"(\w)([A-Z])", r"\1_\2", movie_name) + '_exp.mp4'
     print(MOVIE_PATH)
 
     #################### IMAGES ####################
