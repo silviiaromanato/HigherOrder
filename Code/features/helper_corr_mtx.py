@@ -35,9 +35,9 @@ def correlation_mtx_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 
     return correlation_features
 
 def extract_annot(path_folder,film_ID):
-    f = open (path_folder+'/Annot13_'+film_ID+'_stim.json', "r")
+    f = open (path_folder+'Annot13_'+film_ID+'_stim.json', "r")
     data_annot = json.loads(f.read())
-    annot = pd.read_csv(path_folder+'/Annot13_'+film_ID+'_stim.tsv', sep='\t', names=data_annot['Columns'])
+    annot = pd.read_csv(path_folder+'Annot13_'+film_ID+'_stim.tsv', sep='\t', names=data_annot['Columns'])
     return annot
 
 def extract_corrmat_allregressors(emo_path_folder,film_ID, individual='n', subject=None):
