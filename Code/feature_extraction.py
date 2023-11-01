@@ -233,17 +233,18 @@ if __name__ == '__main__':
         onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
         print('The onset strength is: ', onset_env, onset_env.shape)
         df_sf = pd.DataFrame(onset_env, columns = ['tempo'])
+        df_sf.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/spectral_flux_{movie_name}.csv', index=False)
 
         df['spectral flux'] = df_sf
 
     ##################### CONCATENATE ALL THE FEATURES ###################
-    df_features = pd.DataFrame()
-    for featuretype in df.keys():
-        print('The feature type is: ', featuretype)
-        print('The shape of the feature type is: ', df[featuretype].shape)
-        print('The columns of the feature type are: ', df[featuretype].columns)
-        df_features = pd.concat([df_features, df[featuretype]], axis=1)
-    df_features.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_sound_{movie_name}.csv', index=False)
+    # df_features = pd.DataFrame()
+    # for featuretype in df.keys():
+    #     print('The feature type is: ', featuretype)
+    #     print('The shape of the feature type is: ', df[featuretype].shape)
+    #     print('The columns of the feature type are: ', df[featuretype].columns)
+    #     df_features = pd.concat([df_features, df[featuretype]], axis=1)
+    # df_features.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_sound_{movie_name}.csv', index=False)
 
     print('\n')
     print(f'The code was run for movie {movie_name}!')
