@@ -119,6 +119,7 @@ if __name__ == '__main__':
     corr_features, corr_emo1, corr_emo2, corr_emo3, corr_emo4 = mtx_creation(movie)
     
     # Threshold the matrices
+    print('Thresholding the matrices')
     corr_features = threshold_matrix_creation(corr_features, movie)
     corr_emo1 = threshold_matrix_creation(corr_emo1, movie)
     corr_emo2 = threshold_matrix_creation(corr_emo2, movie)
@@ -126,19 +127,15 @@ if __name__ == '__main__':
     corr_emo4 = threshold_matrix_creation(corr_emo4, movie)
 
     # Compute the final clusters
+    print('Computing the final clusters')
     final_clusters_features = compute_modified_modularity_function(corr_features)
     final_clusters_emo1 = compute_modified_modularity_function(corr_emo1)
     final_clusters_emo2 = compute_modified_modularity_function(corr_emo2)
     final_clusters_emo3 = compute_modified_modularity_function(corr_emo3)
     final_clusters_emo4 = compute_modified_modularity_function(corr_emo4)
 
-    cam_features = cluster_matrix(corr_features, final_clusters_features)
-    cam_emo1 = cluster_matrix(corr_emo1, final_clusters_emo1)
-    cam_emo2 = cluster_matrix(corr_emo2, final_clusters_emo2)
-    cam_emo3 = cluster_matrix(corr_emo3, final_clusters_emo3)
-    cam_emo4 = cluster_matrix(corr_emo4, final_clusters_emo4)
-
     # compute element to clster dictionary
+    print('Computing the element to cluster dictionary')
     element_to_cluster_features = elem2clu(final_clusters_features)
     element_to_cluster_emo1 = elem2clu(final_clusters_emo1)
     element_to_cluster_emo2 = elem2clu(final_clusters_emo2)
@@ -146,6 +143,7 @@ if __name__ == '__main__':
     element_to_cluster_emo4 = elem2clu(final_clusters_emo4)
 
     # compute the ecs
+    print('Computing the ecs')
     ecs_features = Clustering(element_to_cluster_features)
     ecs_emo1 = Clustering(element_to_cluster_emo1)
     ecs_emo2 = Clustering(element_to_cluster_emo2)
@@ -153,6 +151,7 @@ if __name__ == '__main__':
     ecs_emo4 = Clustering(element_to_cluster_emo4)
 
     # compute the similarity
+    print('Computing the similarity')
     sim_mtx = compute_similarity_mtx(ecs_features, ecs_emo1, ecs_emo2, ecs_emo3, ecs_emo4)
 
     # save the results

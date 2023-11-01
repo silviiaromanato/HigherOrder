@@ -79,7 +79,7 @@ def Correlation_features(df_sound, df_brightness, movie_name):
 
 def emo_corr_matrix(movie_name, emotion = 3):
     # emotion can be ['positive', 'negative', 'poistive and negative', 'all']
-    PATH_EMO = f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/'
+    PATH_EMO = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/'
     emo = extract_corrmat_emo(PATH_EMO, movie_name)
     if emotion == 3:
         all_emo = extract_corrmat_allregressors(PATH_EMO, movie_name)
