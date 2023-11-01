@@ -10,7 +10,7 @@ from collections import defaultdict
 
 def correlation_mtx_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left']):
 
-    PATH_EMO = f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/'
+    PATH_EMO = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/'
     emo = extract_corrmat_allregressors(PATH_EMO, movie_name)
     length = emo.shape[0]
 
