@@ -89,6 +89,8 @@ if __name__ == '__main__':
 
     movie_name = sys.argv[1]
     PATH_MOVIES = sys.argv[2]
+    print('The movie name is: ', movie_name)
+    print('The path of the movies is: ', PATH_MOVIES)
 
     MOVIE_PATH = PATH_MOVIES + movie_name
     print(MOVIE_PATH)
@@ -101,18 +103,19 @@ if __name__ == '__main__':
     ##################### AUDIO EXTRACTION #####################
     print('Extracting the audio from the movie...')
     movie_name = movie_name[:-4]
-    if not os.path.exists('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name[:-4]}.wav'):
+    print(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name[:-4]}.wav')
+    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name[:-4]}.wav'):
         video = mp.VideoFileClip(MOVIE_PATH)
         video_duration = video.duration
         start_time = 1  # Start time in seconds
         end_time = video_duration  # End time, limited to video duration
         clip = video.subclip(start_time, end_time)
-        clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav")
-        filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav"
+        clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name}.wav")
+        filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name}.wav"
         print('The audio was extracted!')
 
     else:
-        filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav"
+        filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name}.wav"
         print('The audio was already extracted and was reloaded!')
 
     ##################### READING THE AUDIO #####################
