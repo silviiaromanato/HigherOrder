@@ -108,7 +108,7 @@ if __name__ == '__main__':
     print('Extracting the audio from the movie...')
     print(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name}.wav')
     if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio{movie_name}.wav'):
-        video = mp.VideoFileClip('/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/The_Secret_Number_exp.mp4')
+        video = mp.VideoFileClip('/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/The_secret_number_exp.mp4')
         video_duration = video.duration
         start_time = 1  # Start time in seconds
         end_time = video_duration  # End time, limited to video duration
