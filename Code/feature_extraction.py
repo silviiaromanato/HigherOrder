@@ -8,24 +8,17 @@ import IPython.display as ipd
 import moviepy.editor as mp
 from pydub import AudioSegment
 from PIL import Image
+import scipy.io.wavfile as wavfile
+import sys
 
-#PATH_MOVIES = '/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/'
-# Local
-Local = False
-
-if Local:
-    PATH_MOVIES = '/Users/silviaromanato/Desktop/ServerMIPLAB/FilmFiles/'
-else:
-    PATH_MOVIES = '/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/'
-
-
+PATH_MOVIES = '/media/miplab-nas2/Data2/Movies_Emo/FilmFiles/'
 
 def convert_to_hsv(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv_image)
     return h, s, v
 
-def FrameCapture(MOVIE_PATH):
+def FrameCapture(MOVIE_PATH): # IMAGES
     # Path to video file
     video = cv2.VideoCapture(MOVIE_PATH)
 
@@ -100,27 +93,44 @@ if __name__ == '__main__':
         print(MOVIE_PATH)
 
         #################### IMAGES ####################
-        df_movie = FrameCapture(MOVIE_PATH)
-        print(df_movie.head(30))
-        df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv', index=False)
+        #df_movie = FrameCapture(MOVIE_PATH)
+        #print(df_movie.head(30))
+        #df_movie.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/movie_features_{movie_name[:-4]}.csv', index=False)
             
         ##################### AUDIO EXTRACTION #####################
         print('Extracting the audio from the movie...')
-        video = mp.VideoFileClip(MOVIE_PATH)
-        video_duration = video.duration
-        start_time = 1  # Start time in seconds
-        end_time = video_duration  # End time, limited to video duration
-        clip = video.subclip(start_time, end_time)
-        clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name[:-4]}.wav")
-        filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name[:-4]}.wav"
-        print('The audio was extracted!')
+        movie_name = movie_name[:-4]
+        if not os.path.exists('/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name[:-4]}.wav'):
+            video = mp.VideoFileClip(MOVIE_PATH)
+            video_duration = video.duration
+            start_time = 1  # Start time in seconds
+            end_time = video_duration  # End time, limited to video duration
+            clip = video.subclip(start_time, end_time)
+            clip.audio.write_audiofile(f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav")
+            filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav"
+            print('The audio was extracted!')
+
+        else:
+            filename = f"/media/miplab-nas2/Data2/Movies_Emo/Silvia/Audio/audio_{movie_name}.wav"
+            print('The audio was already extracted and was reloaded!')
 
         ##################### READING THE AUDIO #####################
         # Load the audio file
         y, sr = librosa.load(filename, sr=22050)
         duration_seconds, duration_minutes = librosa.get_duration(y=y, sr=sr), librosa.get_duration(y=y, sr=sr) / 60
         print("Duration (seconds):", duration_seconds, " -- Duration (minutes):", duration_minutes)
+
+        ##################### SPECTOGRAM #####################
+
+        Fs, aud = wavfile.read(filename)
+        aud = aud[:,0]
+        powerSpectrum, frequenciesFound, time, imageAxis = plt.specgram(aud, Fs=Fs)
+        print('The power spectrum is: ', powerSpectrum, powerSpectrum.shape)
+        print('The frequencies found are: ', frequenciesFound, frequenciesFound.shape)
+        print('The time is: ', time, time.shape)
+        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/spectogram_{movie_name}.png')
         
+        sys.exit()
         ##################### RMS ################### : total magnitude of the signal, LOUDNESS OF THE SIGNAL
         S, phase = librosa.magphase(librosa.stft(y))
         rms = librosa.feature.rms(S=S)
@@ -133,7 +143,7 @@ if __name__ == '__main__':
         ax[0].label_outer() 
         librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max), y_axis='log', x_axis='time', ax=ax[1]) 
         ax[1].set(title='log Power spectrogram')
-        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.png')
+        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name}.png')
         # SAVE THE RMS
         #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/RMS_{movie_name[:-4]}.npy', np.array(rms))
         print(f"RMS Energy: {rms}", 'The length is: ', rms.shape)
@@ -148,7 +158,7 @@ if __name__ == '__main__':
         print(f"Zero crossing rate: {sum(librosa.zero_crossings(y))}")
         plt.figure(figsize=(15, 3)) 
         plt.plot(zcrs[0])
-        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.png')
+        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name}.png')
         #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/ZCR_{movie_name[:-4]}.npy', np.array(zcrs))
         print(f"Zero crossing rate: {zcrs}", 'The length is: ', zcrs.shape)
         zcrs = zcrs.T
@@ -163,7 +173,7 @@ if __name__ == '__main__':
         mfccs = librosa.feature.mfcc(y = y, sr=sr)
         plt.figure(figsize=(15, 3)) 
         librosa.display.specshow(mfccs, sr=sr, x_axis='time')
-        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name[:-4]}.png')
+        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/MFCCs_{movie_name}.png')
         print(f"MFCCs: {mfccs} and the length is {mfccs.shape}")
         mfccs = mfccs.T
         df_mfccs = pd.DataFrame(mfccs, columns = ['mfccs_0', 'mfccs_1', 'mfccs_2', 'mfccs_3', 'mfccs_4',
@@ -179,7 +189,7 @@ if __name__ == '__main__':
         img = librosa.display.specshow(chromagram, x_axis='time', y_axis='chroma', hop_length=hop_length, cmap='coolwarm') 
         fig.colorbar(img, ax=ax)
         ax.set(title='Chromagram')
-        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.png')
+        plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name}.png')
         #np.save(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/Chroma_{movie_name[:-4]}.npy', np.array(chromagram))
         print(f"Chromagram: {chromagram}", 'The length is: ', chromagram.shape)
         # save as a dataframe
@@ -197,7 +207,7 @@ if __name__ == '__main__':
 
         ##################### CONCATENATE ALL THE FEATURES ###################
         df_features = pd.concat([df_rms, df_zcrs, df_mfccs, df_chromagram], axis=1)
-        df_features.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_sound_{movie_name[:-4]}.csv', index=False)
+        df_features.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_sound_{movie_name}.csv', index=False)
 
         print('\n')
         print(f'The code was run for movie {movie_name}!')
