@@ -236,6 +236,7 @@ if __name__ == '__main__':
         print('The onset strength is: ', onset_env, onset_env.shape)
         df_sf = pd.DataFrame(onset_env, columns = ['tempo'])
         df_sf.to_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/spectral_flux_{movie_name}.csv', index=False)
+        print('The data was saved in: ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/spectral_flux_{movie_name}.csv')
 
         df['spectralflux'] = df_sf
 
