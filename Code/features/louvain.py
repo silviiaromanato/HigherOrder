@@ -139,6 +139,18 @@ if __name__ == '__main__':
     final_clusters_emo4 = compute_modified_modularity_function(corr_emo4)
 
     print('The clusters are:', final_clusters_features)
+    for key in final_clusters_features:
+        final_clusters_features[key] = [final_clusters_features[key]]
+    print('The clusters are:', final_clusters_features)
+
+    for key in final_clusters_emo1:
+        final_clusters_emo1[key] = [final_clusters_emo1[key]]
+    for key in final_clusters_emo2:
+        final_clusters_emo2[key] = [final_clusters_emo2[key]]
+    for key in final_clusters_emo3:
+        final_clusters_emo3[key] = [final_clusters_emo3[key]]
+    for key in final_clusters_emo4:
+        final_clusters_emo4[key] = [final_clusters_emo4[key]]
 
     # compute the ecs
     print('Computing the ecs')
