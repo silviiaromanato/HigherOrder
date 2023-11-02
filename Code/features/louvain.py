@@ -6,10 +6,11 @@ from helper_corr_mtx import *
 import networkx as nx
 import numpy as np
 import pandas as pd
-import community as community_louvain
 import sys
 from clusim.clustering import Clustering, print_clustering
 import clusim.sim as sim
+import community.community_louvain
+import community
 
 def mtx_creation(movie):
 
@@ -48,7 +49,7 @@ def compute_modified_modularity_function(thresh_mat):
     
     # Perform iterations
     for iter in range(N_iter):
-        clusters = list(nx.algorithms.community.louvain_communities(G, seed=iter))
+        clusters = list(community.best_partition(G, seed=iter))
         for cluster in clusters:
             cluster_matrix = update_consensus_matrix(cluster, num_nodes)
             Consensus_matrix += cluster_matrix
@@ -60,7 +61,7 @@ def compute_modified_modularity_function(thresh_mat):
     G_consensus = nx.Graph(Consensus_matrix)
     
     # Compute final clustering based on the consensus graph   
-    final_clusters = nx.algorithms.community.louvain_communities(G_consensus, seed=1) #change seed?
+    final_clusters = community.best_partition(G_consensus, seed=1) #change seed?
    
     return final_clusters
 
