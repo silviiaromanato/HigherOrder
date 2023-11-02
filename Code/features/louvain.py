@@ -134,48 +134,48 @@ if __name__ == '__main__':
     # Compute the final clusters
     print('Computing the final clusters')
     # features
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_features.json'):       
+    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_features.json'):       
         final_clusters_features = compute_modified_modularity_function(corr_features)
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_features.json', 'w') as fp:
+        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_features.json', 'w') as fp:
             json.dump(final_clusters_features, fp)
     else:
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_features.json', 'r') as fp:
+        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_features.json', 'r') as fp:
             final_clusters_features = json.load(fp)
 
     # emotion 1
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo1.json'):       
+    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo1.json'):       
         final_clusters_emo1 = compute_modified_modularity_function(corr_emo1)
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo1.json', 'w') as fp:
+        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo1.json', 'w') as fp:
             json.dump(final_clusters_emo1, fp)
     else:
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo1.json', 'r') as fp:
+        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo1.json', 'r') as fp:
             final_clusters_emo1 = json.load(fp)
 
     # emotion 2
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo2.json'):
+    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo2.json'):
         final_clusters_emo2 = compute_modified_modularity_function(corr_emo2)
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo2.json', 'w') as fp:
+        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo2.json', 'w') as fp:
             json.dump(final_clusters_emo2, fp)
     else:
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo2.json', 'r') as fp:
+        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo2.json', 'r') as fp:
             final_clusters_emo2 = json.load(fp)
 
     # emotion 3
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo3.json'):
+    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo3.json'):
         final_clusters_emo3 = compute_modified_modularity_function(corr_emo3)
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo3.json', 'w') as fp:
+        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo3.json', 'w') as fp:
             json.dump(final_clusters_emo3, fp)
     else:
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo3.json', 'r') as fp:
+        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo3.json', 'r') as fp:
             final_clusters_emo3 = json.load(fp)
 
     # emotion 4
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo4.json'):
+    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo4.json'):
         final_clusters_emo4 = compute_modified_modularity_function(corr_emo4)
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo4.json', 'w') as fp:
+        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo4.json', 'w') as fp:
             json.dump(final_clusters_emo4, fp)
     else:
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_clusters_emo4.json', 'r') as fp:
+        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo4.json', 'r') as fp:
             final_clusters_emo4 = json.load(fp)
 
     for key in final_clusters_features:
