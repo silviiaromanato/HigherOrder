@@ -50,10 +50,8 @@ def compute_modified_modularity_function(thresh_mat):
     # Perform iterations
     for iter in range(N_iter):
         clusters = community.best_partition(G, random_state=iter)
-        # create a dictionary with key = cluster_id and value = list of nodes in the cluster
         clusters = {k: [node for node, clust in clusters.items() if clust == k] for k in set(clusters.values())}
         for cluster in clusters:
-            print('The cluster is: ', cluster)
             cluster_matrix = update_consensus_matrix(clusters[cluster], num_nodes)
             Consensus_matrix += cluster_matrix
 
