@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import json
 import re
 import seaborn as sns
-from collections import defaultdict
+import matplotlib.colors as mcolors
 
 
 
@@ -100,3 +100,58 @@ def threshold_matrix_lower_upper(corr_matrix, perc_lower, perc_upper):
 
     transformed_corr_matrix = corr_matrix.applymap(lambda x: 1 if x > upper_90th or x < lower_10th else 0)
     return transformed_corr_matrix
+
+def plot_cluster_matrix(cluster_feat, sim_score, movie, type):
+            
+    cluster_matrix = np.full((len(cluster_feat), len(cluster_feat)), np.nan)
+
+    # Convert string keys to integer if necessary
+    cluster_feat = {int(node): cluster for node, cluster in cluster_feat.items()}
+
+    # Iterate over the cluster_feat dictionary to populate the cluster assignment matrix
+    for node, cluster_id in cluster_feat.items():
+        for other_node, other_cluster_id in cluster_feat.items():
+            if node != other_node and cluster_id == other_cluster_id:  
+                cluster_matrix[node, other_node] = cluster_id
+
+    # Replace NaN values with a specific number (e.g., -1) for proper color mapping
+    cluster_matrix = np.nan_to_num(cluster_matrix, nan=-1)
+    
+    # Define the number of clusters
+    num_clusters = len(np.unique(cluster_matrix)) - 1  # subtract 1 to exclude the NaN replacement
+
+    colors = ['white'] + sns.color_palette("pastel", num_clusters)
+    cmap = mcolors.ListedColormap(colors)
+    
+    # Define the bounds and normalization for the colormap
+    bounds = np.arange(-1.5, num_clusters + 0.5, 1)
+    norm = mcolors.BoundaryNorm(bounds, cmap.N)
+    
+    # Plot the cluster matrix
+    plt.figure(figsize=(6, 6))
+    plt.imshow(cluster_matrix, cmap=cmap, norm=norm, interpolation='none')
+
+    # Configure the colorbar
+    cbar = plt.colorbar(ticks=np.arange(-1, num_clusters), label=f'Cluster ID for {movie} and {type}')
+    cbar.set_ticklabels(['NaN'] + [str(i) for i in range(num_clusters)])
+
+    # add text printin 'The Element Centric Similarity score is: sim_score' print only the 3 decimals
+    plt.text(0.5, 1.08, f'The Element Centric Similarity score is: {sim_score:.3f}', horizontalalignment='center', fontsize=12, transform=plt.gca().transAxes)
+
+    
+    # Add labels and show the plot
+    if type == 'features':
+        type = 'Features extracted'
+    elif type == 'emo1':
+        type = 'Positive emotions'
+    elif type == 'emo2':
+        type = 'Negative emtions'
+    elif type == 'emo3':
+        type = 'Pos and Neg emotions'
+    elif type == 'emo4':
+        type = 'All emotions'
+    
+    plt.title(f'Communities {movie} and {type}')
+    plt.xlabel('Node')
+    plt.ylabel('Node')
+    plt.show()

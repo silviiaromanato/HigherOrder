@@ -13,18 +13,6 @@ import community.community_louvain
 import community
 import os
 
-def mtx_creation(movie):
-
-    corr_features = correlation_mtx_features(movie, columns = ['spectralflux', 'rms', 'zcrs'], 
-                                            columns_images= ['average_brightness_left', 'average_saturation_left', 'average_hue_left',
-                                                            'average_brightness_right', 'average_saturation_right', 'average_hue_right'])
-    corr_emo1 = emo_corr_matrix(movie, emotion = 0)
-    corr_emo2 = emo_corr_matrix(movie, emotion = 1)
-    corr_emo3 = emo_corr_matrix(movie, emotion = 2)
-    corr_emo4 = emo_corr_matrix(movie, emotion = 3)
-
-    return corr_features, corr_emo1, corr_emo2, corr_emo3, corr_emo4
-
 def threshold_matrix_creation(matrix, movie, lower_threshold=5, upper_threshold=95):
     corr_features = threshold_matrix_lower_upper(matrix, perc_lower= lower_threshold, perc_upper=upper_threshold)
     return corr_features
@@ -85,127 +73,85 @@ def elem2clu(final_clusters):
             element_to_cluster_features[element] = cluster_id
     return element_to_cluster_features
 
-def compute_similarity_mtx(ecs_features, ecs_emo1, ecs_emo2, ecs_emo3, ecs_emo4):
+def compute_similarity_mtx(ecs):
     # create a similarity mariix
-    sim_mtx = np.zeros((5,5))
-    sim_mtx[0,0] = sim.element_sim(ecs_features, ecs_features)
-    sim_mtx[0,1] = sim.element_sim(ecs_features, ecs_emo1)
-    sim_mtx[0,2] = sim.element_sim(ecs_features, ecs_emo2)
-    sim_mtx[0,3] = sim.element_sim(ecs_features, ecs_emo3)
-    sim_mtx[0,4] = sim.element_sim(ecs_features, ecs_emo4)
-    sim_mtx[1,0] = sim.element_sim(ecs_emo1, ecs_features)
-    sim_mtx[1,1] = sim.element_sim(ecs_emo1, ecs_emo1)
-    sim_mtx[1,2] = sim.element_sim(ecs_emo1, ecs_emo2)
-    sim_mtx[1,3] = sim.element_sim(ecs_emo1, ecs_emo3)
-    sim_mtx[1,4] = sim.element_sim(ecs_emo1, ecs_emo4)
-    sim_mtx[2,0] = sim.element_sim(ecs_emo2, ecs_features)
-    sim_mtx[2,1] = sim.element_sim(ecs_emo2, ecs_emo1)
-    sim_mtx[2,2] = sim.element_sim(ecs_emo2, ecs_emo2)
-    sim_mtx[2,3] = sim.element_sim(ecs_emo2, ecs_emo3)
-    sim_mtx[2,4] = sim.element_sim(ecs_emo2, ecs_emo4)
-    sim_mtx[3,0] = sim.element_sim(ecs_emo3, ecs_features)
-    sim_mtx[3,1] = sim.element_sim(ecs_emo3, ecs_emo1)
-    sim_mtx[3,2] = sim.element_sim(ecs_emo3, ecs_emo2)
-    sim_mtx[3,3] = sim.element_sim(ecs_emo3, ecs_emo3)
-    sim_mtx[3,4] = sim.element_sim(ecs_emo3, ecs_emo4)
-    sim_mtx[4,0] = sim.element_sim(ecs_emo4, ecs_features)
-    sim_mtx[4,1] = sim.element_sim(ecs_emo4, ecs_emo1)
-    sim_mtx[4,2] = sim.element_sim(ecs_emo4, ecs_emo2)
-    sim_mtx[4,3] = sim.element_sim(ecs_emo4, ecs_emo3)
-    sim_mtx[4,4] = sim.element_sim(ecs_emo4, ecs_emo4)
+    n = len(ecs)
+    sim_mtx = np.zeros((n,n))
+    for i in range(n):
+        for j in range(n):
+            sim_mtx[i,j] = sim.element_sim(ecs[list(ecs.keys())[i]], ecs[list(ecs.keys())[j]])
     return sim_mtx
+
+def correlation_mtx_fmri(movie_name, method):
+    PATH_DATA = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/FMRI'
+    if method == 'bold':
+        mtx_tt =pd.read_csv(PATH_DATA + f'/average_{method}/corr_matrix_ave_{method.upper()}_{movie_name}.txt', sep=' ', header=None)
+    elif method == 'scaffold':
+        mtx_tt =pd.read_csv(PATH_DATA + f'/average_{method}/corr_matrix_ave_{method}sfrequency_{movie_name}.txt', sep=' ', header=None)
+    else:
+        mtx_tt =pd.read_csv(PATH_DATA + f'/average_{method}/corr_matrix_ave_{method}_{movie_name}.txt', sep=' ', header=None)
+    mtx_tt = mtx_tt.fillna(0)
+    return mtx_tt
 
 if __name__ == '__main__': 
     
     movie = sys.argv[1]
     lower_threshold = sys.argv[2]
     upper_threshold = sys.argv[3]
+    emotions = sys.argv[4]
 
-    corr_features, corr_emo1, corr_emo2, corr_emo3, corr_emo4 = mtx_creation(movie)
-    
-    # Threshold the matrices
+    if emotions:
+        types = ['features', 'emo1', 'emo2', 'emo3', 'emo4']
+    else:
+        types = ['features', 'bold', 'edges', 'scaffold', 'triangles']
+
+    corr_ ={}
+    for i, type in enumerate(types):
+        corr_[type] = correlation_mtx_features(movie, columns = ['spectralflux', 'rms', 'zcrs'], 
+                                            columns_images= ['average_brightness_left', 'average_saturation_left', 'average_hue_left',
+                                                            'average_brightness_right', 'average_saturation_right', 'average_hue_right'])
+        if emotions:
+            corr_[type] = emo_corr_matrix(movie, emotion = 0)
+            corr_[type] = emo_corr_matrix(movie, emotion = 1)
+            corr_[type] = emo_corr_matrix(movie, emotion = 2)
+            corr_[type] = emo_corr_matrix(movie, emotion = 3)
+        else:
+            corr_[type] = correlation_mtx_fmri(movie, type)
+            corr_[type] = correlation_mtx_fmri(movie, type)
+            corr_[type] = correlation_mtx_fmri(movie, type)
+            corr_[type] = correlation_mtx_fmri(movie, type)
+
     print('Thresholding the matrices')
-    corr_features = threshold_matrix_creation(corr_features, movie)
-    corr_emo1 = threshold_matrix_creation(corr_emo1, movie)
-    corr_emo2 = threshold_matrix_creation(corr_emo2, movie)
-    corr_emo3 = threshold_matrix_creation(corr_emo3, movie)
-    corr_emo4 = threshold_matrix_creation(corr_emo4, movie)
+    thr_ = {}
+    for type in types:
+        thr_[type] = threshold_matrix_creation(corr_[type], movie, lower_threshold, upper_threshold)
 
-    # Compute the final clusters
     print('Computing the final clusters')
-    # features
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_features.json'):       
-        final_clusters_features = compute_modified_modularity_function(corr_features)
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_features.json', 'w') as fp:
-            json.dump(final_clusters_features, fp)
-    else:
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_features.json', 'r') as fp:
-            final_clusters_features = json.load(fp)
+    final_clusters = {}
+    for type in types:
+        if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_{type}.json'):    
+            final_clusters[type] = compute_modified_modularity_function(thr_[type])
+            with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_{type}.json', 'w') as fp:
+                json.dump(final_clusters[type], fp)
+        else:
+            with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_{type}.json', 'r') as fp:
+                final_clusters[type] = json.load(fp)
 
-    # emotion 1
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo1.json'):       
-        final_clusters_emo1 = compute_modified_modularity_function(corr_emo1)
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo1.json', 'w') as fp:
-            json.dump(final_clusters_emo1, fp)
-    else:
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo1.json', 'r') as fp:
-            final_clusters_emo1 = json.load(fp)
+        for key in final_clusters[type]:
+            final_clusters[type][key] = [final_clusters[type][key]]
 
-    # emotion 2
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo2.json'):
-        final_clusters_emo2 = compute_modified_modularity_function(corr_emo2)
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo2.json', 'w') as fp:
-            json.dump(final_clusters_emo2, fp)
-    else:
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo2.json', 'r') as fp:
-            final_clusters_emo2 = json.load(fp)
-
-    # emotion 3
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo3.json'):
-        final_clusters_emo3 = compute_modified_modularity_function(corr_emo3)
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo3.json', 'w') as fp:
-            json.dump(final_clusters_emo3, fp)
-    else:
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo3.json', 'r') as fp:
-            final_clusters_emo3 = json.load(fp)
-
-    # emotion 4
-    if not os.path.exists(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo4.json'):
-        final_clusters_emo4 = compute_modified_modularity_function(corr_emo4)
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo4.json', 'w') as fp:
-            json.dump(final_clusters_emo4, fp)
-    else:
-        with open(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_clusters_emo4.json', 'r') as fp:
-            final_clusters_emo4 = json.load(fp)
-
-    for key in final_clusters_features:
-        final_clusters_features[key] = [final_clusters_features[key]]
-    for key in final_clusters_emo1:
-        final_clusters_emo1[key] = [final_clusters_emo1[key]]
-    for key in final_clusters_emo2:
-        final_clusters_emo2[key] = [final_clusters_emo2[key]]
-    for key in final_clusters_emo3:
-        final_clusters_emo3[key] = [final_clusters_emo3[key]]
-    for key in final_clusters_emo4:
-        final_clusters_emo4[key] = [final_clusters_emo4[key]]
-
-    # compute the ecs
     print('Computing the ecs')
-    ecs_features = Clustering(final_clusters_features)
-    ecs_emo1 = Clustering(final_clusters_emo1)
-    ecs_emo2 = Clustering(final_clusters_emo2)
-    ecs_emo3 = Clustering(final_clusters_emo3)
-    ecs_emo4 = Clustering(final_clusters_emo4)
+    ecs = {}
+    for type in types:
+        ecs[type] = Clustering(final_clusters[type])
 
-    print('Ecf features: ', ecs_features)
-    print('Ecf emo1: ', ecs_emo1)
-    print('Ecf emo2: ', ecs_emo2)
-    print('Ecf emo3: ', ecs_emo3)
-    print('Ecf emo4: ', ecs_emo4)
-
-    # compute the similarity
     print('Computing the similarity')
-    sim_mtx = compute_similarity_mtx(ecs_features, ecs_emo1, ecs_emo2, ecs_emo3, ecs_emo4)
+    sim_mtx = compute_similarity_mtx(ecs)
 
     # save the results
-    np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx.csv', sim_mtx, delimiter=',')
+    print('Saving the results...')
+    if emotions:
+        np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_emo.csv', sim_mtx, delimiter=',')
+    else:
+        np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_fmri.csv', sim_mtx, delimiter=',')
+    print('Done!\n')
