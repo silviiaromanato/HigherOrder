@@ -204,4 +204,4 @@ if __name__ == '__main__':
     sim_mtx = compute_similarity_mtx(ecs_features, ecs_emo1, ecs_emo2, ecs_emo3, ecs_emo4)
 
     # save the results
-    np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_sim_mtx.csv', sim_mtx, delimiter=',')
+    np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx.csv', sim_mtx, delimiter=',')
