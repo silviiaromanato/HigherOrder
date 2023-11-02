@@ -180,8 +180,6 @@ if __name__ == '__main__':
 
     for key in final_clusters_features:
         final_clusters_features[key] = [final_clusters_features[key]]
-    print('The clusters are:', final_clusters_features)
-
     for key in final_clusters_emo1:
         final_clusters_emo1[key] = [final_clusters_emo1[key]]
     for key in final_clusters_emo2:
@@ -198,6 +196,12 @@ if __name__ == '__main__':
     ecs_emo2 = Clustering(final_clusters_emo2)
     ecs_emo3 = Clustering(final_clusters_emo3)
     ecs_emo4 = Clustering(final_clusters_emo4)
+
+    print('Ecf features: ', ecs_features)
+    print('Ecf emo1: ', ecs_emo1)
+    print('Ecf emo2: ', ecs_emo2)
+    print('Ecf emo3: ', ecs_emo3)
+    print('Ecf emo4: ', ecs_emo4)
 
     # compute the similarity
     print('Computing the similarity')
