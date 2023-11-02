@@ -104,6 +104,7 @@ if __name__ == '__main__':
         types = ['features', 'emo1', 'emo2', 'emo3', 'emo4']
     else:
         types = ['features', 'bold', 'edges', 'scaffold', 'triangles']
+    print('The types are:', types)
 
     corr_ ={}
     for i, type in enumerate(types):
@@ -120,6 +121,7 @@ if __name__ == '__main__':
             corr_[type] = correlation_mtx_fmri(movie, type)
             corr_[type] = correlation_mtx_fmri(movie, type)
             corr_[type] = correlation_mtx_fmri(movie, type)
+    print(corr_['bold'])
 
     print('Thresholding the matrices')
     thr_ = {}
