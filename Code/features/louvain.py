@@ -64,7 +64,7 @@ def compute_modified_modularity_function(thresh_mat):
     G_consensus = nx.Graph(Consensus_matrix)
     
     # Compute final clustering based on the consensus graph   
-    final_clusters = community.best_partition(G_consensus, random_state=1) #change seed?
+    final_clusters = community.best_partition(G_consensus, random_state=1)
    
     return final_clusters
 
@@ -159,4 +159,4 @@ if __name__ == '__main__':
     sim_mtx = compute_similarity_mtx(ecs_features, ecs_emo1, ecs_emo2, ecs_emo3, ecs_emo4)
 
     # save the results
-    np.savetxt(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Output/{movie}_sim_mtx.csv', sim_mtx, delimiter=',')
+    np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/{movie}_sim_mtx.csv', sim_mtx, delimiter=',')
