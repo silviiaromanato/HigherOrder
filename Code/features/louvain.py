@@ -133,29 +133,20 @@ if __name__ == '__main__':
     # Compute the final clusters
     print('Computing the final clusters')
     final_clusters_features = compute_modified_modularity_function(corr_features)
-    # final_clusters_emo1 = compute_modified_modularity_function(corr_emo1)
-    # final_clusters_emo2 = compute_modified_modularity_function(corr_emo2)
-    # final_clusters_emo3 = compute_modified_modularity_function(corr_emo3)
-    # final_clusters_emo4 = compute_modified_modularity_function(corr_emo4)
+    final_clusters_emo1 = compute_modified_modularity_function(corr_emo1)
+    final_clusters_emo2 = compute_modified_modularity_function(corr_emo2)
+    final_clusters_emo3 = compute_modified_modularity_function(corr_emo3)
+    final_clusters_emo4 = compute_modified_modularity_function(corr_emo4)
 
     print('The clusters are:', final_clusters_features)
 
-    sys.exit()
-    # compute element to clster dictionary
-    # print('Computing the element to cluster dictionary')
-    # element_to_cluster_features = elem2clu(final_clusters_features)
-    # element_to_cluster_emo1 = elem2clu(final_clusters_emo1)
-    # element_to_cluster_emo2 = elem2clu(final_clusters_emo2)
-    # element_to_cluster_emo3 = elem2clu(final_clusters_emo3)
-    # element_to_cluster_emo4 = elem2clu(final_clusters_emo4)
-
     # compute the ecs
     print('Computing the ecs')
-    ecs_features = Clustering(element_to_cluster_features)
-    ecs_emo1 = Clustering(element_to_cluster_emo1)
-    ecs_emo2 = Clustering(element_to_cluster_emo2)
-    ecs_emo3 = Clustering(element_to_cluster_emo3)
-    ecs_emo4 = Clustering(element_to_cluster_emo4)
+    ecs_features = Clustering(final_clusters_features)
+    ecs_emo1 = Clustering(final_clusters_emo1)
+    ecs_emo2 = Clustering(final_clusters_emo2)
+    ecs_emo3 = Clustering(final_clusters_emo3)
+    ecs_emo4 = Clustering(final_clusters_emo4)
 
     # compute the similarity
     print('Computing the similarity')
