@@ -49,7 +49,7 @@ def compute_modified_modularity_function(thresh_mat):
     
     # Perform iterations
     for iter in range(N_iter):
-        clusters = list(community.best_partition(G, seed=iter))
+        clusters = list(community.best_partition(G, random_state=iter))
         for cluster in clusters:
             cluster_matrix = update_consensus_matrix(cluster, num_nodes)
             Consensus_matrix += cluster_matrix
@@ -61,7 +61,7 @@ def compute_modified_modularity_function(thresh_mat):
     G_consensus = nx.Graph(Consensus_matrix)
     
     # Compute final clustering based on the consensus graph   
-    final_clusters = community.best_partition(G_consensus, seed=1) #change seed?
+    final_clusters = community.best_partition(G_consensus, random_state=1) #change seed?
    
     return final_clusters
 
