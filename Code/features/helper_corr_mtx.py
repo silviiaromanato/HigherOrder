@@ -93,7 +93,7 @@ def threshold_matrix_lower_upper(corr_matrix, perc_lower, perc_upper):
     corr_values = corr_values.stack()
 
     corr_values = np.array(corr_values)
-
+    print('The number of elements in the matrix is:', len(corr_values), corr_values)
     lower_10th = np.percentile(corr_values, perc_lower)
     upper_90th = np.percentile(corr_values, perc_upper)
 
