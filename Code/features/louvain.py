@@ -100,7 +100,7 @@ if __name__ == '__main__':
     upper_threshold = sys.argv[3]
     emotions = sys.argv[4]
 
-    if emotions:
+    if emotions == 1:
         types = ['features', 'emo1', 'emo2', 'emo3', 'emo4']
     else:
         types = ['features', 'bold', 'edges', 'scaffold', 'triangles']
