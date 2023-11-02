@@ -49,6 +49,8 @@ def compute_modified_modularity_function(thresh_mat):
     
     # Perform iterations
     for iter in range(N_iter):
+        if iter % 100 == 0:
+            print(f'Iteration {iter}')
         clusters = community.best_partition(G, random_state=iter)
         clusters = {k: [node for node, clust in clusters.items() if clust == k] for k in set(clusters.values())}
         for cluster in clusters:
