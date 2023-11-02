@@ -6,8 +6,6 @@ import re
 import seaborn as sns
 import matplotlib.colors as mcolors
 
-
-
 def correlation_mtx_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left']):
 
     PATH_EMO = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/'
@@ -95,6 +93,8 @@ def threshold_matrix_lower_upper(corr_matrix, perc_lower, perc_upper):
     corr_values = corr_values.stack()
 
     # Calculate the 10th and 90th percentiles
+    print(type(corr_values), type(perc_lower), type(perc_upper))
+
     lower_10th = np.percentile(corr_values, perc_lower)
     upper_90th = np.percentile(corr_values, perc_upper)
 
