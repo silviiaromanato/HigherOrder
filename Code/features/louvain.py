@@ -121,7 +121,6 @@ if __name__ == '__main__':
             corr_[type] = correlation_mtx_fmri(movie, type)
             corr_[type] = correlation_mtx_fmri(movie, type)
             corr_[type] = correlation_mtx_fmri(movie, type)
-    print(corr_['bold'])
 
     print('Thresholding the matrices')
     thr_ = {}
