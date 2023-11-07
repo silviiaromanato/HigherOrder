@@ -79,9 +79,9 @@ def compute_similarity_mtx(ecs):
     for i in range(n):
         for j in range(n):
             print(ecs)
-            element = (ecs[list(ecs.keys())[i]], ecs[list(ecs.keys())[j]])
+            element = ecs[list(ecs.keys())[i]], ecs[list(ecs.keys())[j]]
             print(element)
-            sim_mtx[i,j] = sim.element_sim(element)
+            sim_mtx[i,j] = sim.element_sim(element[0], element[1])
     return sim_mtx
 
 def correlation_mtx_fmri(movie_name, method):
