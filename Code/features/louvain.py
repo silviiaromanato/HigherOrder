@@ -74,12 +74,13 @@ def elem2clu(final_clusters):
     return element_to_cluster_features
 
 def compute_similarity_mtx(ecs):
-    # create a similarity mariix
     n = len(ecs)
     sim_mtx = np.zeros((n,n))
     for i in range(n):
         for j in range(n):
-            sim_mtx[i,j] = sim.element_sim(ecs[list(ecs.keys())[i]], ecs[list(ecs.keys())[j]])
+            element = sim.element_sim(ecs[list(ecs.keys())[i]], ecs[list(ecs.keys())[j]])
+            print(element)
+            sim_mtx[i,j] = element
     return sim_mtx
 
 def correlation_mtx_fmri(movie_name, method):
@@ -145,9 +146,8 @@ if __name__ == '__main__':
     ecs = {}
     for type in types:
         ecs[type] = Clustering(final_clusters[type])
-
-    print('Computing the similarity')
-    sim_mtx = compute_similarity_mtx(ecs)
+        print('Computing the similarity')
+        sim_mtx = compute_similarity_mtx(ecs[type])
 
     # save the results
     print('Saving the results...')
