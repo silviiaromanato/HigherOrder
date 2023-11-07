@@ -78,9 +78,7 @@ def compute_similarity_mtx(ecs):
     sim_mtx = np.zeros((n,n))
     for i in range(n):
         for j in range(n):
-            print(ecs)
             element = ecs[list(ecs.keys())[i]], ecs[list(ecs.keys())[j]]
-            print(element)
             sim_mtx[i,j] = sim.element_sim(element[0], element[1])
     return sim_mtx
 
