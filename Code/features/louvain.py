@@ -100,7 +100,7 @@ if __name__ == '__main__':
     upper_threshold = sys.argv[3]
     emotions = sys.argv[4]
 
-    print('The emotions are: ', emotions == 1, emotions)
+    print('The emotions are: ', emotions == 1, type(emotions))
     if emotions == 1:
         print('we are performing the louvain on the emotions.')
         types = ['features', 'emo1', 'emo2', 'emo3', 'emo4']
