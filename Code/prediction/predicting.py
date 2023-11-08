@@ -108,7 +108,7 @@ if __name__ == '__main__':
     yeo_dict = loading_yeo(PATH_YEO)
 
     # Load the Y behavioural dataset
-    Y = pd.read_csv(PATH_DATA + 'participants.tsv', sep='\t', header=0)[columns]
+    Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
     extrovercy = Y['BIG5_ext']
     agreeableness = Y['BIG5_agr']
     conscientiousness = Y['BIG5_con']
