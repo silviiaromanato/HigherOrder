@@ -117,10 +117,12 @@ if __name__ == '__main__':
             corr_[type] = emo_corr_matrix(movie, emotion = 2)
             corr_[type] = emo_corr_matrix(movie, emotion = 3)
         else:
-            corr_[type] = correlation_mtx_fmri(movie, type[1])
-            corr_[type] = correlation_mtx_fmri(movie, type[2])
-            corr_[type] = correlation_mtx_fmri(movie, type[3])
-            corr_[type] = correlation_mtx_fmri(movie, type[4])
+            if type == 'features':
+                continue
+            corr_[type] = correlation_mtx_fmri(movie, type)
+            corr_[type] = correlation_mtx_fmri(movie, type)
+            corr_[type] = correlation_mtx_fmri(movie, type)
+            corr_[type] = correlation_mtx_fmri(movie, type)
 
     print('Thresholding the matrices')
     thr_ = {}
