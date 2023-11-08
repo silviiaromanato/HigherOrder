@@ -93,6 +93,7 @@ def cpm(X_train, y_train, threshold, movie, method, region):
     plt.xlabel('Observed behavior')
     plt.ylabel('Predicted behavior')
     plt.title('Negative edges')
+    plt.suptitle(f'CPM: {movie}, {method}, {region}')
     plt.tight_layout()
     plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/images/CPM_{movie}_{method}_{region}.png')
 
