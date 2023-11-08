@@ -145,12 +145,12 @@ if __name__ == '__main__':
 
     print('Computing the ecs')
     ecs = {}
-    for type in types:
+    for type in types:ß
         ecs[type] = Clustering(final_clusters[type])
     
     print('Computing the similarity')
     print('The keys are: ', ecs.keys())
-    print('The shape of the ecs is: ', ecs
+    print('The shape of the ecs is: ', ecs)
     sim_mtx = compute_similarity_mtx(ecs)
 
     if emotions == '1':
