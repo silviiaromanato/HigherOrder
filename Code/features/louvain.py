@@ -149,6 +149,8 @@ if __name__ == '__main__':
         ecs[type] = Clustering(final_clusters[type])
     
     print('Computing the similarity')
+    print('The keys are: ', ecs.keys())
+    print('The shape of the ecs is: ', ecs['features'].get_shape())
     sim_mtx = compute_similarity_mtx(ecs)
 
     if emotions == '1':
