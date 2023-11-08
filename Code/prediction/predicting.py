@@ -96,6 +96,7 @@ def cpm(X_train, y_train, threshold):
     return behav_pred_corr_neg, behav_pred_corr_pos
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
+columns = ['BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
 
 if __name__ == '__main__': 
     PATH = sys.argv[1]
