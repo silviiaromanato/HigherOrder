@@ -152,7 +152,7 @@ if __name__ == '__main__':
 
     # save the results
     print('Saving the results...')
-    if emotions:
+    if emotions == 1:
         print('Saving the results for emotions: path is ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_emo.csv')
         np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_emo.csv', sim_mtx, delimiter=',')
     else:
