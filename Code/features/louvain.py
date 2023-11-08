@@ -145,7 +145,7 @@ if __name__ == '__main__':
 
     print('Computing the ecs')
     ecs = {}
-    for type in types:ß
+    for type in types:
         ecs[type] = Clustering(final_clusters[type])
     
     print('Computing the similarity')
