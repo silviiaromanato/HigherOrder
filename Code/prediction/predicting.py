@@ -79,11 +79,10 @@ def cpm(X_train, y_train, threshold, movie, method, region):
         # print(f'This iteration took: {minutes:06.3f} minutes and {seconds:06.3f} seconds')
 
     # 8. EVALUATION: Compute correlations between predicted and observed behavior
-    correlation, pvalue = scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0])
+    correlation_pos, pvalue_pos = scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0])
     behav_pred_corr_pos = np.array([correlation, pvalue])
-    correlation, pvalue = scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0])
+    correlation_neg, pvalue_neg = scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0])
     behav_pred_corr_neg = np.array([correlation, pvalue])
-    print(behav_pred_corr_pos, behav_pred_corr_neg)
 
     # compute mean squared error
     mse_pos = mean_squared_error(all_behav, behav_pred_pos[:, 0])
@@ -95,17 +94,17 @@ def cpm(X_train, y_train, threshold, movie, method, region):
     plt.scatter(all_behav, behav_pred_pos)
     plt.xlabel('Observed behavior')
     plt.ylabel('Predicted behavior')
-    plt.title('Positive edges: p-val ', behav_pred_corr_pos[1])
+    plt.title('Positive edges: p-val ', pvalue_pos)
     plt.subplot(1, 2, 2)
     plt.scatter(all_behav, behav_pred_neg)
     plt.xlabel('Observed behavior')
     plt.ylabel('Predicted behavior')
-    plt.title('Negative edges: p-val ', behav_pred_corr_neg[1])
+    plt.title('Negative edges: p-val ', pvalue_neg)
     plt.suptitle(f'CPM: {movie}, {method}, {region}')
     plt.tight_layout()
     plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/images/CPM_{movie}_{method}_{region}.png')
 
-    return behav_pred_corr_neg, behav_pred_corr_pos, mse_pos, mse_neg
+    return mse_pos, mse_neg, correlation_pos, correlation_neg, pvalue_pos, pvalue_neg
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 columns = ['BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
@@ -145,10 +144,10 @@ if __name__ == '__main__':
     #X_train, X_test, y_train, y_test = train_test_split(X, extrovercy, test_size=0.2, random_state=0)
 
     # compute the CPM
-    behav_pred_corr_neg, behav_pred_corr_pos, mse_pos, mse_neg = cpm(X_movie, extrovercy, threshold, movie_name, method, region)
+    mse_pos, mse_neg, correlation_pos, correlation_neg, pvalue_pos, pvalue_neg = cpm(X_movie, extrovercy, threshold, movie_name, method, region)
 
-    print('The correlation between the predicted and the observed behaviour for negative is: ', behav_pred_corr_neg[0], 'with a p-value of: ', behav_pred_corr_neg[1])
-    print('The correlation between the predicted and the observed behaviour for positive is: ', behav_pred_corr_pos[0], 'with a p-value of: ', behav_pred_corr_pos[1])
+    print('The correlation between the predicted and the observed behaviour for negative is: ', correlation_neg, 'with a p-value of: ', pvalue_neg)
+    print('The correlation between the predicted and the observed behaviour for positive is: ', correlation_pos, 'with a p-value of: ', pvalue_pos)
 
     print('The mean squared error for negative is: ', mse_neg)
     print('The mean squared error for positive is: ', mse_pos)
@@ -168,8 +167,8 @@ if __name__ == '__main__':
         print('The movie was already done. We will not perform the CPM.')
         sys.exit()
 
-    CPM_results = CPM_results.append({'Correlation': behav_pred_corr_neg[0], 'P-value': behav_pred_corr_neg[1], 'MSE': mse_neg, 'Movie': movie_name, 'Region': region, 'Type': 'Negative'}, ignore_index=True)
-    CPM_results = CPM_results.append({'Correlation': behav_pred_corr_pos[0], 'P-value': behav_pred_corr_pos[1], 'MSE': mse_pos, 'Movie': movie_name, 'Region': region, 'Type': 'Positive'}, ignore_index=True)
+    CPM_results = CPM_results.append({'Correlation': correlation_neg, 'P-value': pvalue_neg, 'MSE': mse_neg, 'Movie': movie_name, 'Region': region, 'Type': 'Negative'}, ignore_index=True)
+    CPM_results = CPM_results.append({'Correlation': correlation_pos, 'P-value': pvalue_pos, 'MSE': mse_pos, 'Movie': movie_name, 'Region': region, 'Type': 'Positive'}, ignore_index=True)
 
     CPM_results.to_csv(PATH_SAVE, index=False)
 
