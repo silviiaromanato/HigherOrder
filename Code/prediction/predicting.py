@@ -4,6 +4,7 @@ from scipy.io import loadmat
 from compute_pred import *
 from helpers_pred import *
 import sys 
+import time
 
 import warnings
 warnings.simplefilter('ignore', DeprecationWarning)
