@@ -100,9 +100,7 @@ if __name__ == '__main__':
     upper_threshold = sys.argv[3]
     emotions = sys.argv[4]
 
-    print('The emotions are: ', emotions == '1', emotions)
     if emotions == '1':
-        print('we are performing the louvain on the emotions.')
         types = ['features', 'emo1', 'emo2', 'emo3', 'emo4']
     else:
         types = ['features', 'bold', 'edges', 'scaffold', 'triangles']
@@ -113,7 +111,7 @@ if __name__ == '__main__':
         corr_[type] = correlation_mtx_features(movie, columns = ['spectralflux', 'rms', 'zcrs'], 
                                             columns_images= ['average_brightness_left', 'average_saturation_left', 'average_hue_left',
                                                             'average_brightness_right', 'average_saturation_right', 'average_hue_right'])
-        if emotions:
+        if emotions == '1':
             corr_[type] = emo_corr_matrix(movie, emotion = 0)
             corr_[type] = emo_corr_matrix(movie, emotion = 1)
             corr_[type] = emo_corr_matrix(movie, emotion = 2)
@@ -151,8 +149,6 @@ if __name__ == '__main__':
     print('Computing the similarity')
     sim_mtx = compute_similarity_mtx(ecs)
 
-    # save the results
-    print('Saving the results...')
     if emotions == '1':
         print('Saving the results for emotions: path is ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_emo.csv')
         np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_emo.csv', sim_mtx, delimiter=',')
