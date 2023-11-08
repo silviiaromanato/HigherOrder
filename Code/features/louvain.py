@@ -105,6 +105,7 @@ if __name__ == '__main__':
     else:
         types = ['features', 'bold', 'edges', 'scaffold', 'triangles']
     print('The types are:', types)
+    print('The emotions are: ', emotions)
 
     corr_ ={}
     for i, type in enumerate(types):
@@ -152,7 +153,9 @@ if __name__ == '__main__':
     # save the results
     print('Saving the results...')
     if emotions:
+        print('Saving the results for emotions: path is ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_emo.csv')
         np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_emo.csv', sim_mtx, delimiter=',')
     else:
+        print('Saving the results for fmri: path is ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_fmri.csv')
         np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_fmri.csv', sim_mtx, delimiter=',')
     print('Done!\n')
