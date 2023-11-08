@@ -150,4 +150,26 @@ if __name__ == '__main__':
     print('The mean squared error for negative is: ', mse_neg)
     print('The mean squared error for positive is: ', mse_pos)
 
+    # Save the results
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/CPM_{method}_{region}_results.csv'
+    if os.path.exists(PATH_SAVE):
+        CPM_results = pd.read_csv(PATH_SAVE)
+    else:
+        CPM_results = pd.DataFrame(columns = ['Correlation', 'P-value', 'MSE', 'Movie', 'Region', 'Type'])
+
+    print('The shape of the CPM results is: ', CPM_results.shape)
+    movies_done = CPM_results['Movie'].unique()
+    print('The movies that CPM was trained on are: ', movies_done)
+
+    if movie_name in movies_done:
+        print('The movie was already done. We will not perform the CPM.')
+        sys.exit()
+
+    CPM_results = CPM_results.append({'Correlation': behav_pred_corr_neg[0], 'P-value': behav_pred_corr_neg[1], 'MSE': mse_neg, 'Movie': movie_name, 'Region': region, 'Type': 'Negative'}, ignore_index=True)
+    CPM_results = CPM_results.append({'Correlation': behav_pred_corr_pos[0], 'P-value': behav_pred_corr_pos[1], 'MSE': mse_pos, 'Movie': movie_name, 'Region': region, 'Type': 'Positive'}, ignore_index=True)
+
+    CPM_results.to_csv(PATH_SAVE, index=False)
+
+    print('The shape of the CPM results after appending the new prediction output is: ', CPM_results.shape)
+
     
