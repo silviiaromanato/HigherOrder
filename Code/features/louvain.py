@@ -150,7 +150,7 @@ if __name__ == '__main__':
     
     print('Computing the similarity')
     print('The keys are: ', ecs.keys())
-    print('The shape of the ecs is: ', ecs['features'].get_shape())
+    print('The shape of the ecs is: ', ecs
     sim_mtx = compute_similarity_mtx(ecs)
 
     if emotions == '1':
