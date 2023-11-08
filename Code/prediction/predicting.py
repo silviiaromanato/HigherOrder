@@ -9,7 +9,7 @@ import time
 import warnings
 warnings.simplefilter('ignore', DeprecationWarning)
 
-def cpm(X_train, y_train, threshold):
+def cpm(X_train, y_train, threshold, movie, method, region):
     # 1. INPUTS: Divide the data into training and test sets
     M, N = X_train.shape[1], X_train.shape[0] 
     all_mats, all_behav = X_train, y_train
@@ -92,7 +92,7 @@ def cpm(X_train, y_train, threshold):
     plt.ylabel('Predicted behavior')
     plt.title('Negative edges')
     plt.tight_layout()
-    plt.show()
+    plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/images/CPM_{movie}_{method}_{region}.png')
 
     return behav_pred_corr_neg, behav_pred_corr_pos
 
@@ -131,11 +131,12 @@ if __name__ == '__main__':
 
     # Perform the CPM Behavioural analysis
     threshold = 0.01
-    res = cpm(X_movie, Y, threshold = threshold)
 
     #X_train, X_test, y_train, y_test = train_test_split(X, extrovercy, test_size=0.2, random_state=0)
 
     # compute the CPM
-    cpm(X, extrovercy, threshold)
+    behav_pred_corr_neg, behav_pred_corr_pos = cpm(X_movie, extrovercy, threshold, movie_name, method, region)
+
+    print('The correlation between the predicted and the observed behaviour is: ', behav_pred_corr_neg, behav_pred_corr_pos)
 
     
