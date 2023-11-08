@@ -2,7 +2,7 @@ import numpy as np
 import h5py 
 import pandas as pd
 import glob
-from compute import *
+from compute_pred import *
 from matplotlib import pyplot as plt
 from itertools import combinations
 from scipy.io import loadmat
