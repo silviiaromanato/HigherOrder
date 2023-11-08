@@ -79,9 +79,8 @@ def cpm(X_train, y_train, threshold, movie, method, region):
         # print(f'This iteration took: {minutes:06.3f} minutes and {seconds:06.3f} seconds')
 
     # 8. EVALUATION: Compute correlations between predicted and observed behavior
-    behav_pred_corr_pos = np.array(scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0]))
-    behav_pred_corr_neg = np.array(scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0]))
-    print(behav_pred_corr_pos, behav_pred_corr_neg)
+    behav_pred_corr_pos = np.array(scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0]).statistic, scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0]).pvalue)
+    behav_pred_corr_neg = np.array(scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0]).statistic, scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0]).pvalue)
 
     # compute mean squared error
     mse_pos = mean_squared_error(all_behav, behav_pred_pos[:, 0])
