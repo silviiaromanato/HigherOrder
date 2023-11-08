@@ -100,11 +100,11 @@ if __name__ == '__main__':
     upper_threshold = sys.argv[3]
     emotions = sys.argv[4]
 
-    print('The emotions are: ', emotions == 1, type(emotions))
-    if emotions == 1:
+    print('The emotions are: ', emotions == '1', emotions)
+    if emotions == '1':
         print('we are performing the louvain on the emotions.')
         types = ['features', 'emo1', 'emo2', 'emo3', 'emo4']
-    elif emotions == 0:
+    else:
         types = ['features', 'bold', 'edges', 'scaffold', 'triangles']
     print('The types are:', types)
     
@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
     # save the results
     print('Saving the results...')
-    if emotions == 1:
+    if emotions == '1':
         print('Saving the results for emotions: path is ', f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_emo.csv')
         np.savetxt(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/louvain/{movie}_sim_mtx_emo.csv', sim_mtx, delimiter=',')
     else:
