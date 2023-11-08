@@ -130,7 +130,6 @@ if __name__ == '__main__':
 
     X_movie = compute_X(PATH, movie_name, method=method, regions = region)
     X_movie = pd.DataFrame(X_movie)
-    print('The shape of the X movie is: ', X_movie.shape)
 
     # Perform the CPM Behavioural analysis
     threshold = 0.01
@@ -140,6 +139,8 @@ if __name__ == '__main__':
     # compute the CPM
     behav_pred_corr_neg, behav_pred_corr_pos = cpm(X_movie, extrovercy, threshold, movie_name, method, region)
 
-    print('The correlation between the predicted and the observed behaviour is: ', behav_pred_corr_neg, behav_pred_corr_pos)
+    print('The correlation between the predicted and the observed behaviour for negative is: ', behav_pred_corr_neg[0], 'with a p-value of: ', behav_pred_corr_neg[1])
+    print('The correlation between the predicted and the observed behaviour for positive is: ', behav_pred_corr_pos[0], 'with a p-value of: ', behav_pred_corr_pos[1])
+
 
     
