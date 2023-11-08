@@ -100,13 +100,14 @@ if __name__ == '__main__':
     upper_threshold = sys.argv[3]
     emotions = sys.argv[4]
 
+    print('The emotions are: ', emotions == 1, emotions)
     if emotions == 1:
+        print('we are performing the louvain on the emotions.')
         types = ['features', 'emo1', 'emo2', 'emo3', 'emo4']
-    else:
+    elif emotions == 0:
         types = ['features', 'bold', 'edges', 'scaffold', 'triangles']
     print('The types are:', types)
-    print('The emotions are: ', emotions)
-
+    
     corr_ ={}
     for i, type in enumerate(types):
         corr_[type] = correlation_mtx_features(movie, columns = ['spectralflux', 'rms', 'zcrs'], 
