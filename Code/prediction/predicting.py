@@ -81,23 +81,27 @@ def cpm(X_train, y_train, threshold, movie, method, region):
     behav_pred_corr_pos = scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0])
     behav_pred_corr_neg = scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0])
 
+    # compute mean squared error
+    mse_pos = mean_squared_error(all_behav, behav_pred_pos[:, 0])
+    mse_neg = mean_squared_error(all_behav, behav_pred_neg[:, 0])
+
     # 9. VISUALIZATION: Make a pretty figure
     plt.figure(figsize=(10, 4))
     plt.subplot(1, 2, 1)
     plt.scatter(all_behav, behav_pred_pos)
     plt.xlabel('Observed behavior')
     plt.ylabel('Predicted behavior')
-    plt.title('Positive edges')
+    plt.title('Positive edges: p-val ', behav_pred_corr_pos[1])
     plt.subplot(1, 2, 2)
     plt.scatter(all_behav, behav_pred_neg)
     plt.xlabel('Observed behavior')
     plt.ylabel('Predicted behavior')
-    plt.title('Negative edges')
+    plt.title('Negative edges: p-val ', behav_pred_corr_neg[1])
     plt.suptitle(f'CPM: {movie}, {method}, {region}')
     plt.tight_layout()
     plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/images/CPM_{movie}_{method}_{region}.png')
 
-    return behav_pred_corr_neg, behav_pred_corr_pos
+    return behav_pred_corr_neg, behav_pred_corr_pos, mse_pos, mse_neg
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 columns = ['BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
@@ -137,10 +141,12 @@ if __name__ == '__main__':
     #X_train, X_test, y_train, y_test = train_test_split(X, extrovercy, test_size=0.2, random_state=0)
 
     # compute the CPM
-    behav_pred_corr_neg, behav_pred_corr_pos = cpm(X_movie, extrovercy, threshold, movie_name, method, region)
+    behav_pred_corr_neg, behav_pred_corr_pos, mse_pos, mse_neg = cpm(X_movie, extrovercy, threshold, movie_name, method, region)
 
     print('The correlation between the predicted and the observed behaviour for negative is: ', behav_pred_corr_neg[0], 'with a p-value of: ', behav_pred_corr_neg[1])
     print('The correlation between the predicted and the observed behaviour for positive is: ', behav_pred_corr_pos[0], 'with a p-value of: ', behav_pred_corr_pos[1])
 
+    print('The mean squared error for negative is: ', mse_neg)
+    print('The mean squared error for positive is: ', mse_pos)
 
     
