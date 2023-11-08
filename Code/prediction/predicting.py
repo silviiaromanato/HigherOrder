@@ -24,7 +24,7 @@ def cpm(X_train, y_train, threshold, movie, method, region):
     
     # 2. CROSS VALIDATION: Perform leave-one-out procedure
     for leftout in range(N):
-        print(f'\nLeaving out subj # {leftout + 1:06.3f}')
+        # print(f'\nLeaving out subj # {leftout + 1:06.3f}')
         start = time.time()
 
         # Leave out subject from matrices and behavior
@@ -75,7 +75,7 @@ def cpm(X_train, y_train, threshold, movie, method, region):
         minutes = (end - start) / 60
         seconds = (end - start) % 60
 
-        print(f'This iteration took: {minutes:06.3f} minutes and {seconds:06.3f} seconds')
+        # print(f'This iteration took: {minutes:06.3f} minutes and {seconds:06.3f} seconds')
 
     # 8. EVALUATION: Compute correlations between predicted and observed behavior
     behav_pred_corr_pos = scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0])
