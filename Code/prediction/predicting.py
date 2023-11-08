@@ -81,6 +81,7 @@ def cpm(X_train, y_train, threshold, movie, method, region):
     # 8. EVALUATION: Compute correlations between predicted and observed behavior
     behav_pred_corr_pos = np.array(scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0]))
     behav_pred_corr_neg = np.array(scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0]))
+    print(behav_pred_corr_pos, behav_pred_corr_neg)
 
     # compute mean squared error
     mse_pos = mean_squared_error(all_behav, behav_pred_pos[:, 0])
