@@ -121,7 +121,7 @@ def plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movi
     plt.title('Negative edges')
     plt.tight_layout()
 
-    plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/CPM/{movie}_{region}_{threshold}_CPM.png')
+    plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/Output/prediction/images/{movie}_{region}_{threshold}_CPM.png')
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 columns = ['BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
@@ -159,6 +159,16 @@ if __name__ == '__main__':
                                                 'threshold', 'mean_neg', 'mean_pos', 'r_pos', 'p_pos', 'r_neg', 
                                                 'p_neg', 'added'])
         
+        # CHECK IF THE MOVIE WAS ALREADY DONE
+        list_movies_done = df_results['movie'].unique()
+        list_regions_done = df_results['region'].unique()
+        list_thresholds_done = df_results['threshold'].unique()
+        if movie in list_movies_done and region in list_regions_done and threshold in list_thresholds_done:
+            print(f'The movie was already done for {region}, {threshold}, {method}, {movie}. We will not perform the CPM.')
+            sys.exit()
+
+        # PERFORM THE CPM
+        print(f'Performing CPM for {movie} and {region} and {method} and {threshold}')
         added = False
         if behav_pred_neg.shape[0] != 30:
             added = True
@@ -183,6 +193,7 @@ if __name__ == '__main__':
         df['added'] = added
 
         df_results = pd.concat([df_results, df], ignore_index=True)
+        df_results.to_csv(PATH_SAVE + f'CPM_{method}_{region}_{threshold}_results.csv', index=False)
 
         # PLOT
         plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movie, region)
