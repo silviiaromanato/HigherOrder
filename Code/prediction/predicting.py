@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
         # SAVE THE RESULTS
         if os.path.exists(PATH_SAVE + f'CPM_{method}_{region}_results.csv'):
-            df_results = pd.read_csv(PATH_SAVE + f'CPM_{method}_{region}_results.csv')
+            df_results = pd.read_csv(PATH_SAVE + f'CPM_results.csv')
         else:
             df_results = pd.DataFrame(columns = ['predicted_pos', 'predicted_neg', 'observed', 'movie', 'region', 
                                                 'threshold', 'mean_neg', 'mean_pos', 'r_pos', 'p_pos', 'r_neg', 
@@ -193,7 +193,7 @@ if __name__ == '__main__':
         df['added'] = added
 
         df_results = pd.concat([df_results, df], ignore_index=True)
-        df_results.to_csv(PATH_SAVE + f'CPM_{method}_{region}_{threshold}_results.csv', index=False)
+        df_results.to_csv(PATH_SAVE + f'CPM_results.csv', index=False)
 
         # PLOT
         plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movie, region)
