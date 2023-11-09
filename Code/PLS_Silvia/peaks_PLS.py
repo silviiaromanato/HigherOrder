@@ -100,7 +100,7 @@ if __name__ == '__main__':
     data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
     data.columns = labels['Columns']
     times_peaking = data[f'{emotion}'].loc[data[f'{emotion}'] > 1].index
-    print('The times of the peaks are: ', times_peaking)
+    print('The times of the peaks are: ', len(times_peaking))
     if len(times_peaking) == 0:
         print('There are no peaks for this emotion. We will not perform the PLS.')
         sys.exit()
