@@ -104,7 +104,7 @@ if __name__ == '__main__':
         print('Each movie has the following number of LCs: ', PLS_results.groupby('Movie').count()['LC'])
 
         if movie_name in movies_done:
-            print('The movie was already done. We will not perform the PLS.')
+            print('The movie was already done. We will not perform the PLS.\n')
             sys.exit()
 
     yeo_dict = loading_yeo(PATH_YEO)
@@ -112,11 +112,11 @@ if __name__ == '__main__':
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
 
-    print('\n' + ' -' * 10 + f' for {emotion}, {movie_name} and {region} FOR: ', movie_name, ' -' * 10)
+    print('\n' + ' -' * 10 + f' for {emotion} and {region} FOR: ', movie_name, ' -' * 10)
 
     X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 20)
+    results = boostrap_subjects(X_movie, Y, sample_size = 25, num_rounds = 10)
 
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
@@ -137,4 +137,4 @@ if __name__ == '__main__':
 
     PLS_results.to_csv(PATH_SAVE, index=False)
 
-    print('\n' + f"------------ The PLS for {emotion} peak, {movie_name} and {region} was performed!!! ------------")
+    print('\n' + f"------------ The PLS for {emotion} peak, {movie_name} and {region} was performed!!! ------------ \n")
