@@ -88,7 +88,7 @@ def cpm(X_train, y_train, threshold):
 
     return behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos
 
-def plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movie, region):
+def plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movie, region, behavioural, threshold):
 
     # 8. EVALUATION: Compute correlations between predicted and observed behavior
     behav_pred_corr_pos = scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0])
@@ -96,7 +96,7 @@ def plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movi
 
     plt.figure(figsize=(10, 5))
     palette = sns.color_palette()
-    plt.suptitle(f'CPM prediction of extraversion {region} on {movie}', fontsize=16)
+    plt.suptitle(f'CPM prediction of extraversion {region} on {movie}, {behavioural}', fontsize=16)
     # add text at the bottom of the figure
     plt.figtext(0.90, 0.95, f'threshold = {threshold}', wrap=True, 
                 horizontalalignment='center', fontsize=10, bbox=dict(facecolor='red', alpha=0.1))
@@ -106,8 +106,8 @@ def plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movi
                 bbox=dict(facecolor='grey', alpha=0.1))
     plt.annotate(f'Mean fraction significant edges = {mean_pos:.2f}', xy=[0.03, 0.93], xycoords='axes fraction', ha='left', va='bottom',
                 bbox=dict(facecolor=palette[0], alpha=0.5))
-    plt.xlabel('Observed behavior')
-    plt.ylabel('Predicted behavior')
+    plt.xlabel(f'Observed {behavioural}')
+    plt.ylabel(f'Predicted {behavioral}')
     plt.title('Positive edges')
 
     plt.subplot(1, 2, 2)
@@ -116,12 +116,12 @@ def plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movi
                 bbox=dict(facecolor='grey', alpha=0.1))
     plt.annotate(f'Mean fraction significant edges = {mean_neg:.2f}', xy=[0.03, 0.93], xycoords='axes fraction', ha='left', va='bottom',
                 bbox=dict(facecolor=palette[1], alpha=0.5))
-    plt.xlabel('Observed behavior')
-    plt.ylabel('Predicted behavior')
+    plt.xlabel(f'Observed {behavioural}')
+    plt.ylabel(f'Predicted {behavioral}')
     plt.title('Negative edges')
     plt.tight_layout()
 
-    plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/images/{movie}_{region}_{threshold}_CPM.png')
+    plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/images/{movie}_{region}_{threshold}_{behavioural}_CPM.png')
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 columns = ['BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
@@ -137,65 +137,60 @@ if __name__ == '__main__':
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
-    extrovercy = Y['BIG5_ext']
-    agreeableness = Y['BIG5_agr']
-    conscientiousness = Y['BIG5_con']
-    neuroticism = Y['BIG5_neu']
-    openness = Y['BIG5_ope']
+    behav = {}
+    behav['extrovercy'] = Y['BIG5_ext']
+    behav['agreeableness'] = Y['BIG5_agr']
+    behav['conscientiousness'] = Y['BIG5_con']
+    behav['neuroticism'] = Y['BIG5_neu']
+    behav['openness'] = Y['BIG5_ope']
 
     # Save the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/'
 
-    for threshold in [0.1, 0.05, 0.01]:    
-        print(f'\nComputing CPM for {movie} and {region} and {method} and {threshold}')
-        X = compute_X(PATH_MOVIE, movie, method, regions = region)
-        behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos = cpm(X, extrovercy, threshold)
+    for behavioural in behav.keys():
+        for threshold in [0.1, 0.05, 0.01]:    
+            print(f'\nComputing CPM for {movie} and {region} and {method} and {threshold} and {behavioural}')
+            X = compute_X(PATH_MOVIE, movie, method, regions = region)
+            behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos = cpm(X, behav[behvaioural], threshold)
 
-        # SAVE THE RESULTS
-        if os.path.exists(PATH_SAVE + f'CPM_results.csv'):
-            df_results = pd.read_csv(PATH_SAVE + f'CPM_results.csv')
-        else:
-            df_results = pd.DataFrame(columns = ['predicted_pos', 'predicted_neg', 'observed', 'movie', 'region', 
-                                                'threshold', 'mean_neg', 'mean_pos', 'r_pos', 'p_pos', 'r_neg', 
-                                                'p_neg', 'added'])
-        
-        # CHECK IF THE MOVIE WAS ALREADY DONE
-        list_movies_done = df_results['movie'].unique()
-        list_regions_done = df_results['region'].unique()
-        list_thresholds_done = df_results['threshold'].unique()
-        if movie in list_movies_done and region in list_regions_done and threshold in list_thresholds_done:
-            print(f'The movie was already done for {region}, {threshold}, {method}, {movie}. We will not perform the CPM.')
-            sys.exit()
+            # SAVE THE RESULTS
+            if os.path.exists(PATH_SAVE + f'CPM_results.csv'):
+                df_results = pd.read_csv(PATH_SAVE + f'CPM_results.csv')
+            else:
+                df_results = pd.DataFrame(columns = ['predicted_pos', 'predicted_neg', 'observed', 'movie', 'region', 
+                                                    'threshold', 'mean_neg', 'mean_pos', 'r_pos', 'p_pos', 'r_neg', 
+                                                    'p_neg', 'added', 'behavioural'])
+            
+            # PERFORM THE CPM
+            print(f'Performing CPM for {movie} and {region} and {method} and {threshold}')
+            added = False
+            if behav_pred_neg.shape[0] != 30:
+                added = True
+                behav_pred_neg = np.concatenate((behav_pred_neg, np.zeros((30-behav_pred_neg.shape[0], 1))))
+            if behav_pred_pos.shape[0] != 30:
+                added = True
+                behav_pred_pos = np.concatenate((behav_pred_pos, np.zeros((30-behav_pred_pos.shape[0], 1))))
+            r_pos, p_pos = scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0])
+            r_neg, p_neg = scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0])
+            print(f'Positive edges: r = {r_pos:.3f}, p = {p_pos:.3f}')
+            print(f'Negative edges: r = {r_neg:.3f}, p = {p_neg:.3f}')
+            df = pd.DataFrame({'predicted_pos': behav_pred_pos[:, 0], 'predicted_neg': behav_pred_neg[:, 0], 'observed': all_behav})
+            df['movie'] = movie
+            df['region'] = region
+            df['threshold'] = threshold
+            df['mean_neg'] = mean_neg
+            df['mean_pos'] = mean_pos
+            df['r_pos'] = r_pos
+            df['p_pos'] = p_pos
+            df['r_neg'] = r_neg
+            df['p_neg'] = p_neg
+            df['added'] = added
+            df['behavioural'] = behavioural
 
-        # PERFORM THE CPM
-        print(f'Performing CPM for {movie} and {region} and {method} and {threshold}')
-        added = False
-        if behav_pred_neg.shape[0] != 30:
-            added = True
-            behav_pred_neg = np.concatenate((behav_pred_neg, np.zeros((30-behav_pred_neg.shape[0], 1))))
-        if behav_pred_pos.shape[0] != 30:
-            added = True
-            behav_pred_pos = np.concatenate((behav_pred_pos, np.zeros((30-behav_pred_pos.shape[0], 1))))
-        r_pos, p_pos = scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0])
-        r_neg, p_neg = scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0])
-        print(f'Positive edges: r = {r_pos:.3f}, p = {p_pos:.3f}')
-        print(f'Negative edges: r = {r_neg:.3f}, p = {p_neg:.3f}')
-        df = pd.DataFrame({'predicted_pos': behav_pred_pos[:, 0], 'predicted_neg': behav_pred_neg[:, 0], 'observed': all_behav})
-        df['movie'] = movie
-        df['region'] = region
-        df['threshold'] = threshold
-        df['mean_neg'] = mean_neg
-        df['mean_pos'] = mean_pos
-        df['r_pos'] = r_pos
-        df['p_pos'] = p_pos
-        df['r_neg'] = r_neg
-        df['p_neg'] = p_neg
-        df['added'] = added
+            df_results = pd.concat([df_results, df], ignore_index=True)
+            df_results.to_csv(PATH_SAVE + f'CPM_results.csv', index=False)
 
-        df_results = pd.concat([df_results, df], ignore_index=True)
-        df_results.to_csv(PATH_SAVE + f'CPM_results.csv', index=False)
-
-        # PLOT
-        plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movie, region)
+            # PLOT
+            plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movie, region, behavioural, threshold)
 
     
