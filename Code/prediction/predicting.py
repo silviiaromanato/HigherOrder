@@ -147,7 +147,7 @@ if __name__ == '__main__':
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/'
 
     for threshold in [0.1, 0.05, 0.01]:    
-        print(f'Computing CPM for {movie} and {region} and {method} and {threshold}')
+        print(f'\nComputing CPM for {movie} and {region} and {method} and {threshold}')
         X = compute_X(PATH_MOVIE, movie, method, regions = region)
         behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos = cpm(X, extrovercy, threshold)
 
