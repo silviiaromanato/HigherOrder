@@ -151,7 +151,7 @@ if __name__ == '__main__':
         for threshold in [0.1, 0.05, 0.01]:    
             print(f'\nComputing CPM for {movie} and {region} and {method} and {threshold} and {behavioural}')
             X = compute_X(PATH_MOVIE, movie, method, regions = region)
-            behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos = cpm(X, behav[behvaioural], threshold)
+            behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos = cpm(X, behav[behavioural], threshold)
 
             # SAVE THE RESULTS
             if os.path.exists(PATH_SAVE + f'CPM_results.csv'):
