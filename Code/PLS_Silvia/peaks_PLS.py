@@ -90,7 +90,7 @@ if __name__ == '__main__':
     times_peaking = data[f'{emotion}'].loc[data[f'{emotion}'] > 1].index
     print('The times of the peaks are: ', len(times_peaking))
     if len(times_peaking) == 0:
-        print('There are no peaks for this emotion. We will not perform the PLS.')
+        print('There are no peaks for this emotion. We will not perform the PLS.\n')
         sys.exit()
 
     # Load the boostrapped results from the same region ad movie
