@@ -107,7 +107,7 @@ def plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movi
     plt.annotate(f'Mean fraction significant edges = {mean_pos:.2f}', xy=[0.03, 0.93], xycoords='axes fraction', ha='left', va='bottom',
                 bbox=dict(facecolor=palette[0], alpha=0.5))
     plt.xlabel(f'Observed {behavioural}')
-    plt.ylabel(f'Predicted {behavioral}')
+    plt.ylabel(f'Predicted {behavioural}')
     plt.title('Positive edges')
 
     plt.subplot(1, 2, 2)
@@ -117,7 +117,7 @@ def plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movi
     plt.annotate(f'Mean fraction significant edges = {mean_neg:.2f}', xy=[0.03, 0.93], xycoords='axes fraction', ha='left', va='bottom',
                 bbox=dict(facecolor=palette[1], alpha=0.5))
     plt.xlabel(f'Observed {behavioural}')
-    plt.ylabel(f'Predicted {behavioral}')
+    plt.ylabel(f'Predicted {behavioural}')
     plt.title('Negative edges')
     plt.tight_layout()
 
