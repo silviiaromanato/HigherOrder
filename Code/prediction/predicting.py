@@ -152,7 +152,7 @@ if __name__ == '__main__':
         behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos = cpm(X, extrovercy, threshold)
 
         # SAVE THE RESULTS
-        if os.path.exists(PATH_SAVE + f'CPM_{method}_{region}_results.csv'):
+        if os.path.exists(PATH_SAVE + f'CPM_results.csv'):
             df_results = pd.read_csv(PATH_SAVE + f'CPM_results.csv')
         else:
             df_results = pd.DataFrame(columns = ['predicted_pos', 'predicted_neg', 'observed', 'movie', 'region', 
