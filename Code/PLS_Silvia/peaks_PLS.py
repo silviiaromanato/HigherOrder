@@ -64,6 +64,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
         print('The shape of the pls is: ', pls)
         pls = pd.DataFrame(pls)
         results = pd.concat([results, pls], axis=0)
+        print('The shape of the results is: ', results.shape)
     return results
 
 nb = 30              # Number of participants
