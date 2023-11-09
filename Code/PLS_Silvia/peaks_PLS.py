@@ -103,10 +103,13 @@ if __name__ == '__main__':
     # Load the peaks of the emotion in question
     print('The emotion is: ', emotion, 'computing the times where the peaks are...')
     labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json')
-    print('The shape of the labels is: ', labels)
     data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
     data.columns = labels['Columns']
     times_peaking = data[f'{emotion}'].loc[data[f'{emotion}'] > 1].index
+    print('The times of the peaks are: ', times_peaking)
+    if len(times_peaking) == 0:
+        print('There are no peaks for this emotion. We will not perform the PLS.')
+        sys.exit()
 
     # Load the boostrapped results from the same region ad movie
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{emotion}_{region}_results.csv'
