@@ -141,8 +141,6 @@ if __name__ == '__main__':
     neuroticism = Y['BIG5_neu']
     openness = Y['BIG5_ope']
 
-    print('\n' + ' -' * 10 + f' for {method}, {movie} and {region} FOR: ', movie_name, ' -' * 10)
-
     # Save the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/'
 
