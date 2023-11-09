@@ -36,7 +36,7 @@ def compute_X_withtimes(PATH, movie, times, regions = None):
 
     return X
 
-def run_pls(X_movie, Y):
+def run_pls(X_movie, Y, region):
     res = run_decomposition(X_movie, Y)
     res_permu = permutation(res, nPer, seed, sl)
     #res_bootstrap = bootstrap(res, nBoot, seed)
@@ -44,27 +44,37 @@ def run_pls(X_movie, Y):
 
     # Save the results
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
-    data_cov_significant=results[results['P-value'] < p_star]
-    data_cov_significant.sort_values('P-value')
     results['Movie']=movie_name
     results['LC']=np.arange(1, results.shape[0]+1)
     results['Region'] = region
     results['Covariance Explained'] = results['Covariance Explained'].astype(float)
-    return data_cov_significant
+    return results
 
-def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
-    print(f'Performing BOOSTRAPPING on {sample_size} subjects for {num_rounds} rounds')
+def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
+    """
+    Compute the bootstrap for the subjects
+
+    -------------------------------------
+    Input:
+    - param X_movie: X dataset
+    - param Y: Y dataset
+    - param sample_size: number of subjects to sample
+    - param num_rounds: number of rounds to perform
+    -------------------------------------
+    Output:
+    - results: results of the boostrap
+    """
+    print(f'Performing BOOSTRAPPING on 20 subjects for {num_rounds} rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
     for i in range(num_rounds):
         print('The round is: ', i)
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
         Y_sample = Y.iloc[idx,:]
-        pls = run_pls(X_movie_sample, Y_sample)
-        print('The shape of the pls is: ', pls)
+        pls = run_pls(X_movie_sample, Y_sample, region)
         pls = pd.DataFrame(pls)
         results = pd.concat([results, pls], axis=0)
-        print('The shape of the results is: ', results.shape)
+        print('The results are: ', results.head())
     return results
 
 nb = 30              # Number of participants
@@ -114,18 +124,15 @@ if __name__ == '__main__':
 
     X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, sample_size = 25, num_rounds = 10)
+    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
 
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
     else:
         PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
 
-    print('The shape of the PLS results is: ', PLS_results.shape)
     movies_done = PLS_results['Movie'].unique()
     print('The movies that PLS was trained on are: ', movies_done)
-    print('Each movie has the following number of LCs: ', PLS_results.groupby('Movie').count()['LC'])
-
     movie_making = results['Movie'].unique()[0]
     print('The movie that is being added is: ', movie_making)
 
