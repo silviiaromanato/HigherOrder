@@ -82,13 +82,13 @@ if __name__ == '__main__':
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
 
-    # Load the peaks of the emotion in question
-    print('The emotion is: ', emotion, 'computing the times where the peaks are...')
+    print('\n' + ' -' * 10 + f' for {emotion} and {region} FOR: ', movie_name, ' -' * 10)
+
     labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json')
     data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
     data.columns = labels['Columns']
     times_peaking = data[f'{emotion}'].loc[data[f'{emotion}'] > 1].index
-    print('The times of the peaks are: ', len(times_peaking))
+    print('The number of times where there are peaks is: ', len(times_peaking))
     if len(times_peaking) == 0:
         print('There are no peaks for this emotion. We will not perform the PLS.\n')
         sys.exit()
@@ -111,8 +111,6 @@ if __name__ == '__main__':
 
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
-
-    print('\n' + ' -' * 10 + f' for {emotion} and {region} FOR: ', movie_name, ' -' * 10)
 
     X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
