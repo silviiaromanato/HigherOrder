@@ -53,19 +53,6 @@ def run_pls(X_movie, Y):
     return data_cov_significant
 
 def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
-    """
-    Compute the bootstrap for the subjects
-
-    -------------------------------------
-    Input:
-    - param X_movie: X dataset
-    - param Y: Y dataset
-    - param sample_size: number of subjects to sample
-    - param num_rounds: number of rounds to perform
-    -------------------------------------
-    Output:
-    - results: results of the boostrap
-    """
     print(f'Performing BOOSTRAPPING on {sample_size} subjects for {num_rounds} rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
     for i in range(num_rounds):
@@ -128,7 +115,7 @@ if __name__ == '__main__':
 
     X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 20)
+    results = boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 20)
 
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
