@@ -121,7 +121,7 @@ def plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movi
     plt.title('Negative edges')
     plt.tight_layout()
 
-    plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/Output/prediction/images/{movie}_{region}_{threshold}_CPM.png')
+    plt.savefig(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/images/{movie}_{region}_{threshold}_CPM.png')
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 columns = ['BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
