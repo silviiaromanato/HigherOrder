@@ -102,9 +102,9 @@ if __name__ == '__main__':
 
     # Load the peaks of the emotion in question
     print('The emotion is: ', emotion, 'computing the times where the peaks are...')
-    labels = pd.read_json(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/Annot13_{movie_name}_stim.json')
+    labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json')
     print('The shape of the labels is: ', labels)
-    data = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
+    data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
     data.columns = labels['Columns']
     times_peaking = data[f'{emotion}'].loc[data[f'{emotion}'] > 1].index
 
