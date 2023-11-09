@@ -126,7 +126,7 @@ columns = ['BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
 
 if __name__ == '__main__': 
     PATH_MOVIE = sys.argv[1]
-    movie_name = sys.argv[2]
+    movie = sys.argv[2]
     method = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     neuroticism = Y['BIG5_neu']
     openness = Y['BIG5_ope']
 
-    print('\n' + ' -' * 10 + f' for {method}, {movie_name} and {region} FOR: ', movie_name, ' -' * 10)
+    print('\n' + ' -' * 10 + f' for {method}, {movie} and {region} FOR: ', movie_name, ' -' * 10)
 
     # Save the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/'
