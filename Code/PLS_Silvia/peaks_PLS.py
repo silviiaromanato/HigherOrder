@@ -23,10 +23,7 @@ def compute_X_withtimes(PATH, movie, times, regions = None):
     mtx_upper_triangular = []
     for i, PATH_SUBJ in enumerate(list_subjects):
         data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
-        print('The shape of the data feature is: ', data_feature.shape)
-        # Select only the times of interest
         data_feature = data_feature.iloc[times,:]
-        print('The shape of the data feature after the times selection is: ', data_feature.shape)
         if regions == 'ALL':
             connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
         else:
