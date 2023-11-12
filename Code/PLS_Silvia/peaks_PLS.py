@@ -39,10 +39,7 @@ def compute_X_withtimes(PATH, movie, times, regions = None):
 def run_pls(X_movie, Y, region):
     res = run_decomposition(X_movie, Y)
     res_permu = permutation(res, nPer, seed, sl)
-    #res_bootstrap = bootstrap(res, nBoot, seed)
     print('The pvalues are: ', res_permu['P_val'])
-
-    # Save the results
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
     results['Movie']=movie_name
     results['LC']=np.arange(1, results.shape[0]+1)
@@ -51,21 +48,8 @@ def run_pls(X_movie, Y, region):
     return results
 
 def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
-    """
-    Compute the bootstrap for the subjects
-
-    -------------------------------------
-    Input:
-    - param X_movie: X dataset
-    - param Y: Y dataset
-    - param sample_size: number of subjects to sample
-    - param num_rounds: number of rounds to perform
-    -------------------------------------
-    Output:
-    - results: results of the boostrap
-    """
     print(f'Performing BOOSTRAPPING on 20 subjects for {num_rounds} rounds')
-    results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
+    results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round'])
     for i in range(num_rounds):
         print('The round is: ', i)
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
@@ -73,6 +57,7 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
         Y_sample = Y.iloc[idx,:]
         pls = run_pls(X_movie_sample, Y_sample, region)
         pls = pd.DataFrame(pls)
+        pls['bootstrap_round'] = i
         results = pd.concat([results, pls], axis=0)
         print('The results are: ', results.head())
     return results
@@ -104,7 +89,7 @@ if __name__ == '__main__':
         sys.exit()
 
     # Load the boostrapped results from the same region ad movie
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{emotion}_{region}_results.csv'
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{emotion}_{region}_withcontrol_results.csv'
     print('The path of the PLS results is: ', PATH_SAVE, 'It exists?', os.path.exists(PATH_SAVE))
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
@@ -122,14 +107,30 @@ if __name__ == '__main__':
     # Load the Y behavioural dataset
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
 
+    # emotion
     X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
+    results['Emotion'] = emotion
 
+    # control of the emotion
+    results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion'])
+    for i in range(15):
+        np.random.seed(i)
+        control_times = np.random.choice(data[f'{emotion}'].index, size=len(times_peaking), replace=False)
+        
+        X_movie = compute_X_withtimes(PATH, movie_name, control_times, regions = region)
+        X_movie = pd.DataFrame(X_movie)
+        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
+        results_control_i['Emotion'] = f'Control_{i}_{emotion}'
+        results_control = pd.concat([results_control, results_control_i], axis=0)
+
+    results = pd.concat([results, results_control], axis=0)
+    
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
     else:
-        PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
+        PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion'])
 
     movies_done = PLS_results['Movie'].unique()
     print('The movies that PLS was trained on are: ', movies_done)
