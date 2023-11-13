@@ -73,7 +73,6 @@ if __name__ == '__main__':
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
 
-
     # Load the boostrapped results from the same region ad movie
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLS_{method}_{region}_results.csv'
     print('The path of the PLS results is: ', PATH_SAVE, 'It exists?', os.path.exists(PATH_SAVE))

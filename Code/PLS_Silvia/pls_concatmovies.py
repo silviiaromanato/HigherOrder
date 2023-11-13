@@ -38,7 +38,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
     Output:
     - results: results of the boostrap
     """
-    print('Performing BOOSTRAPPING on 20 subjects for 100 rounds')
+    print(f'Performing BOOSTRAPPING on 20 subjects for {num_rounds} rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region'])
     for i in range(100):
         print('The round is: ', i)

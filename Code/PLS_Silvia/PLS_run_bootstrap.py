@@ -18,7 +18,7 @@ def loading_yeo(path=PATH_YEO):
 
 def run_pls(X_movie, Y, region):
     res = run_decomposition(X_movie, Y)
-    res_permu = permutation(res, nPer, seed, sl)
+    res_permu =   (res, nPer, seed, sl)
     #res_bootstrap = bootstrap(res, nBoot, seed)
     print('The pvalues are: ', res_permu['P_val'])
 
@@ -77,9 +77,17 @@ if __name__ == '__main__':
     region = sys.argv[5]
     num_rounds = int(sys.argv[6])
     print('The region is: ', region)
+    print('The number of bootstraps are: ', num_rounds)
+
+    doing_bootstrap = num_rounds > 1
+    print('Performing bootstrap? ', doing_bootstrap)
 
     # Load the boostrapped results from the same region ad movie
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_bootstrap/PLS_{method}_{region}_bootstrap_results.csv'
+    if doing_bootstrap:
+        PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_bootstrap/PLS_{method}_{region}_bootstrap_results.csv'
+    else:
+        PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_{method}_{region}_results.csv'
+
     print('The path of the PLS results is: ', PATH_SAVE, 'It exists?', os.path.exists(PATH_SAVE))
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)

@@ -2,7 +2,7 @@ import numpy as np
 import h5py 
 import pandas as pd
 import glob
-from compute import *
+from PLS_Silvia.compute import *
 from matplotlib import pyplot as plt
 from itertools import combinations
 from scipy.io import loadmat
@@ -33,12 +33,12 @@ def compute_X(PATH, movie, method, regions = None):
                 list_subjects.append(i)
         mtx_upper_triangular = []
         for i, PATH_SUBJ in enumerate(list_subjects):
-            data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
+            data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None) # This is N (114) x T (timepoints)
             if regions == 'ALL':
-                connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
+                connectivity_matrix = np.corrcoef(data_feature, rowvar=False) # This is N (114) x N (114)
             else:
                 connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
-            upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
+            upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)] 
             mtx_upper_triangular.append(upper_triangular)
         mtx_upper_triangular = np.array(mtx_upper_triangular)
         X = pd.DataFrame(mtx_upper_triangular)
