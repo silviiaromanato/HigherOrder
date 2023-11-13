@@ -108,16 +108,16 @@ if __name__ == '__main__':
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
 
     # emotion
-    X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
-    X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
-    results['Emotion'] = emotion
+    # """X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
+    # X_movie = pd.DataFrame(X_movie)
+    # results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
+    # results['Emotion'] = emotion
 
-    print('The shape of the results is: ', results.columns)
+    # print('The shape of the results is: ', results.columns)"""
 
     # control of the emotion
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion'])
-    for i in range(5):
+    for i in range(10):
         print('The control round is: ', i)
         np.random.seed(i)
         control_times = np.random.choice(data[f'{emotion}'].index, size=len(times_peaking), replace=False)
@@ -129,8 +129,6 @@ if __name__ == '__main__':
         results_control_i['Emotion'] = f'Control_{i}_{emotion}'
         results_control = pd.concat([results_control, results_control_i], axis=0)
         print('The shape of the results_control is: ', results_control.columns, results_control.shape)
-
-    results = pd.concat([results, results_control], axis=0)
     
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
@@ -139,11 +137,11 @@ if __name__ == '__main__':
 
     movies_done = PLS_results['Movie'].unique()
     print('The movies that PLS was trained on are: ', movies_done)
-    movie_making = results['Movie'].unique()[0]
+    movie_making = results_control['Movie'].unique()[0]
     print('The movie that is being added is: ', movie_making)
 
     print('The movie was not done. It will be added')
-    PLS_results = pd.concat([PLS_results, results], axis=0)
+    PLS_results = pd.concat([PLS_results, results_control], axis=0)
     print('The shape of the PLS results is: ', PLS_results)
 
     PLS_results.to_csv(PATH_SAVE, index=False)
