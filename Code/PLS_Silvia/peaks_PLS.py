@@ -117,17 +117,18 @@ if __name__ == '__main__':
 
     # control of the emotion
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion'])
-    for i in range(15):
+    for i in range(5):
+        print('The control round is: ', i)
         np.random.seed(i)
         control_times = np.random.choice(data[f'{emotion}'].index, size=len(times_peaking), replace=False)
+        print('The control times are: ', control_times)
         
         X_movie = compute_X_withtimes(PATH, movie_name, control_times, regions = region)
         X_movie = pd.DataFrame(X_movie)
         results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 5)
         results_control_i['Emotion'] = f'Control_{i}_{emotion}'
         results_control = pd.concat([results_control, results_control_i], axis=0)
-
-    print('The shape of the results_control is: ', results_control.columns, results_control.shape)
+        print('The shape of the results_control is: ', results_control.columns, results_control.shape)
 
     results = pd.concat([results, results_control], axis=0)
     
