@@ -98,7 +98,7 @@ if __name__ == '__main__':
         sys.exit()
 
     # Load the boostrapped results from the same region ad movie
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_withcontrol_results.csv'
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSmean_withcontrol_results.csv'
     yeo_dict = loading_yeo(PATH_YEO)
 
     # emotion ----------> results
@@ -139,4 +139,4 @@ if __name__ == '__main__':
     print('The shape of the PLS results is: ', PLS_results.shape)
     PLS_results.to_csv(PATH_SAVE, index=False)
 
-    print('\n' + f"------------ The PLS for {emotion} peak, {movie_name} and {region} was performed!!! ------------ \n")
+    print('\n' + f"------------ The PLS for {emotions} peak, {movie_name} and {region} was performed!!! ------------ \n")
