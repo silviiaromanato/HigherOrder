@@ -79,7 +79,7 @@ if __name__ == '__main__':
     region = sys.argv[5]
     threshold = float(sys.argv[6])
 
-    print('\n' + ' -' * 10 + f' for {emotion} and {region} FOR: ', movie_name, ' -' * 10)
+    print('\n' + ' -' * 10 + f' for {emotion} and {region} and {threshold} FOR: ', movie_name, ' -' * 10)
 
     # Load the data
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
