@@ -70,17 +70,17 @@ if __name__ == '__main__':
     # Input arguments
     PATH = sys.argv[1]
     movie_name = sys.argv[2]
-    emotions = sys.argv[3]
+    emotions_type = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
     threshold = float(sys.argv[6])
 
-    if emotions == 'positive':
+    if emotions_type == 'positive':
         emotions = ['Love', 'Regard', 'WarmHeartedness', 'Pride', 'Satisfaction', 'Happiness']
-    elif emotions == 'negative':
+    elif emotions_type == 'negative':
         emotions = ['Sad', 'Anxiety', 'Fear', 'Guilt', 'Disgust', 'Anger']
 
-    print('\n' + ' -' * 10 + f' for {emotions} emotions and {region} and {threshold} FOR: ', movie_name, ' -' * 10)
+    print('\n' + ' -' * 10 + f' for {emotions_type} emotions and {region} and {threshold} FOR: ', movie_name, ' -' * 10)
 
     # Load the data
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
-    results['Emotion'] = emotion
+    results['Emotion'] = emotions
     results['threshold'] = threshold
     print('The shape of the results is: ', results.columns, results.head())
 
@@ -115,11 +115,11 @@ if __name__ == '__main__':
         random_number = np.random.randint(1, 1001)
         print('The control round is: ', i)
         np.random.seed(i * random_number)
-        control_times = np.random.choice(data[f'{emotion}'].index, size=len(times_peaking), replace=False)
+        control_times = np.random.choice(emo_avg.index, size=len(times_peaking), replace=False)
         X_movie = compute_X_withtimes(PATH, movie_name, control_times, regions = region)
         X_movie = pd.DataFrame(X_movie)
         results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 30, num_rounds = 1)
-        results_control_i['Emotion'] = f'Control_{i}_{emotion}'
+        results_control_i['Emotion'] = f'Control_{i}_{emotions_type}'
         results_control_i['threshold'] = threshold
         results_control = pd.concat([results_control, results_control_i], axis=0)
         print('The shape of the results_control is: ', results_control.columns, results_control.head())
@@ -139,4 +139,4 @@ if __name__ == '__main__':
     print('The shape of the PLS results is: ', PLS_results.shape)
     PLS_results.to_csv(PATH_SAVE, index=False)
 
-    print('\n' + f"------------ The PLS for {emotions} peak, {movie_name} and {region} was performed!!! ------------ \n")
+    print('\n' + f"------------ The PLS for {emotions_type} peak, {movie_name} and {region} was performed!!! ------------ \n")
