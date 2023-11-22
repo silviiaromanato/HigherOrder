@@ -48,7 +48,7 @@ def run_pls(X_movie, Y, region):
     return results
 
 def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
-    print(f'Performing BOOSTRAPPING on 20 subjects for {num_rounds} rounds')
+    print(f'Performing BOOSTRAPPING on {sample_size} subjects for {num_rounds} rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round'])
     for i in range(num_rounds):
         print('The round is: ', i)
@@ -71,79 +71,71 @@ p_star = 0.05
 columns = ['DASS_dep', 'DASS_anx', 'DASS_str',	'bas_d', 'bas_f', 'bas_r', 'bis', 'BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
 
 if __name__ == '__main__': 
+
+    # Input arguments
     PATH = sys.argv[1]
     movie_name = sys.argv[2]
     emotion = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
+    threshold = sys.argv[6]
 
     print('\n' + ' -' * 10 + f' for {emotion} and {region} FOR: ', movie_name, ' -' * 10)
 
+    # Load the data
+    Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
     labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json')
     data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
     data.columns = labels['Columns']
-    times_peaking = data[f'{emotion}'].loc[data[f'{emotion}'] > 1].index
+
+    # Find the times where the emotion is peaking
+    times_peaking = data[f'{emotion}'].loc[data[f'{emotion}'] > threshold].index
     print('The number of times where there are peaks is: ', len(times_peaking))
     if len(times_peaking) == 0:
         print('There are no peaks for this emotion. We will not perform the PLS.\n')
         sys.exit()
 
     # Load the boostrapped results from the same region ad movie
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{emotion}_{region}_withcontrol_results.csv'
-    print('The path of the PLS results is: ', PATH_SAVE, 'It exists?', os.path.exists(PATH_SAVE))
-    if os.path.exists(PATH_SAVE):
-        PLS_results = pd.read_csv(PATH_SAVE)
-        print('The shape of the PLS results is: ', PLS_results.shape)
-        movies_done = PLS_results['Movie'].unique()
-        print('The movies that PLS was trained on are: ', movies_done)
-        print('Each movie has the following number of LCs: ', PLS_results.groupby('Movie').count()['LC'])
-
-        if movie_name in movies_done:
-            print('The movie was already done. We will not perform the PLS.\n')
-            sys.exit()
-
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_withcontrol_results.csv'
     yeo_dict = loading_yeo(PATH_YEO)
 
-    # Load the Y behavioural dataset
-    Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
+    # emotion ----------> results
+    X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
+    X_movie = pd.DataFrame(X_movie)
+    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
+    results['Emotion'] = emotion
+    results['threshold'] = threshold
+    print('The shape of the results is: ', results.columns)
 
-    # emotion
-    # """X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
-    # X_movie = pd.DataFrame(X_movie)
-    # results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
-    # results['Emotion'] = emotion
-
-    # print('The shape of the results is: ', results.columns)"""
-
-    # control of the emotion
-    results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion'])
+    # control of the emotion ---------------> results_control
+    results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
     for i in range(10):
+        random_number = np.random.randint(1, 1001)
         print('The control round is: ', i)
-        np.random.seed(i)
+        np.random.seed(i * random_number)
         control_times = np.random.choice(data[f'{emotion}'].index, size=len(times_peaking), replace=False)
         print('The control times are: ', control_times)
-        
         X_movie = compute_X_withtimes(PATH, movie_name, control_times, regions = region)
         X_movie = pd.DataFrame(X_movie)
         results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 5)
         results_control_i['Emotion'] = f'Control_{i}_{emotion}'
+        results_control_i['threshold'] = threshold
         results_control = pd.concat([results_control, results_control_i], axis=0)
         print('The shape of the results_control is: ', results_control.columns, results_control.shape)
     
+    # concatentate the emotion and the control group
+    results = pd.concat([results, results_control], axis=0)
+
+    # save the results
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
     else:
-        PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion'])
+        PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
 
-    movies_done = PLS_results['Movie'].unique()
-    print('The movies that PLS was trained on are: ', movies_done)
-    movie_making = results_control['Movie'].unique()[0]
-    print('The movie that is being added is: ', movie_making)
-
-    print('The movie was not done. It will be added')
-    PLS_results = pd.concat([PLS_results, results_control], axis=0)
-    print('The shape of the PLS results is: ', PLS_results)
-
+    print('The movies that PLS was trained on are: ', PLS_results['Movie'].unique())
+    print('The movie that is being added is: ', results['Movie'].unique()[0])
+    PLS_results = pd.concat([PLS_results, results], axis=0)
+    print('The shape of the PLS results is: ', PLS_results.shape)
     PLS_results.to_csv(PATH_SAVE, index=False)
 
     print('\n' + f"------------ The PLS for {emotion} peak, {movie_name} and {region} was performed!!! ------------ \n")
