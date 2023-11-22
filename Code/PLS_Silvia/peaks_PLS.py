@@ -78,7 +78,7 @@ if __name__ == '__main__':
     emotion = sys.argv[3]
     PATH_DATA = sys.argv[4]
     region = sys.argv[5]
-    threshold = int(sys.argv[6])
+    threshold = sys.argv[6]
 
     print('\n' + ' -' * 10 + f' for {emotion} and {region} FOR: ', movie_name, ' -' * 10)
 
