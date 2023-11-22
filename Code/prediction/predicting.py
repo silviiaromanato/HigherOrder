@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import scipy.stats
 import seaborn as sns
-import umap.umap_ as umap
+import umap
 
 
 import warnings
