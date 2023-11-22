@@ -104,7 +104,7 @@ if __name__ == '__main__':
     # emotion ----------> results
     X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
+    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 2)
     results['Emotion'] = emotions_type
     results['threshold'] = threshold
     print('The shape of the results is: ', results.columns, results.head())
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         control_times = np.random.choice(emo_avg.index, size=len(times_peaking), replace=False)
         X_movie = compute_X_withtimes(PATH, movie_name, control_times, regions = region)
         X_movie = pd.DataFrame(X_movie)
-        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 30, num_rounds = 1)
+        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 30, num_rounds = 2)
         results_control_i['Emotion'] = f'Control_{i}_{emotions_type}'
         results_control_i['threshold'] = threshold
         results_control = pd.concat([results_control, results_control_i], axis=0)
