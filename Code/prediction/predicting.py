@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import scipy.stats
 import seaborn as sns
+import umap
 
 import warnings
 warnings.simplefilter('ignore', DeprecationWarning)
@@ -125,6 +126,7 @@ def plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movi
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 columns = ['BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
+UMAP = True
 
 if __name__ == '__main__': 
     PATH_MOVIE = sys.argv[1]
@@ -147,10 +149,53 @@ if __name__ == '__main__':
     # Save the results
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/prediction/'
 
+    if os.path.exists(PATH_SAVE + f'UMAP_results.csv'):
+        umap_results = pd.read_csv(PATH_SAVE + f'UMAP_results.csv')
+    else:
+        umap_results = pd.DataFrame(columns = ['behavioural', 'n_neigh', 'min_dist', 'r_pos', 'p_pos', 'r_neg', 'p_neg', 'threshold', 'movie', 'region'])
+    
+    min_distances = [0.0, 0.1, 0.25, 0.5, 0.8, 0.99]
+
+    X = compute_X(PATH_MOVIE, movie, method, regions = region)
+    behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos = cpm(X, behav['extrovercy'], threshold = 0.01)
+    r_pos, p_pos = scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0])
+    r_neg, p_neg = scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0])
+    df = pd.DataFrame({'behavioural': 'extrovercy', 'n_neigh': 0, 'min_dist': 0, 'r_pos': r_pos, 'p_pos': p_pos, 'r_neg': r_neg, 'p_neg': p_neg, 'threshold': 0.01, 'movie': movie, 'region': region}, index=[0])
+    umap_results = pd.concat([umap_results, df], ignore_index=True)
+
+    if UMAP:
+        for number_neigh in [2, 5, 10, 20, 40, 60, 80, 100, 200]:
+            for dist in min_distances:
+                print(f'\nComputing UMAP for {movie} and {region} and {method} and {number_neigh} and {dist}')
+                reducer = umap.UMAP(n_neighbors=number_neigh, min_dist=dist)
+                X = reducer.fit_transform(X)
+                print(f'UMAP performed on {movie} and {region} and {method}')
+
+                behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos = cpm(X, behav['extrovercy'], threshold = 0.01)
+                added = False
+                if behav_pred_neg.shape[0] != 30:
+                    added = True
+                    behav_pred_neg = np.concatenate((behav_pred_neg, np.zeros((30-behav_pred_neg.shape[0], 1))))
+                if behav_pred_pos.shape[0] != 30:
+                    added = True
+                    behav_pred_pos = np.concatenate((behav_pred_pos, np.zeros((30-behav_pred_pos.shape[0], 1))))
+                r_pos, p_pos = scipy.stats.pearsonr(all_behav, behav_pred_pos[:, 0])
+                r_neg, p_neg = scipy.stats.pearsonr(all_behav, behav_pred_neg[:, 0])
+
+                df = pd.DataFrame({'behavioural': 'extrovercy', 'n_neigh': number_neigh, 'min_dist': dist, 'r_pos': r_pos, 'p_pos': p_pos, 'r_neg': r_neg, 'p_neg': p_neg, 'threshold': 0.01, 'movie': movie, 'region': region}, index=[0])
+                umap_results = pd.concat([umap_results, df], ignore_index=True)
+
+    umap_results.to_csv(PATH_SAVE + f'UMAP_results.csv', index=False)
+
+    # exit 
+    sys.exit()
+            
+
+
     for behavioural in behav.keys():
         for threshold in [0.1, 0.05, 0.01]:    
             print(f'\nComputing CPM for {movie} and {region} and {method} and {threshold} and {behavioural}')
-            X = compute_X(PATH_MOVIE, movie, method, regions = region)
+            
             behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos = cpm(X, behav[behavioural], threshold)
 
             # SAVE THE RESULTS
@@ -190,7 +235,6 @@ if __name__ == '__main__':
             df_results = pd.concat([df_results, df], ignore_index=True)
             df_results.to_csv(PATH_SAVE + f'CPM_results.csv', index=False)
 
-            # PLOT
             plot_cpm(behav_pred_pos, behav_pred_neg, all_behav, mean_neg, mean_pos, movie, region, behavioural, threshold)
 
     
