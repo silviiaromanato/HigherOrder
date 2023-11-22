@@ -59,7 +59,6 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
         pls = pd.DataFrame(pls)
         pls['bootstrap_round'] = i
         results = pd.concat([results, pls], axis=0)
-        print('The results are: ', results.head())
     return results
 
 nb = 30              # Number of participants
@@ -105,23 +104,22 @@ if __name__ == '__main__':
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
     results['Emotion'] = emotion
     results['threshold'] = threshold
-    print('The shape of the results is: ', results.columns)
+    print('The shape of the results is: ', results.columns, results.head())
 
     # control of the emotion ---------------> results_control
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
-    for i in range(10):
+    for i in range(1):
         random_number = np.random.randint(1, 1001)
         print('The control round is: ', i)
         np.random.seed(i * random_number)
         control_times = np.random.choice(data[f'{emotion}'].index, size=len(times_peaking), replace=False)
-        print('The control times are: ', control_times)
         X_movie = compute_X_withtimes(PATH, movie_name, control_times, regions = region)
         X_movie = pd.DataFrame(X_movie)
-        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 5)
+        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 30, num_rounds = 1)
         results_control_i['Emotion'] = f'Control_{i}_{emotion}'
         results_control_i['threshold'] = threshold
         results_control = pd.concat([results_control, results_control_i], axis=0)
-        print('The shape of the results_control is: ', results_control.columns, results_control.shape)
+        print('The shape of the results_control is: ', results_control.columns, results_control.head())
     
     # concatentate the emotion and the control group
     results = pd.concat([results, results_control], axis=0)
