@@ -93,7 +93,9 @@ def compute_X_concat(PATH, times, emotion, threshold, regions = None):
 
             # Read the data from the txt file and select the times where the emotion is peaking
             data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep=' ', header=None)
+            print('The shape of the data_features is: ', data_features.shape)
             data_features = data_features.iloc[times_peaking,:]
+            print('The shape of the data_features is: ', data_features.shape)
 
             list_df.append(data_features)
         data_features_concat = pd.concat(list_df, axis=0)
