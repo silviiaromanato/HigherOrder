@@ -7,31 +7,6 @@ import sys
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 
-def compute_X_withtimes(PATH, movie, times, regions = None):
-
-    yeo_dict = loading_yeo(PATH_YEO)
-    yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
-    N = 114 if regions == 'ALL' else len(yeo_indices)
-    list_subjects = []
-    for i in glob.glob(PATH+'*'):
-        if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
-            list_subjects.append(i)
-    mtx_upper_triangular = []
-    for i, PATH_SUBJ in enumerate(list_subjects):
-        data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
-        data_feature = data_feature.iloc[times,:]
-        if regions == 'ALL':
-            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
-        else:
-            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
-        upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
-        mtx_upper_triangular.append(upper_triangular)
-    mtx_upper_triangular = np.array(mtx_upper_triangular)
-    X = pd.DataFrame(mtx_upper_triangular)
-    print('The shape of X for BOLD is: ', X.shape)
-
-    return X
-
 def run_pls(X_movie, Y, region):
     res = run_decomposition(X_movie, Y)
     res_permu = permutation(res, nPer, seed, sl)
@@ -165,7 +140,7 @@ if __name__ == '__main__':
     yeo_dict = loading_yeo(PATH_YEO)
 
     # emotion ----------> results
-    X_movie = compute_X_concat(PATH, emotion, threshold, control=  False)
+    X_movie = compute_X_concat(PATH, emotion, threshold, control= False)
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
     results['Emotion'] = emotion
@@ -177,7 +152,7 @@ if __name__ == '__main__':
     for i in range(10):
         X_movie = compute_X_concat(PATH, emotion, threshold, control=True, seed = 10 * i)
         X_movie = pd.DataFrame(X_movie)
-        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 30, num_rounds = 10)
+        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 30, num_rounds = 5)
         results_control_i['Emotion'] = f'Control_{i}_{emotion}'
         results_control_i['threshold'] = threshold
         results_control = pd.concat([results_control, results_control_i], axis=0)
