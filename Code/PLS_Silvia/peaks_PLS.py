@@ -57,7 +57,7 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
         results = pd.concat([results, pls], axis=0)
     return results
 
-def compute_X_concat(PATH, times, emotion, threshold, regions = None):
+def compute_X_concat(PATH, emotion, threshold, regions = None, control = False, seed = None):
 
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
 
@@ -82,6 +82,7 @@ def compute_X_concat(PATH, times, emotion, threshold, regions = None):
     for subject in range(data_subjects.shape[0]):
         list_df = []
         for movie in range(data_subjects.shape[1]):
+            print('The subject is: ', subject, ' and the movie is: ', movie)
             # Read the labels and the data from the emotions
             labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
             data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
@@ -89,6 +90,10 @@ def compute_X_concat(PATH, times, emotion, threshold, regions = None):
 
             # Find the times where the emotion is peaking
             times_peaking = data[f'{emotion}'].loc[data[f'{emotion}'] > threshold].index
+            if control == True:
+                np.random.seed(seed)
+                control_times = np.random.choice(data[f'{emotion}'].index, size=len(times_peaking), replace=False)
+                times_peaking = control_times
 
             # Read the data from the txt file and select the times where the emotion is peaking
             data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep=' ', header=None)
@@ -100,7 +105,6 @@ def compute_X_concat(PATH, times, emotion, threshold, regions = None):
 
     mtx_upper_triangular = []
     for data_feature in list_datafeatures:
-        data_feature = data_feature.iloc[times,:]
         if regions == 'ALL':
             connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
         else:
@@ -161,7 +165,7 @@ if __name__ == '__main__':
     yeo_dict = loading_yeo(PATH_YEO)
 
     # emotion ----------> results
-    X_movie = compute_X_concat(PATH, times_peaking, emotion, threshold, regions = region)
+    X_movie = compute_X_concat(PATH, times_peaking, emotion, threshold, regions = region, control=  False)
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
     results['Emotion'] = emotion
@@ -171,11 +175,7 @@ if __name__ == '__main__':
     # control of the emotion ---------------> results_control
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
     for i in range(10):
-        random_number = np.random.randint(1, 1001)
-        print('The control round is: ', i)
-        np.random.seed(i * random_number)
-        control_times = np.random.choice(data[f'{emotion}'].index, size=len(times_peaking), replace=False)
-        X_movie = compute_X_withtimes(PATH, movie_name, control_times, regions = region)
+        X_movie = compute_X_concat(PATH, emotion, threshold, regions = region, control=True, seed = 10 * i)
         X_movie = pd.DataFrame(X_movie)
         results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 30, num_rounds = 10)
         results_control_i['Emotion'] = f'Control_{i}_{emotion}'
