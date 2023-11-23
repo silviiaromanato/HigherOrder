@@ -83,26 +83,20 @@ def compute_X_concat(PATH, times, emotion, threshold, regions = None):
         list_df = []
         for movie in range(data_subjects.shape[1]):
             # Read the labels and the data from the emotions
-            print('The movie is: ', list_movies[movie])
             labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
             data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
             data.columns = labels['Columns']
 
             # Find the times where the emotion is peaking
             times_peaking = data[f'{emotion}'].loc[data[f'{emotion}'] > threshold].index
-            print('The number of times where there are peaks is: ', len(times_peaking))
 
             # Read the data from the txt file and select the times where the emotion is peaking
             data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep=' ', header=None)
-            print('The shape of the data_features is: ', data_features.shape)
             data_features = data_features.iloc[times_peaking,:]
-            print('The shape of the data_features is: ', data_features.shape)
 
             list_df.append(data_features)
         data_features_concat = pd.concat(list_df, axis=0)
         list_datafeatures.append(data_features_concat)
-    print('The length of list_datafeatures is: ', len(list_datafeatures))
-    print('The shape of list_datafeatures[0] is: ', list_datafeatures[0].shape)
 
     mtx_upper_triangular = []
     for data_feature in list_datafeatures:
