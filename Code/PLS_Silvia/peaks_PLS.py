@@ -70,7 +70,6 @@ def compute_X_concat(PATH, list_movies, times, regions = None):
             if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 list_X.append(i)
         dict_movies[movie] = list_X
-
     print('The length of dict_movies is: ', len(dict_movies), dict_movies)
 
     # create a dataframe from the dictionary
@@ -88,11 +87,10 @@ def compute_X_concat(PATH, list_movies, times, regions = None):
         list_datafeatures.append(data_features_concat)
     print('The length of list_datafeatures is: ', len(list_datafeatures))
     print('The shape of list_datafeatures[0] is: ', list_datafeatures[0].shape)
-    
 
     mtx_upper_triangular = []
     for data_feature in list_datafeatures:
-        # data_feature = data_feature.iloc[times,:]
+        data_feature = data_feature.iloc[times,:]
         if regions == 'ALL':
             connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
         else:
@@ -153,7 +151,7 @@ if __name__ == '__main__':
     yeo_dict = loading_yeo(PATH_YEO)
 
     # emotion ----------> results
-    X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
+    X_movie = compute_X_concat(PATH, times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
     results['Emotion'] = emotion
