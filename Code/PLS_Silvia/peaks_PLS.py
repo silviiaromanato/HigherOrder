@@ -57,7 +57,7 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
         results = pd.concat([results, pls], axis=0)
     return results
 
-def compute_X_concat(PATH, emotion, threshold, regions = None, control = False, seed = None):
+def compute_X_concat(PATH, emotion, threshold, regions = 'ALL', control = False, seed = None):
 
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
 
@@ -165,7 +165,7 @@ if __name__ == '__main__':
     yeo_dict = loading_yeo(PATH_YEO)
 
     # emotion ----------> results
-    X_movie = compute_X_concat(PATH, times_peaking, emotion, threshold, regions = region, control=  False)
+    X_movie = compute_X_concat(PATH, emotion, threshold, control=  False)
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
     results['Emotion'] = emotion
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     # control of the emotion ---------------> results_control
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
     for i in range(10):
-        X_movie = compute_X_concat(PATH, emotion, threshold, regions = region, control=True, seed = 10 * i)
+        X_movie = compute_X_concat(PATH, emotion, threshold, control=True, seed = 10 * i)
         X_movie = pd.DataFrame(X_movie)
         results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 30, num_rounds = 10)
         results_control_i['Emotion'] = f'Control_{i}_{emotion}'
