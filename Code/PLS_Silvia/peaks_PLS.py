@@ -72,13 +72,12 @@ def compute_X_concat(PATH, times, regions = None):
             if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
                 list_X.append(i)
         dict_movies[movie] = list_X
-    print('The length of dict_movies is: ', len(dict_movies), dict_movies)
 
-    # create a dataframe from the dictionary
+    # Create a df subject x movies where each cell is a path to the txt file
     data_subjects = pd.DataFrame.from_dict(dict_movies) # shape (30, 15)
     data_subjects.reset_index(drop=True, inplace=True)
-    print('The shape of data_subjects is: ', data_subjects.shape, data_subjects.head())
 
+    # Create a list of dataframes where each dataframe is a subject x movie
     list_datafeatures = []
     for subject in range(data_subjects.shape[0]):
         list_df = []
