@@ -57,8 +57,10 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
         results = pd.concat([results, pls], axis=0)
     return results
 
-def compute_X_concat(PATH, list_movies, times, regions = None):
-    
+def compute_X_concat(PATH, times, regions = None):
+
+    list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
+
     yeo_dict = loading_yeo(PATH_YEO)
     yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
     N = 114 if regions == 'ALL' else len(yeo_indices)
@@ -151,7 +153,7 @@ if __name__ == '__main__':
     yeo_dict = loading_yeo(PATH_YEO)
 
     # emotion ----------> results
-    X_movie = compute_X_concat(PATH, times_peaking, regions = region)
+    X_movie = compute_X_concat(PATH, times = times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
     results['Emotion'] = emotion
