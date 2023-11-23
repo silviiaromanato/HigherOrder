@@ -82,7 +82,7 @@ def compute_X_concat(PATH, emotion, threshold, regions = 'ALL', control = False,
     for subject in range(data_subjects.shape[0]):
         list_df = []
         for movie in range(data_subjects.shape[1]):
-            print('The subject is: ', subject, ' and the movie is: ', movie)
+
             # Read the labels and the data from the emotions
             labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
             data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
