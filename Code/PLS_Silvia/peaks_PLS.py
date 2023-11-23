@@ -57,7 +57,7 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
         results = pd.concat([results, pls], axis=0)
     return results
 
-def compute_X_concat(PATH, times, regions = None):
+def compute_X_concat(PATH, times, emotion, threshold, regions = None):
 
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
 
@@ -82,7 +82,19 @@ def compute_X_concat(PATH, times, regions = None):
     for subject in range(data_subjects.shape[0]):
         list_df = []
         for movie in range(data_subjects.shape[1]):
+            # Read the labels and the data from the emotions
+            labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie}_stim.json')
+            data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie}_stim.tsv', sep = '\t', header = None)
+            data.columns = labels['Columns']
+
+            # Find the times where the emotion is peaking
+            times_peaking = data[f'{emotion}'].loc[data[f'{emotion}'] > threshold].index
+            print('The number of times where there are peaks is: ', len(times_peaking))
+
+            # Read the data from the txt file and select the times where the emotion is peaking
             data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep=' ', header=None)
+            data_features = data_features.iloc[times_peaking,:]
+
             list_df.append(data_features)
         data_features_concat = pd.concat(list_df, axis=0)
         list_datafeatures.append(data_features_concat)
@@ -152,7 +164,7 @@ if __name__ == '__main__':
     yeo_dict = loading_yeo(PATH_YEO)
 
     # emotion ----------> results
-    X_movie = compute_X_concat(PATH, times = times_peaking, regions = region)
+    X_movie = compute_X_concat(PATH, times_peaking, emotion, threshold)
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
     results['Emotion'] = emotion
