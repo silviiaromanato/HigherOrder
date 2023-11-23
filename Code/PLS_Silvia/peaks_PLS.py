@@ -37,7 +37,7 @@ def run_pls(X_movie, Y, region):
     res_permu = permutation(res, nPer, seed, sl)
     print('The pvalues are: ', res_permu['P_val'])
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
-    results['Movie']=movie_name
+    results['Movie']='concatenated'
     results['LC']=np.arange(1, results.shape[0]+1)
     results['Region'] = region
     results['Covariance Explained'] = results['Covariance Explained'].astype(float)
@@ -142,10 +142,10 @@ if __name__ == '__main__':
 
     # Input arguments
     PATH = sys.argv[1]
-    emotion = sys.argv[3]
-    PATH_DATA = sys.argv[4]
-    region = sys.argv[5]
-    threshold = float(sys.argv[6])
+    emotion = sys.argv[2]
+    PATH_DATA = sys.argv[3]
+    region = sys.argv[4]
+    threshold = float(sys.argv[5])
 
     print('\n' + ' -' * 10 + f' for {emotion} and {region} and {threshold} FOR', ' -' * 10)
 
@@ -161,7 +161,7 @@ if __name__ == '__main__':
         sys.exit()
 
     # Load the boostrapped results from the same region ad movie
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_withcontrol_results.csv'
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_concat.csv'
     yeo_dict = loading_yeo(PATH_YEO)
 
     # emotion ----------> results
@@ -192,10 +192,8 @@ if __name__ == '__main__':
     else:
         PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
 
-    print('The movies that PLS was trained on are: ', PLS_results['Movie'].unique())
-    print('The movie that is being added is: ', results['Movie'].unique()[0])
     PLS_results = pd.concat([PLS_results, results], axis=0)
     print('The shape of the PLS results is: ', PLS_results.shape)
     PLS_results.to_csv(PATH_SAVE, index=False)
 
-    print('\n' + f"------------ The PLS for {emotion} peak, {movie_name} and {region} was performed!!! ------------ \n")
+    print('\n' + f"------------ The PLS for {emotion} peak, all movies concatenated and {region} was performed!!! ------------ \n")
