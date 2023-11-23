@@ -104,7 +104,7 @@ if __name__ == '__main__':
     # emotion ----------> results
     X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 2)
+    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
     results['Emotion'] = emotions_type
     results['threshold'] = threshold
     print('The shape of the results is: ', results.columns, results.head())
