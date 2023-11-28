@@ -113,6 +113,11 @@ sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 columns = ['DASS_dep', 'DASS_anx', 'DASS_str',	'bas_d', 'bas_f', 'bas_r', 'bis', 'BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
 
+to_do = {
+    'control': True, 
+    'emo': False
+}
+
 if __name__ == '__main__': 
 
     # Input arguments
@@ -124,14 +129,14 @@ if __name__ == '__main__':
 
     print('\n' + ' -' * 10 + f' for {emotion} and {region} and {threshold} FOR', ' -' * 10)
 
-    # Load the data
+    # Load the data Y and concatenated the emotions
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
     data_concat = concat_emo()
 
     # Find the times where the emotion is peaking
     times_peaking = data_concat[f'{emotion}'].loc[data_concat[f'{emotion}'] > threshold].index
     print('The number of times where there are peaks is: ', len(times_peaking))
-    if len(times_peaking) == 0:
+    if len(times_peaking) <= 10:
         print('There are no peaks for this emotion. We will not perform the PLS.\n')
         sys.exit()
 
@@ -139,24 +144,30 @@ if __name__ == '__main__':
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_concat.csv'
     yeo_dict = loading_yeo(PATH_YEO)
 
-    # emotion ----------> results
-    X_movie = compute_X_concat(PATH, emotion, threshold, control= False)
-    X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
-    results['Emotion'] = emotion
-    results['threshold'] = threshold
-    print('The shape of the results is: ', results.columns, results.head())
-
-    # control of the emotion ---------------> results_control
-    results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
-    for i in range(10):
-        X_movie = compute_X_concat(PATH, emotion, threshold, control=True, seed = 10 * i)
+    if to_do['emo'] == True:
+        # emotion ----------> results
+        X_movie = compute_X_concat(PATH, emotion, threshold, control= False)
         X_movie = pd.DataFrame(X_movie)
-        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 30, num_rounds = 5)
-        results_control_i['Emotion'] = f'Control_{i}_{emotion}'
-        results_control_i['threshold'] = threshold
-        results_control = pd.concat([results_control, results_control_i], axis=0)
-        print('The shape of the results_control is: ', results_control.columns, results_control.head())
+        results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
+        results['Emotion'] = emotion
+        results['threshold'] = threshold
+        print('The shape of the results is: ', results.columns, results.head())
+    else:
+        results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
+
+    if to_do['control'] == True:
+        # control of the emotion ---------------> results_controls
+        results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
+        for i in range(100):
+            X_movie = compute_X_concat(PATH, emotion, threshold, control=True, seed = 10 * i)
+            X_movie = pd.DataFrame(X_movie)
+            results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 30, num_rounds = 1)
+            results_control_i['Emotion'] = f'Control_{i}_{emotion}'
+            results_control_i['threshold'] = threshold
+            results_control = pd.concat([results_control, results_control_i], axis=0)
+            print('The shape of the results_control is: ', results_control.columns, results_control.head())
+    else:
+        results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
     
     # concatentate the emotion and the control group
     results = pd.concat([results, results_control], axis=0)
@@ -164,6 +175,10 @@ if __name__ == '__main__':
     # save the results
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
+        if to_do['control'] == True:
+            PLS_results = PLS_results[~PLS_results['Emotion'].str.startswith('Control')]
+        if to_do['emo'] == True:
+            PLS_results = PLS_results[PLS_results['Emotion'].str.startswith('Control')]
     else:
         PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
 
