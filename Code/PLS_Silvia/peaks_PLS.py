@@ -7,9 +7,9 @@ from compute import *
 from helpers_PLS import *
 import sys 
 
-os.chdir('/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Code/')
+os.chdir('/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Code/features')
 print(os.getcwd())
-from features.helper_corr_mtx import *
+from helper_corr_mtx import *
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 
