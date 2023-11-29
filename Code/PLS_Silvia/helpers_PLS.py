@@ -428,9 +428,7 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
                                             columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 
                                                               'average_brightness_right', 'average_saturation_right', 'average_hue_right'], 
                                             cluster = True)
-                print(features.head())
                 data = features[emotions]
-                print(data.head())
 
             times_peaking = data.loc[data > threshold].index
             if control == True:
