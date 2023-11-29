@@ -607,7 +607,8 @@ def extract_corrmat_emo(emo_path_folder,film_ID):
     return corrmat_positive, corrmat_negative, corrmat_all_emo
 
 def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectralflux', 'rms', 'zcrs'], 
-                             columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left'],
+                             columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 
+                                               'average_brightness_right', 'average_saturation_right', 'average_hue_right'],
                              cluster = True
                              ):
     if cluster == cluster:
@@ -645,15 +646,14 @@ def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectra
     features = pd.concat([df_images, df_sound], axis = 1)
     print('The shape of the features is: ', features.shape, 'the columns are:', features.columns)
 
-    if cluster == False:
-        # compute the mean of the left and right features
-        features['average_brightness'] = (features['average_brightness_left'] + features['average_brightness_right']) / 2
-        features['average_saturation'] = (features['average_saturation_left'] + features['average_saturation_right']) / 2
-        features['average_hue'] = (features['average_hue_left'] + features['average_hue_right']) / 2
+    # compute the mean of the left and right features
+    features['average_brightness'] = (features['average_brightness_left'] + features['average_brightness_right']) / 2
+    features['average_saturation'] = (features['average_saturation_left'] + features['average_saturation_right']) / 2
+    features['average_hue'] = (features['average_hue_left'] + features['average_hue_right']) / 2
 
-        # drop the left and right features
-        features.drop(columns = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], inplace = True)
-        
+    # drop the left and right features
+    features.drop(columns = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], inplace = True)
+    
     return features
 
 def extract_features_concat(cluster = True):
