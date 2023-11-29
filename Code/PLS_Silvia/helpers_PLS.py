@@ -446,6 +446,9 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
     return X
 
 def run_pls(X_movie, Y, region):
+    nPer = 1000         # Number of permutations for significance testing
+    seed = 10           # Seed for reproducibility
+    sl = 0.05          # Signficant level for statistical testing
     res = run_decomposition(X_movie, Y)
     res_permu = permutation(res, nPer, seed, sl)
     print('The pvalues are: ', res_permu['P_val'])

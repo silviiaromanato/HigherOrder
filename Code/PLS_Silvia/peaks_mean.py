@@ -6,6 +6,7 @@ from helpers_PLS import *
 import sys 
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
+PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSmean_results.csv'
 
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
@@ -45,7 +46,6 @@ if __name__ == '__main__':
         sys.exit()
 
     # Load the boostrapped results from the same region ad movie
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSmean_results.csv'
     yeo_dict = loading_yeo(PATH_YEO)
 
     # emotion ----------> results
