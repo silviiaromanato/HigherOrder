@@ -8,74 +8,7 @@ from helpers_PLS import *
 import sys 
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
-
-def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectralflux', 'rms', 'zcrs'], 
-                             columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left'],
-                             cluster = True
-                             ):
-    if cluster == True:
-        PATH_EMO = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/'
-    else:
-        PATH_EMO = '/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/'
-    length = extract_corrmat_allregressors(PATH_EMO, movie_name).shape[0]
-
-    movie_name_with_ = re.sub(r"(\w)([A-Z])", r"\1_\2", movie_name)
-    if cluster == True:
-        df_sound = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
-        df_images = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
-    else: 
-        df_sound = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
-        df_images = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
-    window_size1 = df_images.shape[0] // length
-    images_mean = np.apply_along_axis(lambda x: np.convolve(x, np.ones(window_size1), mode='valid') / window_size1, axis=0, arr=df_images)
-
-    window_size2 = df_sound.shape[0] // length
-    sound_mean = np.apply_along_axis(lambda x: np.convolve(x, np.ones(window_size2), mode='valid') / window_size2, axis=0, arr=df_sound)
-
-    # Select elements to represent the initial arrays
-    selected_indices1 = np.linspace(0, len(images_mean) - 1, length, dtype=int)
-    selected_indices2 = np.linspace(0, len(sound_mean) - 1, length, dtype=int)
-    df_images = pd.DataFrame(images_mean[selected_indices1])
-    df_sound = pd.DataFrame(sound_mean[selected_indices2])
-
-    # set the column names
-    df_images.columns = columns_images
-    df_sound.columns = columns
-
-    # concat the two dataframes 
-    df_images.reset_index(drop=True, inplace=True)
-    df_sound.reset_index(drop=True, inplace=True)
-    features = pd.concat([df_images, df_sound], axis = 1)
-
-    # perform z-score normalization
-    # features = (features - features.mean()) / features.std()
-
-    return features
-
-def extract_features_concat():
-    list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain'] 
-    concatenated_features = pd.DataFrame()
-    for movie in list_movies:
-        features = extract_features(movie, columns = ['spectralflux', 'rms', 'zcrs'], 
-                                            columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'],
-                                                cluster = False
-                                                )
-        
-        # compute the mean of the left and right features
-        features['average_brightness'] = (features['average_brightness_left'] + features['average_brightness_right']) / 2
-        features['average_saturation'] = (features['average_saturation_left'] + features['average_saturation_right']) / 2
-        features['average_hue'] = (features['average_hue_left'] + features['average_hue_right']) / 2
-
-        # drop the left and right features
-        features.drop(columns = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], inplace = True)
-        
-        concatenated_features = pd.concat([concatenated_features, features], axis = 0)
-        concatenated_features.reset_index(drop=True, inplace=True)
-
-    # perform z-score normalization
-    concatenated_features = (concatenated_features - concatenated_features.mean()) / concatenated_features.std()
-
-    return concatenated_features
+PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_concat.csv'
 
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
@@ -112,14 +45,13 @@ if __name__ == '__main__':
         sys.exit()
 
     # Load the boostrapped results from the same region ad movie
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_concat.csv'
     yeo_dict = loading_yeo(PATH_YEO)
 
     print('We are doing the peak part')
     # generic feature ----------> results
     X_movie = compute_X_concat(PATH, feature, threshold, control= False)
     X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 10)
+    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 20)
     results['Feature'] = feature
     results['threshold'] = threshold
 
