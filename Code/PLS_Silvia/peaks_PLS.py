@@ -47,6 +47,7 @@ if __name__ == '__main__':
     yeo_dict = loading_yeo(PATH_YEO)
 
     if to_do['emo'] == True:
+        print('We are doing the emotion peak')
         # emotion ----------> results
         X_movie = compute_X_concat(PATH, emotion, threshold, control= False)
         X_movie = pd.DataFrame(X_movie)
@@ -58,6 +59,7 @@ if __name__ == '__main__':
         results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
 
     if to_do['control'] == True:
+        print('We are doing the control')
         # control of the emotion ---------------> results_controls
         results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
         for i in range(100):
@@ -67,7 +69,6 @@ if __name__ == '__main__':
             results_control_i['Emotion'] = f'Control_{i}_{emotion}'
             results_control_i['threshold'] = threshold
             results_control = pd.concat([results_control, results_control_i], axis=0)
-            print('The shape of the results_control is: ', results_control.columns, results_control.head())
     else:
         results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
     
@@ -79,14 +80,13 @@ if __name__ == '__main__':
         PLS_results = pd.read_csv(PATH_SAVE)
         # take only the results for the region and emotion and threshold
         PLS_results = PLS_results.loc[(PLS_results['Emotion'] == emotion) & (PLS_results['threshold'] == threshold) & (PLS_results['Region'] == region)]
-        print('The shape of the PLS results is: ', PLS_results.shape)
+        print('The shape of the PLS results before removing the control for the task is: ', PLS_results.shape)
         PLS_results = PLS_results.loc[~PLS_results['Emotion'].str.contains('Control')]
         print('The shape of the PLS results is: ', PLS_results.shape)
     else:
         PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
 
     PLS_results = pd.concat([PLS_results, results], axis=0)
-    print('The shape of the PLS results is: ', PLS_results.shape)
     PLS_results.to_csv(PATH_SAVE, index=False)
 
     print('\n' + f"------------ The PLS for {emotion} peak, all movies concatenated and {region} was performed!!! ------------ \n")
