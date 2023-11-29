@@ -382,7 +382,7 @@ def loading_yeo(path=PATH_YEO):
     yeoROI_dict['SC'] = np.arange(100, 114)
     return(yeoROI_dict)
 
-def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False, seed = 1, mean = False):
+def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False, seed = 1, todo = 'emotions', mean = False):
 
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
 
@@ -410,16 +410,24 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
         list_df = []
 
         for movie in range(data_subjects.shape[1]):
-            # Read the labels and the data from the emotions
-            labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
-            data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
-            data.columns = labels['Columns']
+            if todo == 'emotions':
+                # Read the labels and the data from the emotions
+                labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
+                data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
+                data.columns = labels['Columns']
 
-            # Take the time peaks
-            if mean == True: # take the mean of the emotions if mean == True
-                data = data[emotions].mean(axis=1)
-            else:
-                data = data[emotions]
+                # Take the time peaks
+                if mean == True: # take the mean of the emotions if mean == True
+                    data = data[emotions].mean(axis=1)
+                else:
+                    data = data[emotions]
+
+            elif todo == 'features_extracted':
+                features = extract_features(movie, columns = ['spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left'], cluster = True)
+                print(features.head())
+                data = features[emotions]
+                print(data.head())
+
             times_peaking = data.loc[data > threshold].index
             if control == True:
                 np.random.seed(seed)
@@ -635,9 +643,14 @@ def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectra
     df_sound.reset_index(drop=True, inplace=True)
     features = pd.concat([df_images, df_sound], axis = 1)
 
-    # perform z-score normalization
-    # features = (features - features.mean()) / features.std()
+    # compute the mean of the left and right features
+    features['average_brightness'] = (features['average_brightness_left'] + features['average_brightness_right']) / 2
+    features['average_saturation'] = (features['average_saturation_left'] + features['average_saturation_right']) / 2
+    features['average_hue'] = (features['average_hue_left'] + features['average_hue_right']) / 2
 
+    # drop the left and right features
+    features.drop(columns = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], inplace = True)
+    
     return features
 
 def extract_features_concat(cluster = True):
@@ -648,14 +661,6 @@ def extract_features_concat(cluster = True):
                                             columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'],
                                                 cluster = cluster
                                                 )
-        
-        # compute the mean of the left and right features
-        features['average_brightness'] = (features['average_brightness_left'] + features['average_brightness_right']) / 2
-        features['average_saturation'] = (features['average_saturation_left'] + features['average_saturation_right']) / 2
-        features['average_hue'] = (features['average_hue_left'] + features['average_hue_right']) / 2
-
-        # drop the left and right features
-        features.drop(columns = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], inplace = True)
         
         concatenated_features = pd.concat([concatenated_features, features], axis = 0)
         concatenated_features.reset_index(drop=True, inplace=True)
