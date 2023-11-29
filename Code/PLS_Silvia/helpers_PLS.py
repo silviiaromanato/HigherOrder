@@ -431,7 +431,6 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
                 data = features[emotions]
 
             times_peaking = data.loc[data > threshold].index
-            print(f'The number of times peaking for {emotions} is: ', len(times_peaking))
             if times_peaking.shape[0] <= 10:
                 continue
 
