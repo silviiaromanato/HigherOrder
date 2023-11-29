@@ -60,17 +60,17 @@ if __name__ == '__main__':
     # generic feature ----------> results
     X_movie = compute_X_concat(PATH, feature, threshold, control= False, todo = todo, mean = False)
     X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 2)
+    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 50)
     results['Feature'] = feature
     results['threshold'] = threshold
 
     print('We are doing the control')
     # control of the generic feature ---------------> results_controls
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Feature', 'threshold'])
-    for i in range(2):
+    for i in range(50):
         X_movie = compute_X_concat(PATH, feature, threshold, control=True, seed = 5 * i, todo = todo, mean = False)
         X_movie = pd.DataFrame(X_movie)
-        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 1)
+        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 5)
         results_control_i['Feature'] = f'Control_{i}_{feature}'
         results_control_i['threshold'] = threshold
         results_control = pd.concat([results_control, results_control_i], axis=0)
