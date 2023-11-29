@@ -384,7 +384,6 @@ def loading_yeo(path=PATH_YEO):
     return(yeoROI_dict)
 
 def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False, seed = 1, todo = 'emotions', mean = False):
-    print('Todo is : ', todo)
 
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
 
