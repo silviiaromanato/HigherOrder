@@ -411,6 +411,7 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
     for subject in range(data_subjects.shape[0]):
         list_df = []
 
+        count_times = 0
         for movie in range(data_subjects.shape[1]):
             if todo == 'emotions':
                 # Read the labels and the data from the emotions
@@ -431,6 +432,7 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
                 data = features[emotions]
 
             times_peaking = data.loc[data > threshold].index
+            count_times += len(times_peaking)
             if times_peaking.shape[0] <= 10:
                 continue
 
