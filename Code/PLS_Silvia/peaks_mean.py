@@ -19,10 +19,10 @@ if __name__ == '__main__':
 
     # Input arguments
     PATH = sys.argv[1]
-    emotions_type = sys.argv[3]
-    PATH_DATA = sys.argv[4]
-    region = sys.argv[5]
-    threshold = float(sys.argv[6])
+    emotions_type = sys.argv[2]
+    PATH_DATA = sys.argv[3]
+    region = sys.argv[4]
+    threshold = float(sys.argv[5])
 
     print('\n' + ' -' * 10 + f' for {emotions_type} emotions and {region} and {threshold} FOR: concatenated movies',' -' * 10)
 
