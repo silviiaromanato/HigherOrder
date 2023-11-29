@@ -54,7 +54,7 @@ def boostrap_subjects(X_movie, Y, sample_size = 20, num_rounds = 100):
         results = pd.concat([results, pls], axis=0)
     return results
 
-def compute_X(PATH, list_movies, regions = None):
+def compute_X_concat(PATH, list_movies, regions = None):
     
     yeo_dict = loading_yeo(PATH_YEO)
     yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
@@ -99,11 +99,11 @@ def compute_X(PATH, list_movies, regions = None):
     return X
 
 
-nb = 30              # Number of participants
+nb = 30             # Number of participants
 nPer = 1000         # Number of permutations for significance testing
 nBoot = 1000        # Number of bootstrap iterations
 seed = 10           # Seed for reproducibility
-sl = 0.05          # Signficant level for statistical testing
+sl = 0.05           # Signficant level for statistical testing
 p_star = 0.05
 columns = ['DASS_dep', 'DASS_anx', 'DASS_str',	'bas_d', 'bas_f', 'bas_r', 'bis', 'BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
 
@@ -112,7 +112,6 @@ if __name__ == '__main__':
     PATH_DATA = sys.argv[2]
     region = sys.argv[3]
     number_of_rounds = sys.argv[4]
-    method = "bold"
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Rest', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLS_bold_{region}_concatmovies.csv'
     print('The path of the PLS results is: ', PATH_SAVE, 'It exists?', os.path.exists(PATH_SAVE))
@@ -127,4 +126,4 @@ if __name__ == '__main__':
     print('The head of PLS_results is: ', PLS_results.shape)
     PLS_results.to_csv(PATH_SAVE, index=False)
 
-    print('\n' + f"------------ The PLS for {method} and {region} for all the movies concatenated was performed!!! ------------")
+    print('\n' + f"------------ The PLS for bold and {region} for all the movies concatenated was performed!!! ------------")
