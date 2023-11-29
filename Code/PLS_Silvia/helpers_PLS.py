@@ -424,7 +424,7 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
                     data = data[emotions]
 
             elif todo == 'features_extracted':
-                features = extract_features(movie, columns = ['spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left'], cluster = True)
+                features = extract_features(list_movies[movie], columns = ['spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left'], cluster = True)
                 print(features.head())
                 data = features[emotions]
                 print(data.head())
@@ -581,7 +581,6 @@ def count_points_above_threshold(emotion_data, emotion, threshold):
     return len(emotion_data[emotion_data[emotion] > threshold])
 
 def extract_annot(path_folder,film_ID):
-    print(path_folder, film_ID)
     f = open(str(path_folder)+'Annot13_'+str(film_ID)+'_stim.json', "r")
     data_annot = json.loads(f.read())
     annot = pd.read_csv(str(path_folder)+'Annot13_'+str(film_ID)+'_stim.tsv', sep='\t', names=data_annot['Columns'])
