@@ -308,7 +308,7 @@ def myPLS_get_LC_pvals(Sp_vect,S,nPerms, seuil=0.01) :
     ## Display & Concatenate significant LCs
     for i in range(nSignifLC):
         sig_PLC.append(signif_LC[i][0])
-        print(f"LC {sig_PLC[-1]} with p-value = {sprob[sig_PLC[-1]]}\n")
+        print(f"LC {sig_PLC[-1]} with p-value = {sprob[sig_PLC[-1]]}")
         
     return sprob, sig_PLC
 

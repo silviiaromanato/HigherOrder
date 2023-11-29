@@ -451,7 +451,6 @@ def run_pls(X_movie, Y, region):
     sl = 0.05          # Signficant level for statistical testing
     res = run_decomposition(X_movie, Y)
     res_permu = permutation(res, nPer, seed, sl)
-    print('The pvalues are: ', res_permu['P_val'])
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
     results['Movie']='concatenated'
     results['LC']=np.arange(1, results.shape[0]+1)
@@ -463,7 +462,7 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
     print(f'Performing BOOSTRAPPING on {sample_size} subjects for {num_rounds} rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round'])
     for i in range(num_rounds):
-        print('The round is: ', i)
+        print('\nThe round is: ', i)
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
         Y_sample = Y.iloc[idx,:]
@@ -473,13 +472,98 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
         results = pd.concat([results, pls], axis=0)
     return results
 
-def concat_emo():
+def concat_emo(server = True):
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
     data_concat = pd.DataFrame()
     for movie_name in list_movies:
-        labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json')
-        data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
+        if server == True:
+            PATH  = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData'
+        else:
+            PATH = '/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData'
+        labels = pd.read_json(PATH + f'/Annot13_{movie_name}_stim.json')
+        data = pd.read_csv(PATH + f'/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
         data.columns = labels['Columns']
         data_concat = pd.concat([data_concat, data], axis=0)
     print('The shape of the data_concat is: ', data_concat.shape)
     return data_concat
+
+def counting_points(movies, thresholds, emotions):
+    """
+    Counts the number of points for each emotion in each movie.
+
+    Args:
+    movies (list): List of movie names.
+    thresholds (list): List of threshold values for emotions.
+    emotions (list): List of emotions to analyze.
+
+    Returns:
+    dict: A dictionary with the count of points for each emotion above the threshold.
+    """
+    emotion_data = concatenate_movie_emotions(movies)
+    return count_emotions_above_threshold(emotion_data, thresholds, emotions)
+
+def concatenate_movie_emotions(movies):
+    """
+    Concatenates emotion data from multiple movies.
+
+    Args:
+    movies (list): List of movie names.
+
+    Returns:
+    DataFrame: A concatenated DataFrame of emotion data for all movies.
+    """
+    concatenated_emotions = pd.DataFrame()
+    for movie in movies:
+        concatenated_emotions = pd.concat([concatenated_emotions, read_movie_data(movie)], axis=0)
+    return concatenated_emotions
+
+def read_movie_data(movie):
+    """
+    Reads emotion data for a single movie.
+
+    Args:
+    movie (str): The name of the movie.
+
+    Returns:
+    DataFrame: DataFrame of emotion data for the movie.
+    """
+    labels_path = f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/Annot13_{movie}_stim.json'
+    data_path = f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/Annot13_{movie}_stim.tsv'
+
+    labels = pd.read_json(labels_path)[['Columns']]
+    data = pd.read_csv(data_path, sep='\t', header=None)
+    data.columns = labels['Columns']
+
+    return data
+
+def count_emotions_above_threshold(emotion_data, thresholds, emotions):
+    """
+    Counts the number of points for each emotion above given thresholds.
+
+    Args:
+    emotion_data (DataFrame): DataFrame containing emotion data.
+    thresholds (list): List of threshold values for emotions.
+    emotions (list): List of emotions to analyze.
+
+    Returns:
+    dict: A dictionary with the count of points for each emotion above the threshold.
+    """
+    count_points = {}
+    for threshold in thresholds:
+        count_points[threshold] = {emotion: count_points_above_threshold(emotion_data, emotion, threshold) for emotion in emotions}
+        count_points[threshold]['All Movie'] = len(emotion_data)
+    return count_points
+
+def count_points_above_threshold(emotion_data, emotion, threshold):
+    """
+    Counts the number of points for a given emotion above a threshold.
+
+    Args:
+    emotion_data (DataFrame): DataFrame containing emotion data.
+    emotion (str): The emotion to analyze.
+    threshold (float): The threshold value.
+
+    Returns:
+    int: Number of points above the threshold for the given emotion.
+    """
+    return len(emotion_data[emotion_data[emotion] > threshold])

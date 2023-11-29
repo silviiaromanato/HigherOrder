@@ -6,7 +6,7 @@ from helpers_PLS import *
 import sys 
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
-PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSmean_results.csv'
+PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSmean_concat.csv'
 
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
@@ -58,10 +58,11 @@ if __name__ == '__main__':
 
     # Control of the emotion ---------------> results_control
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
-    for i in range(100):
+    for i in range(50):
         X = compute_X_concat(PATH, emotions, threshold, control=True, mean = True)
         X = pd.DataFrame(X)
-        results_control_bootstrap = boostrap_subjects(X, Y, region, sample_size = 30, num_rounds = 1)
+        results_control_bootstrap = boostrap_subjects(X, Y, region, sample_size = 25, num_rounds = 5)
+        print('The covariance explained is: ', results_control_bootstrap['Covariance Explained'])
         results_control_bootstrap['Emotion'] = f'Control_{i}_{emotions_type}'
         results_control_bootstrap['threshold'] = threshold
         results_control = pd.concat([results_control, results_control_bootstrap], axis=0)
