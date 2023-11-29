@@ -59,7 +59,7 @@ if __name__ == '__main__':
     # Control of the emotion ---------------> results_control
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
     for i in range(50):
-        X = compute_X_concat(PATH, emotions, threshold, control=True, mean = True)
+        X = compute_X_concat(PATH, emotions, threshold, control=True, mean = True, seed = i)
         X = pd.DataFrame(X)
         results_control_bootstrap = boostrap_subjects(X, Y, region, sample_size = 25, num_rounds = 5)
         print('The covariance explained is: ', results_control_bootstrap['Covariance Explained'])
