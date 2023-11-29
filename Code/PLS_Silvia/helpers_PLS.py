@@ -569,3 +569,29 @@ def count_points_above_threshold(emotion_data, emotion, threshold):
     int: Number of points above the threshold for the given emotion.
     """
     return len(emotion_data[emotion_data[emotion] > threshold])
+
+def extract_annot(path_folder,film_ID):
+    f = open (path_folder+'Annot13_'+film_ID+'_stim.json', "r")
+    data_annot = json.loads(f.read())
+    annot = pd.read_csv(path_folder+'Annot13_'+film_ID+'_stim.tsv', sep='\t', names=data_annot['Columns'])
+    return annot
+
+def extract_corrmat_allregressors(emo_path_folder,film_ID, individual='n', subject=None):
+    annot=extract_annot(emo_path_folder, film_ID)
+    corrmat_allregressors=np.corrcoef(annot.values)   
+    return corrmat_allregressors
+
+def extract_corrmat_emo(emo_path_folder,film_ID):
+    positive_emotions = ['Love', 'Regard', 'WarmHeartedness', 'Pride','Satisfaction','Happiness']
+    negative_emotions = ['Sad', 'Anxiety', 'Fear', 'Guilt','Disgust','Anger']
+    all_emotions = positive_emotions + negative_emotions
+    #Extract the required data data from the emodata file
+    annot=extract_annot(emo_path_folder,film_ID)
+    positive_emotions_matrix = annot[positive_emotions].values
+    negative_emotions_matrix = annot[negative_emotions].values
+    all_emotions_matrix = annot[all_emotions].values
+    #Compute correlation
+    corrmat_positive=np.corrcoef(positive_emotions_matrix)   
+    corrmat_negative=np.corrcoef(negative_emotions_matrix)   
+    corrmat_all_emo=np.corrcoef(all_emotions_matrix)   
+    return corrmat_positive, corrmat_negative, corrmat_all_emo
