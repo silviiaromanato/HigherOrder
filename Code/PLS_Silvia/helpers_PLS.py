@@ -643,15 +643,17 @@ def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectra
     df_images.reset_index(drop=True, inplace=True)
     df_sound.reset_index(drop=True, inplace=True)
     features = pd.concat([df_images, df_sound], axis = 1)
+    print('The shape of the features is: ', features.shape, 'the columns are:', features.columns)
 
-    # compute the mean of the left and right features
-    features['average_brightness'] = (features['average_brightness_left'] + features['average_brightness_right']) / 2
-    features['average_saturation'] = (features['average_saturation_left'] + features['average_saturation_right']) / 2
-    features['average_hue'] = (features['average_hue_left'] + features['average_hue_right']) / 2
+    if cluster == False:
+        # compute the mean of the left and right features
+        features['average_brightness'] = (features['average_brightness_left'] + features['average_brightness_right']) / 2
+        features['average_saturation'] = (features['average_saturation_left'] + features['average_saturation_right']) / 2
+        features['average_hue'] = (features['average_hue_left'] + features['average_hue_right']) / 2
 
-    # drop the left and right features
-    features.drop(columns = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], inplace = True)
-    
+        # drop the left and right features
+        features.drop(columns = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], inplace = True)
+        
     return features
 
 def extract_features_concat(cluster = True):
