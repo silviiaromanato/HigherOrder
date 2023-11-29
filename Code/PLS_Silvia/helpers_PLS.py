@@ -450,6 +450,7 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
         data_features_concat = pd.concat(list_df, axis=0)
         list_datafeatures.append(data_features_concat)
 
+    print('The number of times peaking is: ', count_times)
     mtx_upper_triangular = []
     for data_feature in list_datafeatures:
         if regions == 'ALL':
