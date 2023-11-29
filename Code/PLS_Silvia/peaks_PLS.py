@@ -42,9 +42,16 @@ if __name__ == '__main__':
     # Find the times where the generic feature (emotional or extracted) is peaking
     times_peaking = data_concat[f'{feature}'].loc[data_concat[f'{feature}'] > threshold].index
     print('The number of times where there are peaks is: ', len(times_peaking))
-    if len(times_peaking) <= 10:
-        print(f'There are no peaks for {feature}. We will not perform the PLS.\n')
-        sys.exit()
+    threshold_decreased = threshold
+    while len(times_peaking) <= 30:
+        print(f'There are no peaks for {feature}. We will decrease the threshold.\n')
+        threshold_decreased -= 0.05
+        times_peaking = data_concat[f'{feature}'].loc[data_concat[f'{feature}'] > threshold_decreased].index
+        print('The number of times where there are peaks is: ', len(times_peaking))
+        if threshold_decreased == threshold - 0.5:
+            print('We have reached the minimum threshold. We will not perform the PLS.\n')
+            sys.exit()
+    threshold = threshold_decreased
 
     # Load the boostrapped results from the same region ad movie
     yeo_dict = loading_yeo(PATH_YEO)
