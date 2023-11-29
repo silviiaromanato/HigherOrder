@@ -2,13 +2,11 @@ import numpy as np
 import os
 import pandas as pd
 from scipy.io import loadmat
-print(os.getcwd())
 from compute import *
 from helpers_PLS import *
 import sys 
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
-PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_concat.csv'
 
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
@@ -27,6 +25,7 @@ if __name__ == '__main__':
     region = sys.argv[4]
     threshold = float(sys.argv[5])
     todo = sys.argv[6]
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_concat.csv'
 
     print('\n' + ' -' * 10 + f' for {feature} and {region} and {threshold} FOR {todo}', ' -' * 10)
 
