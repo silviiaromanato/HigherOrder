@@ -424,7 +424,10 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
                     data = data[emotions]
 
             elif todo == 'features_extracted':
-                features = extract_features(list_movies[movie], columns = ['spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left'], cluster = True)
+                features = extract_features(list_movies[movie], columns = ['spectralflux', 'rms', 'zcrs'], 
+                                            columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 
+                                                              'average_brightness_right', 'average_saturation_right', 'average_hue_right'], 
+                                            cluster = True)
                 print(features.head())
                 data = features[emotions]
                 print(data.head())
@@ -644,7 +647,6 @@ def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectra
     df_images.reset_index(drop=True, inplace=True)
     df_sound.reset_index(drop=True, inplace=True)
     features = pd.concat([df_images, df_sound], axis = 1)
-    print('The shape of the features is: ', features.shape, 'the columns are:', features.columns)
 
     # compute the mean of the left and right features
     features['average_brightness'] = (features['average_brightness_left'] + features['average_brightness_right']) / 2
