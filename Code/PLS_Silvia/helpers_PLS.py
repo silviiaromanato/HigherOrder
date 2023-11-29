@@ -417,6 +417,8 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
             # Take the time peaks
             if mean == True: # take the mean of the emotions if mean == True
                 data = data[emotions].mean(axis=1)
+            else:
+                data = data[emotions]
             times_peaking = data.loc[data > threshold].index
             if control == True:
                 np.random.seed(seed)
