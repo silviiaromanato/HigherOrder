@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from itertools import combinations
 from scipy.io import loadmat
 import re
+import sys
 
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
@@ -434,7 +435,7 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
             if times_peaking.shape[0] <= 10:
                 print(f'There are no peaks for {emotions}. We will not perform the PLS.\n')
                 sys.exit()
-                
+
             if control == True:
                 np.random.seed(seed)
                 times_peaking = np.random.choice(data.index, size=len(times_peaking), replace=False)
