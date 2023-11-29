@@ -1,11 +1,12 @@
 import numpy as np
 import pandas as pd
 from scipy.io import loadmat
+print(os.getcwd())
 from compute import *
 from helpers_PLS import *
 import sys 
 import os
-os.chdir('..')
+os.chdir('/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Code/')
 print(os.getcwd())
 from features.helper_corr_mtx import *
 
