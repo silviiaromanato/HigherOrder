@@ -54,7 +54,6 @@ if __name__ == '__main__':
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 20)
     results['Emotion'] = emotions_type
     results['threshold'] = threshold
-    print('The shape of the results is: ', results.columns, results.head())
 
     # Control of the emotion ---------------> results_control
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
@@ -62,7 +61,6 @@ if __name__ == '__main__':
         X = compute_X_concat(PATH, emotions, threshold, control=True, mean = True, seed = i)
         X = pd.DataFrame(X)
         results_control_bootstrap = boostrap_subjects(X, Y, region, sample_size = 25, num_rounds = 5)
-        print('The covariance explained is: ', results_control_bootstrap['Covariance Explained'])
         results_control_bootstrap['Emotion'] = f'Control_{i}_{emotions_type}'
         results_control_bootstrap['threshold'] = threshold
         results_control = pd.concat([results_control, results_control_bootstrap], axis=0)
