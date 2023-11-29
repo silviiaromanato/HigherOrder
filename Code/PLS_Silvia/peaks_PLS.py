@@ -77,6 +77,11 @@ if __name__ == '__main__':
     # save the results
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
+        # take only the results for the region and emotion and threshold
+        PLS_results = PLS_results.loc[(PLS_results['Emotion'] == emotion) & (PLS_results['threshold'] == threshold) & (PLS_results['Region'] == region)]
+        print('The shape of the PLS results is: ', PLS_results.shape)
+        PLS_results = PLS_results.loc[~PLS_results['Emotion'].str.contains('Control')]
+        print('The shape of the PLS results is: ', PLS_results.shape)
     else:
         PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
 
