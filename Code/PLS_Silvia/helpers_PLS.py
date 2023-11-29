@@ -6,6 +6,7 @@ from compute import *
 from matplotlib import pyplot as plt
 from itertools import combinations
 from scipy.io import loadmat
+import re
 
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
@@ -600,14 +601,14 @@ def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectra
                              columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left'],
                              cluster = True
                              ):
-    if cluster == True:
+    if cluster == cluster:
         PATH_EMO = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/'
     else:
         PATH_EMO = '/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/'
     length = extract_corrmat_allregressors(PATH_EMO, movie_name).shape[0]
 
     movie_name_with_ = re.sub(r"(\w)([A-Z])", r"\1_\2", movie_name)
-    if cluster == True:
+    if cluster == cluster:
         df_sound = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
         df_images = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
     else: 
@@ -639,13 +640,13 @@ def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectra
 
     return features
 
-def extract_features_concat():
+def extract_features_concat(cluster = True):
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain'] 
     concatenated_features = pd.DataFrame()
     for movie in list_movies:
         features = extract_features(movie, columns = ['spectralflux', 'rms', 'zcrs'], 
                                             columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'],
-                                                cluster = False
+                                                cluster = cluster
                                                 )
         
         # compute the mean of the left and right features
