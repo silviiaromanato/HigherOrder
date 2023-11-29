@@ -175,10 +175,6 @@ if __name__ == '__main__':
     # save the results
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
-        if to_do['control'] == True:
-            PLS_results = PLS_results[~PLS_results['Emotion'].str.startswith('Control')]
-        if to_do['emo'] == True:
-            PLS_results = PLS_results[PLS_results['Emotion'].str.startswith('Control')]
     else:
         PLS_results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Emotion', 'threshold'])
 
