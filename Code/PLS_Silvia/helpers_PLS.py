@@ -433,7 +433,6 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
             times_peaking = data.loc[data > threshold].index
             print(f'The number of times peaking for {emotions} is: ', len(times_peaking))
             if times_peaking.shape[0] <= 10:
-                print(f'There are no peaks for {emotions} for {movie}. We  check the new movie.\n')
                 continue
 
             if control == True:
