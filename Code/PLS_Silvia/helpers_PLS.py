@@ -426,14 +426,19 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
             elif todo == 'features_extracted':
                 features = extract_features(list_movies[movie], columns = ['spectralflux', 'rms', 'zcrs'], 
                                             columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 
-                                                              'average_brightness_right', 'average_saturation_right', 'average_hue_right'], 
-                                            cluster = True)
+                                                              'average_brightness_right', 'average_saturation_right', 'average_hue_right'],  cluster = True)
                 data = features[emotions]
 
             times_peaking = data.loc[data > threshold].index
+            print(f'The number of times peaking for {emotions} is: ', len(times_peaking))
+            if times_peaking.shape[0] <= 10:
+                print(f'There are no peaks for {emotions}. We will not perform the PLS.\n')
+                sys.exit()
+                
             if control == True:
                 np.random.seed(seed)
                 times_peaking = np.random.choice(data.index, size=len(times_peaking), replace=False)
+            times_peaking = np.sort(times_peaking)
 
             # Read the data from the txt file and select the times where the emotion is peaking
             data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep=' ', header=None)

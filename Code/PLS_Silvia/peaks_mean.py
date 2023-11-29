@@ -51,7 +51,7 @@ if __name__ == '__main__':
     # emotion ----------> results
     X_movie = compute_X_concat(PATH, emotions, threshold, control=False, mean = True)
     X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 20)
+    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 50)
     results['Emotion'] = emotions_type
     results['threshold'] = threshold
 
