@@ -581,12 +581,13 @@ def count_points_above_threshold(emotion_data, emotion, threshold):
     return len(emotion_data[emotion_data[emotion] > threshold])
 
 def extract_annot(path_folder,film_ID):
-    f = open (path_folder+'Annot13_'+film_ID+'_stim.json', "r")
+    print(path_folder, film_ID)
+    f = open(str(path_folder)+'Annot13_'+str(film_ID)+'_stim.json', "r")
     data_annot = json.loads(f.read())
-    annot = pd.read_csv(path_folder+'Annot13_'+film_ID+'_stim.tsv', sep='\t', names=data_annot['Columns'])
+    annot = pd.read_csv(str(path_folder)+'Annot13_'+str(film_ID)+'_stim.tsv', sep='\t', names=data_annot['Columns'])
     return annot
 
-def extract_corrmat_allregressors(emo_path_folder,film_ID, individual='n', subject=None):
+def extract_corrmat_allregressors(emo_path_folder,film_ID):
     annot=extract_annot(emo_path_folder, film_ID)
     corrmat_allregressors=np.corrcoef(annot.values)   
     return corrmat_allregressors
