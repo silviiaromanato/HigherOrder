@@ -32,9 +32,12 @@ if __name__ == '__main__':
     # Load the data Y and concatenated the feature
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
     if todo == 'emotions':
+        print('We are concatenating the emotions')
         data_concat = concat_emo()
     if todo == 'features_extracted':
+        print('We are concatenating the features extracted')
         data_concat = extract_features_concat()
+        print(data_concat.head())
 
     # Find the times where the generic feature (emotional or extracted) is peaking
     times_peaking = data_concat[f'{feature}'].loc[data_concat[f'{feature}'] > threshold].index
