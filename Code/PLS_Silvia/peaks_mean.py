@@ -46,10 +46,11 @@ if __name__ == '__main__':
         print(f'There are no peaks for {emotions_type}. We will decrease the threshold.\n')
         threshold_decreased -= 0.05
         times_peaking = emo_avg.loc[emo_avg > threshold_decreased].index
-        print('The number of times where there are peaks is: ', len(times_peaking))
+        print(f'The number of times where there are peaks is with threshold {threshold_decreased}: ', len(times_peaking))
         if threshold_decreased == threshold - 0.5:
             print('We have reached the minimum threshold. We will not perform the PLS.\n')
             sys.exit()
+    threshold = threshold_decreased
 
     # Load the boostrapped results from the same region ad movie
     yeo_dict = loading_yeo(PATH_YEO)
