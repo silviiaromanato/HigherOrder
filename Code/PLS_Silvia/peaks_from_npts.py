@@ -60,15 +60,15 @@ if __name__ == '__main__':
     threshold = 2.0
     count = 0
     times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
-    while (len(times_peaking) < number_points-5) | (len(times_peaking) > number_points+5):
+    while (len(times_peaking) < number_points-10) | (len(times_peaking) > number_points+10):
         count += 1
-        if len(times_peaking) < number_points-5:
-            print(f'There are no peaks for {feature}. We will increase the threshold.\n')
+        if len(times_peaking) < number_points-10:
+            print(f'There are {len(times_peaking)}  for {feature}. We will increase the threshold.\n')
             threshold += 0.05
-        elif len(times_peaking) > number_points+5:
-            print(f'There are too many peaks for {feature}. We will decrease the threshold.\n')
+        elif len(times_peaking) > number_points+10:
+            print(f'There are {len(times_peaking)} peaks for {feature}. We will decrease the threshold.\n')
             threshold -= 0.05
-        elif (len(times_peaking) >= number_points-5) & (len(times_peaking) <= number_points+5):
+        elif (len(times_peaking) >= number_points-10) & (len(times_peaking) <= number_points+10):
             print('The number of times where there are peaks is: ', len(times_peaking))
             break
         if count == 100:
