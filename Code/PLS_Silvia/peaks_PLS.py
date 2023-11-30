@@ -25,28 +25,37 @@ if __name__ == '__main__':
     region = sys.argv[4]
     threshold = float(sys.argv[5])
     todo = sys.argv[6]
+    concatmovies = sys.argv[7]
+    movie_name = sys.argv[8]
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_concat.csv'
 
     print('\n' + ' -' * 10 + f' for {feature} and {region} and {threshold} FOR {todo}', ' -' * 10)
 
     # Load the data Y and concatenated the feature
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
-    if todo == 'emotions':
-        print('We are concatenating the emotions')
-        data_concat = concat_emo()
-    if todo == 'features_extracted':
-        print('We are concatenating the features extracted')
-        data_concat = extract_features_concat()
-        print(data_concat.head())
+    if concatmovies == 'True':
+        if todo == 'emotions':
+            data = concat_emo()
+        if todo == 'features_extracted':
+            data = extract_features_concat(cluster = True)
+    
+    elif concatmovies == 'False':
+        if todo == 'emotions':
+            Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
+            labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json')
+            data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
+            data.columns = labels['Columns']
+        if todo == 'features_extracted':
+            data = extract_features(movie_name, columns = ['spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], cluster = True)
 
     # Find the times where the generic feature (emotional or extracted) is peaking
-    times_peaking = data_concat[f'{feature}'].loc[data_concat[f'{feature}'] > threshold].index
+    times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
     print('The number of times where there are peaks is: ', len(times_peaking))
     threshold_decreased = threshold
     while len(times_peaking) <= 30:
         print(f'There are no peaks for {feature}. We will decrease the threshold.\n')
         threshold_decreased -= 0.05
-        times_peaking = data_concat[f'{feature}'].loc[data_concat[f'{feature}'] > threshold_decreased].index
+        times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold_decreased].index
         print('The number of times where there are peaks is: ', len(times_peaking))
         if threshold_decreased == threshold - 0.5:
             print('We have reached the minimum threshold. We will not perform the PLS.\n')
@@ -58,7 +67,10 @@ if __name__ == '__main__':
 
     print('We are doing the peak part')
     # generic feature ----------> results
-    X_movie = compute_X_concat(PATH, feature, threshold, control= False, todo = todo, mean = False)
+    if concatmovies == 'True':
+        X_movie = compute_X_concat(PATH, feature, threshold, control= False, todo = todo, mean = False)
+    elif concatmovies == 'False':
+        X_movie = compute_X(movie_name, feature, threshold, control= False, todo = todo, mean = False)
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 50)
     results['Feature'] = feature
@@ -68,6 +80,7 @@ if __name__ == '__main__':
     # control of the generic feature ---------------> results_controls
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Feature', 'threshold'])
     for i in range(50):
+        print(f'Control {i}')
         X_movie = compute_X_concat(PATH, feature, threshold, control=True, seed = 5 * i, todo = todo, mean = False)
         X_movie = pd.DataFrame(X_movie)
         results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 5)
