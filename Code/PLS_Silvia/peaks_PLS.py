@@ -27,7 +27,13 @@ if __name__ == '__main__':
     todo = sys.argv[6]
     concatmovies = sys.argv[7]
     movie_name = sys.argv[8]
+    bootstrap_rounds = sys.argv[9]
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}.csv'
+
+    if concatmovies == 'concat':
+        minimum_points = 30
+    elif concatmovies == 'single':
+        minimum_points = 15
 
     print('\n' + ' -' * 10 + f' for {feature} and {region} and {threshold} FOR {todo}', ' -' * 10)
 
@@ -72,14 +78,14 @@ if __name__ == '__main__':
     elif concatmovies == 'single':
         X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = 'ALL')
     X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 50)
+    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = bootstrap_rounds)
     results['Feature'] = feature
     results['threshold'] = threshold
 
     print('We are doing the control')
     # control of the generic feature ---------------> results_controls
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Feature', 'threshold'])
-    for i in range(50):
+    for i in range(bootstrap_rounds):
         print(f'Control {i}')
         if concatmovies == 'concat':
             X_movie = compute_X_concat(PATH, feature, threshold, control=True, seed = 5 * i, todo = todo, mean = False)
