@@ -45,7 +45,7 @@ if __name__ == '__main__':
     while len(times_peaking) <= 30:
         print(f'There are no peaks for {emotions_type}. We will decrease the threshold.\n')
         threshold_decreased -= 0.05
-        times_peaking = data_concat[emotions].loc[data_concat[emotions] > threshold_decreased].index
+        times_peaking = emo_avg.loc[emo_avg > threshold_decreased].index
         print('The number of times where there are peaks is: ', len(times_peaking))
         if threshold_decreased == threshold - 0.5:
             print('We have reached the minimum threshold. We will not perform the PLS.\n')
