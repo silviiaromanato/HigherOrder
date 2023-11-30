@@ -71,7 +71,7 @@ if __name__ == '__main__':
     # Load the boostrapped results from the same region ad movie
     yeo_dict = loading_yeo(PATH_YEO)
 
-    print('We are doing the peak part')
+    print('\nWe are doing the peak part')
     # generic feature ----------> results
     if concatmovies == 'concat':
         X_movie = compute_X_concat(PATH, feature, threshold, control= False, todo = todo, mean = False)
@@ -82,11 +82,11 @@ if __name__ == '__main__':
     results['Feature'] = feature
     results['threshold'] = threshold
 
-    print('We are doing the control')
+    print('\nWe are doing the control')
     # control of the generic feature ---------------> results_controls
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Feature', 'threshold'])
     for i in range(bootstrap_rounds):
-        print(f'Control {i}')
+        print(f'\nControl {i}')
         if concatmovies == 'concat':
             X_movie = compute_X_concat(PATH, feature, threshold, control=True, seed = 5 * i, todo = todo, mean = False)
         elif concatmovies == 'single':
