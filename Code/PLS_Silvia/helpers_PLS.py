@@ -8,6 +8,7 @@ from itertools import combinations
 from scipy.io import loadmat
 import re
 import sys
+import seaborn as sns
 
 
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
@@ -272,7 +273,6 @@ def process_bold_method(PATH, movie, regions, yeo_indices, N):
 
     return X
 
-
 def standa(X,Y):  
     X_normed = X.copy()
     Y_normed = Y.copy()
@@ -519,7 +519,7 @@ def counting_points(movies, thresholds, emotions):
     dict: A dictionary with the count of points for each emotion above the threshold.
     """
     emotion_data = concatenate_movie_emotions(movies)
-    return count_emotions_above_threshold(emotion_data, thresholds, emotions)
+    return count_features_above_threshold(emotion_data, thresholds, emotions)
 
 def concatenate_movie_emotions(movies):
     """
@@ -555,37 +555,37 @@ def read_movie_data(movie):
 
     return data
 
-def count_emotions_above_threshold(emotion_data, thresholds, emotions):
+def count_features_above_threshold(data, thresholds, features):
     """
-    Counts the number of points for each emotion above given thresholds.
+    Counts the number of points for each feature above given thresholds.
 
     Args:
-    emotion_data (DataFrame): DataFrame containing emotion data.
-    thresholds (list): List of threshold values for emotions.
-    emotions (list): List of emotions to analyze.
+    data (DataFrame): DataFrame containing feature data.
+    thresholds (list): List of threshold values for features.
+    features (list): List of features to analyze.
 
     Returns:
-    dict: A dictionary with the count of points for each emotion above the threshold.
+    dict: A dictionary with the count of points for each feature above the threshold.
     """
     count_points = {}
     for threshold in thresholds:
-        count_points[threshold] = {emotion: count_points_above_threshold(emotion_data, emotion, threshold) for emotion in emotions}
-        count_points[threshold]['All Movie'] = len(emotion_data)
+        count_points[threshold] = {feature: count_points_above_threshold(data, feature, threshold) for feature in features}
+        count_points[threshold]['All Movie'] = len(data)
     return count_points
 
-def count_points_above_threshold(emotion_data, emotion, threshold):
+def count_points_above_threshold(data, feature, threshold):
     """
-    Counts the number of points for a given emotion above a threshold.
+    Counts the number of points for a given feature above a threshold.
 
     Args:
-    emotion_data (DataFrame): DataFrame containing emotion data.
-    emotion (str): The emotion to analyze.
+    data (DataFrame): DataFrame containing feature data.
+    feature (str): The feature to analyze.
     threshold (float): The threshold value.
 
     Returns:
-    int: Number of points above the threshold for the given emotion.
+    int: Number of points above the threshold for the given feature.
     """
-    return len(emotion_data[emotion_data[emotion] > threshold])
+    return len(data[data[feature] > threshold])
 
 def extract_annot(path_folder,film_ID):
     f = open(str(path_folder)+'Annot13_'+str(film_ID)+'_stim.json', "r")
@@ -618,14 +618,14 @@ def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectra
                                                'average_brightness_right', 'average_saturation_right', 'average_hue_right'],
                              cluster = True
                              ):
-    if cluster == cluster:
+    if cluster == True:
         PATH_EMO = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/'
     else:
         PATH_EMO = '/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/'
     length = extract_corrmat_allregressors(PATH_EMO, movie_name).shape[0]
 
     movie_name_with_ = re.sub(r"(\w)([A-Z])", r"\1_\2", movie_name)
-    if cluster == cluster:
+    if cluster == True:
         df_sound = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
         df_images = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
     else: 
@@ -678,3 +678,84 @@ def extract_features_concat(cluster = True):
     concatenated_features = (concatenated_features - concatenated_features.mean()) / concatenated_features.std()
 
     return concatenated_features
+
+def retrieve_significant_data(peaks_data, data_all_movie, count_pts, thresholds, emotions):
+
+    # Take the significant LC for the PLS on the peaks
+    significant_peaks = peaks_data[peaks_data['P-value'] < 0.05]
+    significant_peaks = significant_peaks.groupby(['Region', 'bootstrap_round', 'Feature', 'threshold']).sum()['Covariance Explained'].reset_index()
+    significant_peaks['Control'] = significant_peaks['Feature'].apply(lambda x: 1 if x.split('_')[0] == 'Control' else 0)
+    significant_peaks['Feature'] = significant_peaks['Feature'].apply(lambda x: x.split('_')[-1])
+    # if the feature is called brightness, saturation or hue, then add average_ in front of it
+    significant_peaks['Feature'] = significant_peaks['Feature'].apply(lambda x: 'average_' + x if x in ['brightness', 'saturation', 'hue'] else x)
+
+    # Take the significant LC for the PLS on all the movie
+    data_all_movie['Feature'] = 'All movie'
+    significant_all_movie = data_all_movie[data_all_movie['P-value'] < 0.05]
+    significant_all_movie = significant_all_movie.groupby(['Region', 'bootstrap_round', 'Feature']).sum()['Covariance Explained'].reset_index()
+    significant_all_movie['Control'] = 0
+
+    # Merge the dataframes
+    significant = pd.concat([significant_peaks, significant_all_movie], ignore_index=True)
+
+    for emotion in emotions:
+        for thr in thresholds:
+            significant.loc[(significant['Feature'] == emotion.split('_')[-1]) & (significant['threshold'] == thr), 'Number of points'] = count_pts[thr][emotion]
+    significant.loc[significant['Feature'] == 'All movie', 'Number of points'] = count_pts[thr]['All Movie']
+    return significant
+
+def plot_peaks(significant, emotions, thresholds):
+    # Define your thresholds
+    palette = sns.color_palette("Set2", 8)
+
+    # Assuming 'significant' is your DataFrame and 'emotions' is defined
+    order_emotions = ['All movie'] + emotions  # Adjusted for simplicity
+
+    # Set up the subplot grid
+    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(30, 15))  # Adjust the size as needed
+
+    for i, thr in enumerate(thresholds):
+        # Filter data for the current threshold
+        significant.loc[significant['Feature'] == 'All movie', 'threshold'] = thr
+        df_thr = significant[significant['threshold'] == thr]
+
+        # Plot the boxplot in the i-th subplot
+        sns.boxplot(x='Feature', y='Covariance Explained', data=df_thr,  hue='Control',
+                    palette=palette, order=order_emotions, ax=axes[i])
+
+        # Adjust x-ticks
+        list_n = []
+        for emo in order_emotions:
+            n = df_thr[df_thr['Feature'] == emo.split('_')[0]]['Number of points'].unique()
+            if len(n) == 0:
+                n = 0
+            else:
+                n = n[0]
+            list_n.append(f'{emo}: {int(n)}')
+
+        axes[i].set_xticklabels(list_n, rotation=90, fontsize=15)
+        axes[i].set_title(f'Concatenated movies - threshold {thr}', fontsize=20)
+        axes[i].set_ylim(0, 1)
+        # increase font size
+        for item in ([axes[i].title, axes[i].xaxis.label, axes[i].yaxis.label] +
+                     axes[i].get_xticklabels() + axes[i].get_yticklabels()):
+            item.set_fontsize(25)
+
+    plt.tight_layout()
+    plt.show()
+
+def increase_thr(significant, emotions):
+    # Define your thresholds
+    palette = sns.color_palette("Set2", 8)
+
+    # Assuming 'significant' is your DataFrame and 'emotions' is defined
+    order_emotions = emotions  # Adjusted for simplicity
+    df = significant[significant['Control'] == 0]
+    sns.boxplot(x='Feature', y='Covariance Explained', data=df,  hue='threshold', palette=palette, order=order_emotions)
+
+    plt.xlabel('Emotions', fontsize=15)
+    plt.title(f'Concatenated movies')
+    plt.ylim(0, 1)
+
+    plt.tight_layout()
+    plt.show()
