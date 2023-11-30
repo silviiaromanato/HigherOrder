@@ -64,10 +64,10 @@ if __name__ == '__main__':
         count += 1
         if len(times_peaking) < number_points-5:
             print(f'There are no peaks for {feature}. We will increase the threshold.\n')
-            threshold += 0.01
+            threshold += 0.05
         elif len(times_peaking) > number_points+5:
             print(f'There are too many peaks for {feature}. We will decrease the threshold.\n')
-            threshold -= 0.01
+            threshold -= 0.05
         elif (len(times_peaking) >= number_points-5) & (len(times_peaking) <= number_points+5):
             print('The number of times where there are peaks is: ', len(times_peaking))
             break
