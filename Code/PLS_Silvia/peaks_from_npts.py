@@ -57,7 +57,12 @@ if __name__ == '__main__':
     # Find the times where the generic feature (emotional or extracted) is peaking
     # with the set number of points
 
-    threshold = 2.0
+    if number_points == 150:
+        threshold = 1
+    elif number_points == 100:
+        threshold = 1.5
+    elif number_points == 50:
+        threshold = 2
     count = 0
     times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
     while (len(times_peaking) < number_points-5) | (len(times_peaking) > number_points+5):
