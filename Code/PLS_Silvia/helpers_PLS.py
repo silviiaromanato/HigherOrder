@@ -772,8 +772,7 @@ def increase_thr(significant, emotions):
     plt.tight_layout()
     plt.show()
 
-def 
-(PATH, movie, times, regions = None):
+def compute_X_withtimes(PATH, movie, times, regions = None):
 
     yeo_dict = loading_yeo(PATH_YEO)
     yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
