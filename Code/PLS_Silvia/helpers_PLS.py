@@ -479,10 +479,10 @@ def run_pls(X_movie, Y, region):
     return results
 
 def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
-    print(f'Performing BOOSTRAPPING on {sample_size} subjects for {num_rounds} rounds')
+    print(f'\nPerforming BOOSTRAPPING on {sample_size} subjects for {num_rounds} rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round'])
     for i in range(num_rounds):
-        print('\nThe round is: ', i)
+        print('The round is: ', i)
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
         Y_sample = Y.iloc[idx,:]
