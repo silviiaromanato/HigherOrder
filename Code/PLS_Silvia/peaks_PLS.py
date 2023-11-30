@@ -27,7 +27,7 @@ if __name__ == '__main__':
     todo = sys.argv[6]
     concatmovies = sys.argv[7]
     movie_name = sys.argv[8]
-    bootstrap_rounds = int(sys.argv[9])
+    bootstrap_rounds = int(int(sys.argv[9]))
     PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}.csv'
 
     if concatmovies == 'concat':
