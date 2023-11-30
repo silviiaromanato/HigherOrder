@@ -27,19 +27,19 @@ if __name__ == '__main__':
     todo = sys.argv[6]
     concatmovies = sys.argv[7]
     movie_name = sys.argv[8]
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_concat.csv'
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}.csv'
 
     print('\n' + ' -' * 10 + f' for {feature} and {region} and {threshold} FOR {todo}', ' -' * 10)
 
     # Load the data Y and concatenated the feature
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
-    if concatmovies == 'True':
+    if concatmovies == 'concat':
         if todo == 'emotions':
             data = concat_emo()
         if todo == 'features_extracted':
             data = extract_features_concat(cluster = True)
     
-    elif concatmovies == 'False':
+    elif concatmovies == 'single':
         if todo == 'emotions':
             Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
             labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json')
@@ -67,9 +67,9 @@ if __name__ == '__main__':
 
     print('We are doing the peak part')
     # generic feature ----------> results
-    if concatmovies == 'True':
+    if concatmovies == 'concat':
         X_movie = compute_X_concat(PATH, feature, threshold, control= False, todo = todo, mean = False)
-    elif concatmovies == 'False':
+    elif concatmovies == 'single':
         X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = 'ALL')
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 50)
@@ -81,9 +81,9 @@ if __name__ == '__main__':
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Feature', 'threshold'])
     for i in range(50):
         print(f'Control {i}')
-        if concatmovies == 'True':
+        if concatmovies == 'concat':
             X_movie = compute_X_concat(PATH, feature, threshold, control=True, seed = 5 * i, todo = todo, mean = False)
-        elif concatmovies == 'False':
+        elif concatmovies == 'single':
             X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = 'ALL')
         X_movie = pd.DataFrame(X_movie)
         results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 5)
