@@ -433,7 +433,6 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
                 print('The shape of data is: ', data.shape, data.columns)
 
             times_peaking = data.loc[data > threshold].index
-            print('The number of times peaking is: ', len(times_peaking))
             count_times += len(times_peaking)
             if times_peaking.shape[0] <= 10:
                 continue
@@ -452,7 +451,6 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
         data_features_concat = pd.concat(list_df, axis=0)
         list_datafeatures.append(data_features_concat)
 
-    print('The number of times peaking is: ', count_times)
     mtx_upper_triangular = []
     for data_feature in list_datafeatures:
         if regions == 'ALL':
@@ -774,7 +772,8 @@ def increase_thr(significant, emotions):
     plt.tight_layout()
     plt.show()
 
-def compute_X_withtimes(PATH, movie, times, regions = None):
+def 
+(PATH, movie, times, regions = None):
 
     yeo_dict = loading_yeo(PATH_YEO)
     yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
