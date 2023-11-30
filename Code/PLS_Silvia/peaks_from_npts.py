@@ -79,7 +79,7 @@ if __name__ == '__main__':
         elif (len(times_peaking) >= number_points-5) & (len(times_peaking) <= number_points+5):
             print('The number of times where there are peaks is: ', len(times_peaking))
             break
-        if count == 100:
+        if count == 1000:
             print('Too many iterations, we will not perform the PLS.\n')
             sys.exit()
     # round the threshold to 2 decimals
