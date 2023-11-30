@@ -80,7 +80,7 @@ if __name__ == '__main__':
     # round the threshold to 2 decimals
     threshold = round(threshold, 2)
     times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
-    print('The number of times where there are peaks is: ', len(times_peaking))
+    print('The number of times where there are peaks is: ', len(times_peaking), 'and the threshold is: ', threshold)
 
     # Load the boostrapped results from the same region ad movie
     yeo_dict = loading_yeo(PATH_YEO)
