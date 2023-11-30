@@ -69,12 +69,12 @@ if __name__ == '__main__':
         count += 1
         if len(times_peaking) < number_points-5:
             print(f'There are {len(times_peaking)}  for {feature}. We will increase the threshold.\n')
-            threshold -= 0.05
+            threshold -= 0.01
             times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
 
         elif len(times_peaking) > number_points+5:
             print(f'There are {len(times_peaking)} peaks for {feature}. We will decrease the threshold.\n')
-            threshold += 0.05
+            threshold += 0.01
             times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
         elif (len(times_peaking) >= number_points-5) & (len(times_peaking) <= number_points+5):
             print('The number of times where there are peaks is: ', len(times_peaking))
