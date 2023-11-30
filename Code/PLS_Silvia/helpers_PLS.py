@@ -428,9 +428,12 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
                 features = extract_features(list_movies[movie], columns = ['spectralflux', 'rms', 'zcrs'], 
                                             columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 
                                                               'average_brightness_right', 'average_saturation_right', 'average_hue_right'],  cluster = True)
+                print('The shape of features is: ', features.shape, features.columns)
                 data = features[emotions]
+                print('The shape of data is: ', data.shape, data.columns)
 
             times_peaking = data.loc[data > threshold].index
+            print('The number of times peaking is: ', len(times_peaking))
             count_times += len(times_peaking)
             if times_peaking.shape[0] <= 10:
                 continue
@@ -686,7 +689,6 @@ def retrieve_significant_data(peaks_data, data_all_movie, count_pts, thresholds,
     significant_peaks = significant_peaks.groupby(['Region', 'bootstrap_round', 'Feature', 'threshold']).sum()['Covariance Explained'].reset_index()
     significant_peaks['Control'] = significant_peaks['Feature'].apply(lambda x: 1 if x.split('_')[0] == 'Control' else 0)
     significant_peaks['Feature'] = significant_peaks['Feature'].apply(lambda x: x.split('_')[-1])
-    # if the feature is called brightness, saturation or hue, then add average_ in front of it
     significant_peaks['Feature'] = significant_peaks['Feature'].apply(lambda x: 'average_' + x if x in ['brightness', 'saturation', 'hue'] else x)
 
     # Take the significant LC for the PLS on all the movie
@@ -700,7 +702,11 @@ def retrieve_significant_data(peaks_data, data_all_movie, count_pts, thresholds,
 
     for emotion in emotions:
         for thr in thresholds:
-            significant.loc[(significant['Feature'] == emotion.split('_')[-1]) & (significant['threshold'] == thr), 'Number of points'] = count_pts[thr][emotion]
+            if emotion.startswith('average_'):
+                print(emotion, count_pts[thr][emotion])
+                significant.loc[(significant['Feature'] == emotion) & (significant['threshold'] == thr), 'Number of points'] = count_pts[thr][emotion]
+            else:
+                significant.loc[(significant['Feature'] == emotion.split('_')[-1]) & (significant['threshold'] == thr), 'Number of points'] = count_pts[thr][emotion]
     significant.loc[significant['Feature'] == 'All movie', 'Number of points'] = count_pts[thr]['All Movie']
     return significant
 
@@ -709,7 +715,7 @@ def plot_peaks(significant, emotions, thresholds):
     palette = sns.color_palette("Set2", 8)
 
     # Assuming 'significant' is your DataFrame and 'emotions' is defined
-    order_emotions = ['All movie'] + emotions  # Adjusted for simplicity
+    order_emotions = ['All movie'] + list(emotions)  # Adjusted for simplicity
 
     # Set up the subplot grid
     fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(30, 15))  # Adjust the size as needed
@@ -726,7 +732,10 @@ def plot_peaks(significant, emotions, thresholds):
         # Adjust x-ticks
         list_n = []
         for emo in order_emotions:
-            n = df_thr[df_thr['Feature'] == emo.split('_')[0]]['Number of points'].unique()
+            if emo.startswith('average_'):
+                n = df_thr[df_thr['Feature'] == emo]['Number of points'].unique()
+            else:
+                n = df_thr[df_thr['Feature'] == emo.split('_')[0]]['Number of points'].unique()
             if len(n) == 0:
                 n = 0
             else:
@@ -736,7 +745,7 @@ def plot_peaks(significant, emotions, thresholds):
         axes[i].set_xticklabels(list_n, rotation=90, fontsize=15)
         axes[i].set_title(f'Concatenated movies - threshold {thr}', fontsize=20)
         axes[i].set_ylim(0, 1)
-        # increase font size
+
         for item in ([axes[i].title, axes[i].xaxis.label, axes[i].yaxis.label] +
                      axes[i].get_xticklabels() + axes[i].get_yticklabels()):
             item.set_fontsize(25)
@@ -746,15 +755,19 @@ def plot_peaks(significant, emotions, thresholds):
 
 def increase_thr(significant, emotions):
     # Define your thresholds
-    palette = sns.color_palette("Set2", 8)
+    palette = sns.color_palette("Set2", 8)[3:8]
 
     # Assuming 'significant' is your DataFrame and 'emotions' is defined
     order_emotions = emotions  # Adjusted for simplicity
     df = significant[significant['Control'] == 0]
+
+    plt.figure(figsize=(15, 10))
     sns.boxplot(x='Feature', y='Covariance Explained', data=df,  hue='threshold', palette=palette, order=order_emotions)
 
-    plt.xlabel('Emotions', fontsize=15)
-    plt.title(f'Concatenated movies')
+    plt.xlabel('Emotions', fontsize=20)
+    plt.title(f'Covariance explained with less points (threshold increase)', fontsize=25)
+    # increase the font size of the x and y ticks
+    plt.xticks(fontsize=17)
     plt.ylim(0, 1)
 
     plt.tight_layout()
