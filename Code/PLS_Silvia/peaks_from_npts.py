@@ -60,24 +60,25 @@ if __name__ == '__main__':
     threshold = 2.0
     count = 0
     times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
-    while (len(times_peaking) < number_points-10) | (len(times_peaking) > number_points+10):
+    while (len(times_peaking) < number_points-5) | (len(times_peaking) > number_points+5):
         count += 1
-        if len(times_peaking) < number_points-10:
+        if len(times_peaking) < number_points-5:
             print(f'There are {len(times_peaking)}  for {feature}. We will increase the threshold.\n')
             threshold -= 0.05
             times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
 
-        elif len(times_peaking) > number_points+10:
+        elif len(times_peaking) > number_points+5:
             print(f'There are {len(times_peaking)} peaks for {feature}. We will decrease the threshold.\n')
             threshold += 0.05
             times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
-        elif (len(times_peaking) >= number_points-10) & (len(times_peaking) <= number_points+10):
+        elif (len(times_peaking) >= number_points-5) & (len(times_peaking) <= number_points+5):
             print('The number of times where there are peaks is: ', len(times_peaking))
             break
         if count == 100:
             print('Too many iterations, we will not perform the PLS.\n')
             sys.exit()
-    
+    # round the threshold to 2 decimals
+    threshold = round(threshold, 2)
     times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
     print('The number of times where there are peaks is: ', len(times_peaking))
 
