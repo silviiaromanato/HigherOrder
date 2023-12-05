@@ -443,7 +443,7 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
             # Read the data from the txt file and select the times where the emotion is peaking
             data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep=' ', header=None)
             data_features = data_features.iloc[times_peaking,:]
-            print(f'The shape of the data_features is: {data_features.shape}')
+            print(f'The shape of the data_features is: {data_features.shape} and the length of the list is:', len(list_df))
             list_df.append(data_features)
 
         # Concatenate the dataframes of the subject
