@@ -429,11 +429,10 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
                                             columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 
                                                               'average_brightness_right', 'average_saturation_right', 'average_hue_right'],  cluster = True)
                 data = features[emotions]
-                print('The data are:', data)
 
             times_peaking = data.loc[data > threshold].index
             count_times += len(times_peaking)
-            if times_peaking.shape[0] <= 10:
+            if times_peaking.shape[0] <= 2:
                 continue
 
             if control == True:
@@ -444,9 +443,12 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
             # Read the data from the txt file and select the times where the emotion is peaking
             data_features = pd.read_csv(data_subjects.iloc[subject, movie], sep=' ', header=None)
             data_features = data_features.iloc[times_peaking,:]
+            print(f'The shape of the data_features is: {data_features.shape}')
             list_df.append(data_features)
 
         # Concatenate the dataframes of the subject
+        print(f'The number of times where there are peaks is: {count_times}')
+        print(f'The number of dataframes is: {len(list_df)}', list_df[0])
         data_features_concat = pd.concat(list_df, axis=0)
         list_datafeatures.append(data_features_concat)
 
