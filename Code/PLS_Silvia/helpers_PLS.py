@@ -465,20 +465,20 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
 
     return X
 
-def run_pls(X_movie, Y, region):
+def run_pls(X_movie, Y, region, movie_name = 'concatenated'):
     nPer = 1000         # Number of permutations for significance testing
     seed = 10           # Seed for reproducibility
     sl = 0.05          # Signficant level for statistical testing
     res = run_decomposition(X_movie, Y)
     res_permu = permutation(res, nPer, seed, sl)
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
-    results['Movie']='concatenated'
+    results['Movie']=movie_name
     results['LC']=np.arange(1, results.shape[0]+1)
     results['Region'] = region
     results['Covariance Explained'] = results['Covariance Explained'].astype(float)
     return results
 
-def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
+def boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 20, num_rounds = 100):
     print(f'\nPerforming BOOSTRAPPING on {sample_size} subjects for {num_rounds} rounds')
     results = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round'])
     for i in range(num_rounds):
@@ -486,7 +486,7 @@ def boostrap_subjects(X_movie, Y, region, sample_size = 20, num_rounds = 100):
         idx = np.random.choice(np.arange(X_movie.shape[0]), size=sample_size, replace=True)
         X_movie_sample = X_movie.iloc[idx,:]
         Y_sample = Y.iloc[idx,:]
-        pls = run_pls(X_movie_sample, Y_sample, region)
+        pls = run_pls(X_movie_sample, Y_sample, region, movie_name)
         pls = pd.DataFrame(pls)
         pls['bootstrap_round'] = i
         results = pd.concat([results, pls], axis=0)
