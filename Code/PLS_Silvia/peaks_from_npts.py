@@ -68,12 +68,12 @@ if __name__ == '__main__':
     while (len(times_peaking) < number_points-5) | (len(times_peaking) > number_points+5):
         count += 1
         if len(times_peaking) < number_points-5:
-            print(f'There are {len(times_peaking)}  for {feature}. We will increase the threshold.\n')
+            print(f'There are {len(times_peaking)}  for {feature}. We will increase the threshold.')
             threshold -= 0.01
             times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
 
         elif len(times_peaking) > number_points+5:
-            print(f'There are {len(times_peaking)} peaks for {feature}. We will decrease the threshold.\n')
+            print(f'There are {len(times_peaking)} peaks for {feature}. We will decrease the threshold.')
             threshold += 0.01
             times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
         elif (len(times_peaking) >= number_points-5) & (len(times_peaking) <= number_points+5):
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     elif concatmovies == 'single':
         X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = 'ALL')
     X_movie = pd.DataFrame(X_movie)
-    results = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = bootstrap_rounds)
+    results = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = bootstrap_rounds)
     results['Feature'] = feature
     results['threshold'] = threshold
     results['Number of points'] = number_points
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         elif concatmovies == 'single':
             X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = 'ALL')
         X_movie = pd.DataFrame(X_movie)
-        results_control_i = boostrap_subjects(X_movie, Y, region, sample_size = 25, num_rounds = 5)
+        results_control_i = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = 5)
         results_control_i['Feature'] = f'Control_{i}_{feature}'
         results_control_i['threshold'] = threshold
         results_control_i['Number of points'] = number_points

@@ -675,7 +675,6 @@ def extract_features_concat(cluster = True):
         concatenated_features = pd.concat([concatenated_features, features], axis = 0)
         concatenated_features.reset_index(drop=True, inplace=True)
 
-    # perform z-score normalization
     concatenated_features = (concatenated_features - concatenated_features.mean()) / concatenated_features.std()
 
     return concatenated_features
@@ -797,3 +796,19 @@ def compute_X_withtimes(PATH, movie, times, regions = None):
     print('The shape of X for BOLD is: ', X.shape)
 
     return X
+
+def preprocess_peaks_concat(peaks_data, data_all):
+    peaks_data.dropna(inplace=True)
+    peaks_data = peaks_data[peaks_data['Region'] == 'ALL']
+
+    features_control = peaks_data['Feature'].unique()                       # list of the emotions
+    features = [x for x in features_control if not x.startswith('Control')] # list of the emotions without the control ones
+    thresholds = peaks_data['threshold'].unique()                           # list of the thresholds
+
+    # Read the data for the PLS computed on all the movies concatenated
+    data_all['Region'] = 'ALL'
+    data_all['Type'] = 'bold'
+    data_all.reset_index(inplace=True, drop=False)
+    data_all.rename(columns={'index': 'bootstrap_round'}, inplace=True)
+
+    return peaks_data, data_all, features, thresholds
