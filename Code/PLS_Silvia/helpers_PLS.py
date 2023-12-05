@@ -428,9 +428,8 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
                 features = extract_features(list_movies[movie], columns = ['spectralflux', 'rms', 'zcrs'], 
                                             columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 
                                                               'average_brightness_right', 'average_saturation_right', 'average_hue_right'],  cluster = True)
-                print('The shape of features is: ', features.shape, features.columns)
                 data = features[emotions]
-                print('The shape of data is: ', data.shape, data.columns)
+                print('The data are:', data)
 
             times_peaking = data.loc[data > threshold].index
             count_times += len(times_peaking)
