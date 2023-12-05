@@ -432,8 +432,7 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
 
             times_peaking = data.loc[data > threshold].index
             count_times += len(times_peaking)
-            print(f'The number of times where there are peaks is: {len(times_peaking)}', times_peaking)
-            if times_peaking.shape[0] <= 1:
+            if times_peaking.shape[0] == 0:
                 continue
 
             if control == True:
