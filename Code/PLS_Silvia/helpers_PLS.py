@@ -448,7 +448,9 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
 
         # Concatenate the dataframes of the subject
         print(f'The number of times where there are peaks is: {count_times}')
-        print(f'The number of dataframes is: {len(list_df)}', list_df[0])
+        print(f'The number of dataframes is: {len(list_df)}')
+        if  len(list_df) == 0:
+            continue
         data_features_concat = pd.concat(list_df, axis=0)
         list_datafeatures.append(data_features_concat)
 
