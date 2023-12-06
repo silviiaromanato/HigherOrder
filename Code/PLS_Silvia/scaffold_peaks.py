@@ -6,117 +6,6 @@ from compute import *
 from helpers_scaffolds import *
 import sys 
 
-def compute_X_withtimes(PATH, movie, times, method, regions = None):
-
-    yeo_dict = loading_yeo(PATH_YEO)
-    yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
-    N = 114 if regions == 'ALL' else len(yeo_indices)
-
-    if method == 'bold':
-        print('Performing the bold method')
-        X = process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N)
-    if method == 'scaffold':
-        print('Performing the scaffold method')
-        X = process_scaffold_method(PATH, movie, regions, yeo_indices, times, N)
-    if method == 'triangles':
-        print('Performing the triangles method')
-        X = process_triangles_method(PATH, movie, regions, yeo_indices, times, N)
-    
-    return X
-
-def process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N):
-    list_subjects = []
-    for i in glob.glob(PATH+'*'):
-        if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
-            list_subjects.append(i)
-    mtx_upper_triangular = []
-    for i, PATH_SUBJ in enumerate(list_subjects):
-        data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
-        data_feature = data_feature.iloc[times,:]
-        if regions == 'ALL':
-            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
-        else:
-            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
-        upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
-        mtx_upper_triangular.append(upper_triangular)
-    mtx_upper_triangular = np.array(mtx_upper_triangular)
-    X = pd.DataFrame(mtx_upper_triangular)
-    print('The shape of X for BOLD is: ', X.shape)
-
-    return X
-
-def process_triangles_method(PATH, movie, regions, yeo_indices, times, N):
-    if regions == 'ALL':
-        length = int((114 * (114-1) * (114-2)) / (3*2))
-    else:
-        indices_yeo_all = []
-        for idx_triangles,(i,j,k) in enumerate(combinations(np.arange(114),3)):
-            flag=[i in yeo_indices, j in yeo_indices, k in yeo_indices]
-            if sum(flag) == 3: ## All the nodes belong to the same Yeo networks
-                indices_yeo_all.append(idx_triangles)
-        indices_yeo_all=np.array(indices_yeo_all)
-        number_indices = len(yeo_indices)
-        length = int((number_indices * (number_indices-1) * (number_indices-2)) / (3*2))
-
-    current_tri = np.zeros((30, length))
-    for string in glob.glob(PATH+'*'):
-        if (string.endswith(f'{movie}.hd5')):
-            file=h5py.File(string,'r',swmr=True)
-            subjID = subjid_computat(string)
-            if times is None:
-                if regions == 'ALL':
-                    for t in range(0,len(file)):
-                        sub_matrix = np.array(file[str(t)][:])
-                        current_tri[subjID,:]+=sub_matrix
-                    current_tri[subjID]=current_tri[subjID]/len(file)
-                else:
-                    for t in range(0,len(file)):
-                        sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
-                        current_tri[subjID,:]+=sub_matrix
-                    current_tri[subjID]=current_tri[subjID]/len(file)
-            else:
-                if regions == 'ALL':
-                    for t in times:
-                        sub_matrix = np.array(file[str(t)][:])
-                        current_tri[subjID,:]+=sub_matrix
-                    current_tri[subjID]=current_tri[subjID]/len(times)
-                else:
-                    for t in times:
-                        sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
-                        current_tri[subjID,:]+=sub_matrix
-                    current_tri[subjID]=current_tri[subjID]/len(times)
-    X = current_tri.copy()
-    print('The shape of X for TRIANGLES is: ', X.shape)
-
-def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
-    scaffold_current=np.zeros((30,int(N*(N-1)/2)))
-    for i in glob.glob(PATH+'*'):
-        if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
-            file = h5py.File(i, 'r', swmr=True)
-            u,v=np.triu_indices(n=N,k=1)
-            subjID = subjid_computat(i)
-            if times is None:
-                print('The times are: ', times)
-                for t in range(1,len(file)+1):
-                    if regions == 'ALL':
-                        scaffold_current[subjID,:]+=file[str(t)][:][u,v]
-                    else:
-                        scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
-                scaffold_current[subjID]=scaffold_current[subjID]/len(file)
-            else:
-                print('The times are: ', times)
-                for t in times:
-                    print('The time is: ', t)
-                    if regions == 'ALL':
-                        print('The shape of the scaffold is: ', file[str(t)][:].shape)
-                        scaffold_current[subjID,:]+=file[str(t)][:][u,v]
-                    else:
-                        scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
-                scaffold_current[subjID]=scaffold_current[subjID]/len(times)
-    X = scaffold_current.copy()
-    print('The shape of X for SCAFFOLD is: ', X.shape)
-    return X
-
 PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 
 nb = 30              # Number of participants
@@ -216,8 +105,10 @@ if __name__ == '__main__':
     print('\nWe are doing the peak part')
     # generic feature ----------> results
     if concatmovies == 'concat':
+        print('\nWe are doing the concat')
         X_movie = compute_X_concat(PATH, feature, threshold, control= False, todo = todo, mean = False)
     elif concatmovies == 'single':
+        print('\nWe are doing the single')
         X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = 'ALL')
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = bootstrap_rounds)
