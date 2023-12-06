@@ -35,7 +35,7 @@ if __name__ == '__main__':
     elif concatmovies == 'single':
         minimum_points = 15
 
-    print('\n' + ' -' * 10 + f' for {feature} and {region} and {number_points} FOR {todo}', ' -' * 10)
+    print('\n' + ' -' * 10 + f' - {feature} - {region} - {number_points} - {todo} - {movie_name} - {concatmovies}', ' -' * 10)
 
     # Load the data Y and concatenated the feature
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
@@ -57,14 +57,24 @@ if __name__ == '__main__':
     # Find the times where the generic feature (emotional or extracted) is peaking
     # with the set number of points
 
-    if number_points == 150:
-        threshold = 1
-    elif number_points == 100:
-        threshold = 1.5
-    elif number_points == 50:
-        threshold = 2
-    elif number_points == 35:
-        threshold = 2.5
+    if concatmovies == 'concat':
+        if number_points == 150:
+            threshold = 1
+        elif number_points == 100:
+            threshold = 1.5
+        elif number_points == 50:
+            threshold = 2
+        elif number_points == 35:
+            threshold = 2.5
+    elif concatmovies == 'single':
+        if number_points == 70:
+            threshold = 0.5
+        elif number_points == 50:
+            threshold = 0.7
+        elif number_points == 35:
+            threshold = 1
+        elif number_points == 20:
+            threshold = 1.5
     count = 0
     times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
     while (len(times_peaking) < number_points-5) | (len(times_peaking) > number_points+5):
@@ -130,4 +140,4 @@ if __name__ == '__main__':
     PLS_results = pd.concat([PLS_results, results], axis=0)
     PLS_results.to_csv(PATH_SAVE, index=False)
 
-    print('\n' + f"------------ The PLS for {feature} peak, {concatmovies} and {region} and {number_points} was performed!!! ------------ \n")
+    print('\n' + f"------------ The PLS for {feature} - {region} - {number_points} - {todo} - {movie_name} - {concatmovies} was performed!!! ------------ \n")
