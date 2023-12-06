@@ -93,6 +93,7 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
             u,v=np.triu_indices(n=N,k=1)
             subjID = subjid_computat(i)
             if times is None:
+                print('The times are: ', times)
                 for t in range(1,len(file)+1):
                     if regions == 'ALL':
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
@@ -100,7 +101,9 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
             else:
+                print('The times are: ', times)
                 for t in times:
+                    print('The time is: ', t)
                     if regions == 'ALL':
                         print('The shape of the scaffold is: ', file[str(t)][:].shape)
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
