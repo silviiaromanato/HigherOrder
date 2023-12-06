@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from scipy.io import loadmat
 from compute import *
-from helpers_PLS import *
+from helpers_scaffolds import *
 import sys 
 
 def compute_X_withtimes(PATH, movie, times, method, regions = None):
