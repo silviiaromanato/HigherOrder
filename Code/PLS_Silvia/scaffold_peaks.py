@@ -13,10 +13,13 @@ def compute_X_withtimes(PATH, movie, times, method, regions = None):
     N = 114 if regions == 'ALL' else len(yeo_indices)
 
     if method == 'bold':
+        print('Performing the bold method')
         X = process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N)
     if method == 'scaffold':
+        print('Performing the scaffold method')
         X = process_scaffold_method(PATH, movie, regions, yeo_indices, times, N)
     if method == 'triangles':
+        print('Performing the triangles method')
         X = process_triangles_method(PATH, movie, regions, yeo_indices, times, N)
     
     return X
