@@ -751,13 +751,10 @@ def compute_X_withtimes(PATH, movie, times, method, regions = None):
     N = 114 if regions == 'ALL' else len(yeo_indices)
 
     if method == 'bold':
-        print('Performing the bold method')
         X = process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N)
     if method == 'scaffold':
-        print('Performing the scaffold method')
         X = process_scaffold_method(PATH, movie, regions, yeo_indices, times, N)
     if method == 'triangles':
-        print('Performing the triangles method')
         X = process_triangles_method(PATH, movie, regions, yeo_indices, times, N)
     
     return X
@@ -835,7 +832,6 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
             u,v=np.triu_indices(n=N,k=1)
             subjID = subjid_computat(i)
             if times is None:
-                print('The times are: ', times)
                 for t in range(1,len(file)+1):
                     if regions == 'ALL':
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
@@ -843,11 +839,8 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
             else:
-                print('The times are: ', times)
                 for t in times:
-                    print('The time is: ', t)
                     if regions == 'ALL':
-                        print('The shape of the scaffold is: ', file[str(t)][:].shape)
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
