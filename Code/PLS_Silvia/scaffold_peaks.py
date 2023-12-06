@@ -102,6 +102,7 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
             else:
                 for t in times:
                     if regions == 'ALL':
+                        print('The shape of the scaffold is: ', file[str(t)][:].shape)
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
