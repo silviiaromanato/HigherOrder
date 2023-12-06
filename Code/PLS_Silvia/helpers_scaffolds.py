@@ -759,27 +759,6 @@ def compute_X_withtimes(PATH, movie, times, method, regions = None):
     
     return X
 
-def process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N):
-    list_subjects = []
-    for i in glob.glob(PATH+'*'):
-        if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
-            list_subjects.append(i)
-    mtx_upper_triangular = []
-    for i, PATH_SUBJ in enumerate(list_subjects):
-        data_feature = pd.read_csv(PATH_SUBJ, sep=' ', header=None)
-        data_feature = data_feature.iloc[times,:]
-        if regions == 'ALL':
-            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)
-        else:
-            connectivity_matrix = np.corrcoef(data_feature, rowvar=False)[:,yeo_indices]
-        upper_triangular = connectivity_matrix[np.triu_indices_from(connectivity_matrix, k=1)]
-        mtx_upper_triangular.append(upper_triangular)
-    mtx_upper_triangular = np.array(mtx_upper_triangular)
-    X = pd.DataFrame(mtx_upper_triangular)
-    print('The shape of X for BOLD is: ', X.shape)
-
-    return X
-
 def process_triangles_method(PATH, movie, regions, yeo_indices, times, N):
     if regions == 'ALL':
         length = int((114 * (114-1) * (114-2)) / (3*2))
@@ -797,7 +776,12 @@ def process_triangles_method(PATH, movie, regions, yeo_indices, times, N):
     for string in glob.glob(PATH+'*'):
         if (string.endswith(f'{movie}.hd5')):
             file=h5py.File(string,'r',swmr=True)
-            subjID = subjid_computat(string)
+            subjID = int(string.split('/')[-1].split('_')[4][1:3]) - 1
+            if subjID > 10:
+                if subjID > 16:
+                    subjID -= 2
+                else:
+                    subjID -= 1
             if times is None:
                 if regions == 'ALL':
                     for t in range(0,len(file)):
@@ -823,6 +807,7 @@ def process_triangles_method(PATH, movie, regions, yeo_indices, times, N):
     X = current_tri.copy()
     print('The shape of X for TRIANGLES is: ', X.shape)
     return X
+
 
 def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
     scaffold_current=np.zeros((30,int(N*(N-1)/2)))
