@@ -63,6 +63,8 @@ if __name__ == '__main__':
         threshold = 1.5
     elif number_points == 50:
         threshold = 2
+    elif number_points == 35:
+        threshold = 2.5
     count = 0
     times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
     while (len(times_peaking) < number_points-5) | (len(times_peaking) > number_points+5):
