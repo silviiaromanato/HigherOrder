@@ -29,7 +29,7 @@ if __name__ == '__main__':
     movie_name = sys.argv[8]
     bootstrap_rounds = int(int(sys.argv[9]))
     method = sys.argv[10]
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}_pts.csv'
+    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}_{method}_pts.csv'
 
     if concatmovies == 'concat':
         minimum_points = 30
@@ -105,10 +105,8 @@ if __name__ == '__main__':
     print('\nWe are doing the peak part')
     # generic feature ----------> results
     if concatmovies == 'concat':
-        print('\nWe are doing the concat')
         X_movie = compute_X_concat(PATH, feature, threshold, control= False, todo = todo, mean = False)
     elif concatmovies == 'single':
-        print('\nWe are doing the single')
         X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, method = method, regions = 'ALL')
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = bootstrap_rounds)
