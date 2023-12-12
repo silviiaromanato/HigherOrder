@@ -119,7 +119,7 @@ if __name__ == '__main__':
         if concatmovies == 'concat':
             X_movie = compute_X_concat(PATH, feature, threshold, control=True, seed = 5 * i, todo = todo, mean = False)
         elif concatmovies == 'single':
-            X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
+            X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, method = method, regions = region)
         X_movie = pd.DataFrame(X_movie)
         results_control_i = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = 5)
         results_control_i['Feature'] = f'Control_{i}_{feature}'
