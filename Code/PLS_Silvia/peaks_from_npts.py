@@ -28,6 +28,7 @@ if __name__ == '__main__':
     concatmovies = sys.argv[7]
     movie_name = sys.argv[8]
     bootstrap_rounds = int(int(sys.argv[9]))
+    method = "bold"
     PATH_SAVE = f'/storage/Projects/lab_projects/Silvia/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}_pts.csv'
 
     if concatmovies == 'concat':
