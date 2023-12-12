@@ -6,7 +6,7 @@ from compute import *
 from helpers_PLS import *
 import sys 
 
-PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
+PATH_YEO = '/home/silvia/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
