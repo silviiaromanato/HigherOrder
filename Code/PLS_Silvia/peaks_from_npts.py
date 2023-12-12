@@ -28,7 +28,7 @@ if __name__ == '__main__':
     concatmovies = sys.argv[7]
     movie_name = sys.argv[8]
     bootstrap_rounds = int(int(sys.argv[9]))
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}_pts.csv'
+    PATH_SAVE = f'/storage/Projects/lab_projects/Silvia/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}_pts.csv'
 
     if concatmovies == 'concat':
         minimum_points = 30
@@ -48,14 +48,11 @@ if __name__ == '__main__':
     elif concatmovies == 'single':
         if todo == 'emotions':
             Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
-            labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json')
-            data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
+            labels = pd.read_json(f'/home/silvia/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json')
+            data = pd.read_csv(f'/home/silvia/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
             data.columns = labels['Columns']
         if todo == 'features_extracted':
             data = extract_features(movie_name, columns = ['spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], cluster = True)
-
-    # Find the times where the generic feature (emotional or extracted) is peaking
-    # with the set number of points
 
     if concatmovies == 'concat':
         if number_points == 150:
@@ -107,7 +104,7 @@ if __name__ == '__main__':
     if concatmovies == 'concat':
         X_movie = compute_X_concat(PATH, feature, threshold, control= False, todo = todo, mean = False)
     elif concatmovies == 'single':
-        X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = 'ALL')
+        X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
     X_movie = pd.DataFrame(X_movie)
     results = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = bootstrap_rounds)
     results['Feature'] = feature
@@ -122,7 +119,7 @@ if __name__ == '__main__':
         if concatmovies == 'concat':
             X_movie = compute_X_concat(PATH, feature, threshold, control=True, seed = 5 * i, todo = todo, mean = False)
         elif concatmovies == 'single':
-            X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = 'ALL')
+            X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, regions = region)
         X_movie = pd.DataFrame(X_movie)
         results_control_i = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = 5)
         results_control_i['Feature'] = f'Control_{i}_{feature}'
