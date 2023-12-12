@@ -11,7 +11,7 @@ import sys
 import seaborn as sns
 
 
-PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
+PATH_YEO = '/home/silvia/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 
 def compute_X(PATH, movie, method, regions=None):
     """
@@ -29,31 +29,40 @@ def compute_X(PATH, movie, method, regions=None):
     yeo_dict = loading_yeo(PATH_YEO)
     yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
     N = 114 if regions == 'ALL' else len(yeo_indices)
+    times = None
 
     if method == 'bold':
         return process_bold_method(PATH, movie, regions, yeo_indices, N)
     elif method == 'scaffold':
-        return process_scaffold_method(PATH, movie, regions, yeo_indices, N)
+        return process_scaffold_method(PATH, movie, regions, yeo_indices, times, N)
     elif method == 'triangles':
-        return process_triangles_method(PATH, movie, regions, yeo_indices, N)
+        return process_triangles_method(PATH, movie, regions, yeo_indices, times, N)
     elif method == 'edges':
         return process_edges_method(PATH, movie, regions, yeo_indices, N)
     else:
         raise ValueError("Invalid method specified.")
 
-def process_scaffold_method(PATH, movie, regions, yeo_indices, N):
+def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
     scaffold_current=np.zeros((30,int(N*(N-1)/2)))
     for i in glob.glob(PATH+'*'):
         if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
             file = h5py.File(i, 'r', swmr=True)
             u,v=np.triu_indices(n=N,k=1)
             subjID = subjid_computat(i)
-            for t in range(1,len(file)+1):
-                if regions == 'ALL':
-                    scaffold_current[subjID,:]+=file[str(t)][:][u,v]
-                else:
-                    scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
-            scaffold_current[subjID]=scaffold_current[subjID]/len(file)
+            if times is None:
+                for t in range(1,len(file)+1):
+                    if regions == 'ALL':
+                        scaffold_current[subjID,:]+=file[str(t)][:][u,v]
+                    else:
+                        scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
+                scaffold_current[subjID]=scaffold_current[subjID]/len(file)
+            else:
+                for t in times:
+                    if regions == 'ALL':
+                        scaffold_current[subjID,:]+=file[str(t)][:][u,v]
+                    else:
+                        scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
+                scaffold_current[subjID]=scaffold_current[subjID]/len(times)
     X = scaffold_current.copy()
     print('The shape of X for SCAFFOLD is: ', X.shape)
     return X
@@ -67,7 +76,7 @@ def subjid_computat(i):
             subjID -= 1
     return subjID
 
-def process_triangles_method(PATH, movie, regions, yeo_indices, N):
+def process_triangles_method(PATH, movie, regions, yeo_indices, times, N):
     if regions == 'ALL':
         length = int((114 * (114-1) * (114-2)) / (3*2))
     else:
@@ -83,21 +92,30 @@ def process_triangles_method(PATH, movie, regions, yeo_indices, N):
     current_tri = np.zeros((30, length))
     for string in glob.glob(PATH+'*'):
         if (string.endswith(f'{movie}.hd5')):
-            # try:
             file=h5py.File(string,'r',swmr=True)
-            # except:
-            #     continue
             subjID = subjid_computat(string)
-            if regions == 'ALL':
-                for t in range(0,len(file)):
-                    sub_matrix = np.array(file[str(t)][:])
-                    current_tri[subjID,:]+=sub_matrix
-                current_tri[subjID]=current_tri[subjID]/len(file)
+            if times is None:
+                if regions == 'ALL':
+                    for t in range(0,len(file)):
+                        sub_matrix = np.array(file[str(t)][:])
+                        current_tri[subjID,:]+=sub_matrix
+                    current_tri[subjID]=current_tri[subjID]/len(file)
+                else:
+                    for t in range(0,len(file)):
+                        sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
+                        current_tri[subjID,:]+=sub_matrix
+                    current_tri[subjID]=current_tri[subjID]/len(file)
             else:
-                for t in range(0,len(file)):
-                    sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
-                    current_tri[subjID,:]+=sub_matrix
-                current_tri[subjID]=current_tri[subjID]/len(file)
+                if regions == 'ALL':
+                    for t in times:
+                        sub_matrix = np.array(file[str(t)][:])
+                        current_tri[subjID,:]+=sub_matrix
+                    current_tri[subjID]=current_tri[subjID]/len(times)
+                else:
+                    for t in times:
+                        sub_matrix = np.array(file[str(t)][:])[indices_yeo_all]
+                        current_tri[subjID,:]+=sub_matrix
+                    current_tri[subjID]=current_tri[subjID]/len(times)
     X = current_tri.copy()
     print('The shape of X for TRIANGLES is: ', X.shape)
 
@@ -750,7 +768,7 @@ def plot_peaks(significant, emotions, thresholds):
     plt.tight_layout()
     plt.show()
 
-def increase_thr(significant, emotions):
+def increase_thr(significant, emotions, order_hue = None, on = 'Number of points'):
 
     # Define your thresholds
     palette = sns.color_palette("Set2", 8)[3:8]
@@ -760,23 +778,16 @@ def increase_thr(significant, emotions):
     df = significant[significant['Control'] == 0]
 
     plt.figure(figsize=(15, 10))
-    sns.boxplot(x='Feature', y='Covariance Explained', data=df,  hue='threshold', palette=palette, order=order_emotions)
-
+    sns.boxplot(x='Feature', y='Covariance Explained', data=df,  hue=on, palette=palette, order=order_emotions, hue_order=order_hue)
     plt.xlabel('Emotions', fontsize=20)
-    plt.title(f'Covariance explained with less points (threshold increase)', fontsize=25)
-    # increase the font size of the x and y ticks
+    plt.title(f'Covariance explained with less points ({on} increase)', fontsize=25)
     plt.xticks(fontsize=17)
     plt.ylim(0, 1)
 
     plt.tight_layout()
     plt.show()
 
-def compute_X_withtimes(PATH, movie, times, regions = None):
-
-    yeo_dict = loading_yeo(PATH_YEO)
-    yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
-    N = 114 if regions == 'ALL' else len(yeo_indices)
-
+def process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N):
     list_subjects = []
     for i in glob.glob(PATH+'*'):
         if (i.split('/')[-1].split('-')[0] == 'TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.txt')):
@@ -795,6 +806,21 @@ def compute_X_withtimes(PATH, movie, times, regions = None):
     X = pd.DataFrame(mtx_upper_triangular)
     print('The shape of X for BOLD is: ', X.shape)
 
+    return X
+
+def compute_X_withtimes(PATH, movie, times, method, regions = None):
+
+    yeo_dict = loading_yeo(PATH_YEO)
+    yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
+    N = 114 if regions == 'ALL' else len(yeo_indices)
+
+    if method == 'bold':
+        X = process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N)
+    if method == 'scaffold':
+        X = process_scaffold_method(PATH, movie, regions, yeo_indices, times, N)
+    if method == 'triangles':
+        X = process_triangles_method(PATH, movie, regions, yeo_indices, times, N)
+    
     return X
 
 def preprocess_peaks_concat(peaks_data, data_all):
