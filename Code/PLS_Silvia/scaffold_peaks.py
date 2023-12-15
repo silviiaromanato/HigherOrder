@@ -93,9 +93,6 @@ if __name__ == '__main__':
     elif concatmovies == 'single':
         X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, method = method, PATH_YEO = PATH_YEO, regions = 'ALL')
     X_movie = pd.DataFrame(X_movie)
-    # chech if there are inf or nan values in the X_movie
-    if X_movie.isnull().values.any():
-        print('There are nan values in the X_movie')
     results = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = bootstrap_rounds)
     results['Feature'] = feature
     results['threshold'] = threshold
