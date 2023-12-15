@@ -10,10 +10,7 @@ import re
 import sys
 import seaborn as sns
 
-
-PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
-
-def compute_X(PATH, movie, method, regions=None):
+def compute_X(PATH, movie, method, PATH_YEO, regions=None):
     """
     Compute the X dataset for the PLS analysis.
 
@@ -42,7 +39,6 @@ def compute_X(PATH, movie, method, regions=None):
     else:
         raise ValueError("Invalid method specified.")
 
-
 def subjid_computat(i):
     subjID = int(i.split('/')[-1].split('-')[1][1:3]) - 1
     if subjID > 10:
@@ -51,7 +47,6 @@ def subjid_computat(i):
         else:
             subjID -= 1
     return subjID
-
 
 def process_edges_method(PATH, movie, regions, yeo_indices, N):
     list_subjects = list_of_subjects(PATH, movie)
@@ -335,7 +330,7 @@ def loading_yeo(path=PATH_YEO):
     yeoROI_dict['SC'] = np.arange(100, 114)
     return(yeoROI_dict)
 
-def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False, seed = 1, todo = 'emotions', mean = False):
+def compute_X_concat(PATH, emotions, threshold, PATH_YEO, regions = 'ALL', control = False, seed = 1, todo = 'emotions', mean = False, ):
 
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
 
@@ -366,8 +361,10 @@ def compute_X_concat(PATH, emotions, threshold, regions = 'ALL', control = False
         for movie in range(data_subjects.shape[1]):
             if todo == 'emotions':
                 # Read the labels and the data from the emotions
-                labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
-                data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
+                # labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
+                # data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
+                labels = pd.read_json(f'/home/silvia/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
+                data = pd.read_csv(f'/home/silvia/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
                 data.columns = labels['Columns']
 
                 # Take the time peaks
@@ -449,7 +446,8 @@ def concat_emo(server = True):
     data_concat = pd.DataFrame()
     for movie_name in list_movies:
         if server == True:
-            PATH  = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData'
+            # PATH  = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData'
+            PATH = '/home/silvia/Flavia_E3/EmoData'
         else:
             PATH = '/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData'
         labels = pd.read_json(PATH + f'/Annot13_{movie_name}_stim.json')
@@ -572,15 +570,18 @@ def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectra
                              cluster = True
                              ):
     if cluster == True:
-        PATH_EMO = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/'
+        # PATH_EMO = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/'
+        PATH_EMO = '/home/silvia/Flavia_E3/EmoData/'
     else:
         PATH_EMO = '/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/'
     length = extract_corrmat_allregressors(PATH_EMO, movie_name).shape[0]
 
     movie_name_with_ = re.sub(r"(\w)([A-Z])", r"\1_\2", movie_name)
     if cluster == True:
-        df_sound = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
-        df_images = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
+        # df_sound = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
+        # df_images = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
+        df_sound = pd.read_csv(f'/home/silvia/Silvia/HigherOrder/Data/Output/features_extracted/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
+        df_images = pd.read_csv(f'/home/silvia/Silvia/HigherOrder/Data/Output/features_extracted/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
     else: 
         df_sound = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
         df_images = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
@@ -744,7 +745,7 @@ def process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N):
 
     return X
 
-def compute_X_withtimes(PATH, movie, times, method, regions = None):
+def compute_X_withtimes(PATH, movie, times, method, PATH_YEO, regions = None):
 
     yeo_dict = loading_yeo(PATH_YEO)
     yeo_indices = yeo_dict[regions] if regions != 'ALL' else None
