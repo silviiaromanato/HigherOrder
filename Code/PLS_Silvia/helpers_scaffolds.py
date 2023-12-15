@@ -836,7 +836,9 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
     print(movie, regions, yeo_indices, times)
     scaffold_current=np.zeros((30,int(N*(N-1)/2)))
     for i in glob.glob(PATH+'*'):
+        print(i)
         if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
+            print(i)
             file = h5py.File(i, 'r', swmr=True)
             u,v=np.triu_indices(n=N,k=1)
             subjID = subjid_computat(i)
