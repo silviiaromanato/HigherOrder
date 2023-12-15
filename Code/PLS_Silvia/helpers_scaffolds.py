@@ -833,13 +833,10 @@ def process_triangles_method(PATH, movie, regions, yeo_indices, times, N):
     return X
 
 def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
-    print(PATH, movie, regions, yeo_indices, times)
+    print(PATH, movie, regions, yeo_indices, times, N)
     scaffold_current=np.zeros((30,int(N*(N-1)/2)))
     for i in glob.glob(PATH+'*'):
-        print(i)
-        print((i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')))
         if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
-            print(i)
             file = h5py.File(i, 'r', swmr=True)
             u,v=np.triu_indices(n=N,k=1)
             subjID = subjid_computat(i)
@@ -847,22 +844,17 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
                 for t in range(1,len(file)+1):
                     if regions == 'ALL':
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
-                        print('The shape of scaffold_current is: ', scaffold_current)
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
-                        print('The shape of scaffold_current is: ', scaffold_current)
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
             else:
                 for t in times:
                     if regions == 'ALL':
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
-                        print('The shape of scaffold_current is: ', scaffold_current)
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
-                        print('The shape of scaffold_current is: ', scaffold_current)
                 scaffold_current[subjID]=scaffold_current[subjID]/len(times)
     X = scaffold_current.copy()
-    print('The shape of X for SCAFFOLD is: ', X.shape)
     return X
 
 def preprocess_peaks_concat(peaks_data, data_all):
