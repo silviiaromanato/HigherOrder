@@ -833,7 +833,7 @@ def process_triangles_method(PATH, movie, regions, yeo_indices, times, N):
     return X
 
 def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
-    print(movie, regions, yeo_indices, times)
+    print(PATH, movie, regions, yeo_indices, times)
     scaffold_current=np.zeros((30,int(N*(N-1)/2)))
     for i in glob.glob(PATH+'*'):
         print(i)
