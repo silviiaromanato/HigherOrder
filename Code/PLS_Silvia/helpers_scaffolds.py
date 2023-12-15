@@ -459,8 +459,7 @@ def boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 20, num_roun
         pls = pd.DataFrame(pls)
         pls['bootstrap_round'] = i
         # are there nan values in the results?
-        if pls.isnull().values.any():
-            print('There are nan values in the results')
+        print('There are nan values in results: ', pls.isnull().values.any())
         results = pd.concat([results, pls], axis=0)
     return results
 
