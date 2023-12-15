@@ -108,7 +108,7 @@ if __name__ == '__main__':
         elif concatmovies == 'single':
             X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, method = method, PATH_YEO = PATH_YEO, regions = region)
         X_movie = pd.DataFrame(X_movie)
-        results_control_i = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = 5)
+        results_control_i = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = 2)
         results_control_i['Feature'] = f'Control_{i}_{feature}'
         results_control_i['threshold'] = threshold
         results_control_i['Number of points'] = number_points
