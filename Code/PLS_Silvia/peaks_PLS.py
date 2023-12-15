@@ -83,7 +83,6 @@ if __name__ == '__main__':
     results['threshold'] = threshold
 
     print('\nWe are doing the control')
-    # control of the generic feature ---------------> results_controls
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 'bootstrap_round', 'Feature', 'threshold'])
     for i in range(bootstrap_rounds):
         print(f'\nControl {i}')

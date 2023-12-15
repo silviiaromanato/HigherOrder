@@ -93,6 +93,9 @@ if __name__ == '__main__':
     elif concatmovies == 'single':
         X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, method = method, PATH_YEO = PATH_YEO, regions = 'ALL')
     X_movie = pd.DataFrame(X_movie)
+    print('The shape of the X matrix is: ', X_movie.shape)
+    # how many nan and inf values are there?
+    print('There are ', X_movie.isna().sum().sum(), ' nan values and ', np.isinf(X_movie).sum().sum(), ' inf values in the X matrix.')
     results = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = bootstrap_rounds)
     results['Feature'] = feature
     results['threshold'] = threshold
@@ -100,7 +103,6 @@ if __name__ == '__main__':
     results['Method'] = method
 
     print('\nWe are doing the control')
-    # control of the generic feature ---------------> results_controls
     results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 
                                                 'bootstrap_round', 'Feature', 'threshold', 'Number of points', 'Method'])
     for i in range(bootstrap_rounds):

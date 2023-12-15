@@ -145,7 +145,6 @@ def SVD(R, ICA=False, seed=1, n_components=None,):
 
     n_components = min(R.shape)
     
-    
     ## Run most computationally efficient SVD
     U, d, V = randomized_svd(R, n_components=n_components, random_state=seed)
     
