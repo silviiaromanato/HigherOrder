@@ -18,6 +18,7 @@ if __name__ == '__main__':
 
     # ------------------------- Input arguments -------------------------
     PATH = sys.argv[1]
+    print(PATH)
     feature = sys.argv[2] # these can be the features too
     PATH_DATA_Y = sys.argv[3]
     region = sys.argv[4]
