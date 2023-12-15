@@ -50,9 +50,9 @@ if __name__ == '__main__':
     Y = pd.read_csv(PATH_DATA_Y, sep='\t', header=0)[columns]
     labels = pd.read_json(PATH_LABELS)
     if concatmovies == 'concat':
-        data = concat_emo() if todo == 'emotions' else extract_features_concat(cluster = True) if todo == 'features_extracted' else None
+        data = concat_emo(server=server) if todo == 'emotions' else extract_features_concat(server = server) if todo == 'features_extracted' else None
     elif concatmovies == 'single':
-        data = pd.read_csv(PATH_DATA, sep = '\t', header = None) if todo == 'emotions' else extract_features(movie_name, columns = ['spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], cluster = True) if todo == 'features_extracted' else None
+        data = pd.read_csv(PATH_DATA, sep = '\t', header = None) if todo == 'emotions' else extract_features(movie_name, columns = ['spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], server = server) if todo == 'features_extracted' else None
         data.columns = labels['Columns']
     
     threshold_values = {
@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
     print('\nWe are doing the peak part')
     if concatmovies == 'concat':
-        X_movie = compute_X_concat(PATH, feature, threshold, PATH_YEO, control= False, todo = todo, mean = False)
+        X_movie = compute_X_concat(PATH, feature, threshold, PATH_YEO, control= False, todo = todo, mean = False, server = server)
     elif concatmovies == 'single':
         X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, method = method, PATH_YEO = PATH_YEO, regions = 'ALL')
     X_movie = pd.DataFrame(X_movie)
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     for i in range(bootstrap_rounds):
         print(f'\nControl {i}')
         if concatmovies == 'concat':
-            X_movie = compute_X_concat(PATH, feature, threshold, PATH_YEO, control=True, seed = 5 * i, todo = todo, mean = False)
+            X_movie = compute_X_concat(PATH, feature, threshold, PATH_YEO, control=True, seed = 5 * i, todo = todo, mean = False, server = server)
         elif concatmovies == 'single':
             X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, method = method, PATH_YEO = PATH_YEO, regions = 'ALL')
         X_movie = pd.DataFrame(X_movie)

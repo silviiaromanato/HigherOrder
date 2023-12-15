@@ -240,6 +240,8 @@ def run_decomposition(X,Y):
      
         # print("...SVD ...")
         R=R_cov(X_std, Y_std)
+        print(f'R has nan {np.isnan(R).any()}')
+        print(f'R has inf {np.isinf(R).any()}')
         U,S, V = SVD(R, ICA=True)
         ExplainedVarLC =varexp(S)
         Lx, Ly= PLS_scores(X_std, Y_std, U, V)
@@ -330,7 +332,7 @@ def loading_yeo(path):
     yeoROI_dict['SC'] = np.arange(100, 114)
     return(yeoROI_dict)
 
-def compute_X_concat(PATH, emotions, threshold, PATH_YEO, regions = 'ALL', control = False, seed = 1, todo = 'emotions', mean = False, ):
+def compute_X_concat(PATH, emotions, threshold, PATH_YEO, regions = 'ALL', control = False, seed = 1, todo = 'emotions', mean = False, server = 'miplab'):
 
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
 
@@ -360,11 +362,13 @@ def compute_X_concat(PATH, emotions, threshold, PATH_YEO, regions = 'ALL', contr
         count_times = 0
         for movie in range(data_subjects.shape[1]):
             if todo == 'emotions':
-                # Read the labels and the data from the emotions
-                # labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
-                # data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
-                labels = pd.read_json(f'/home/silvia/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
-                data = pd.read_csv(f'/home/silvia/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
+                
+                if server == 'miplab':
+                    labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
+                    data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
+                elif server == 'enrico':
+                    labels = pd.read_json(f'/home/silvia/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.json')
+                    data = pd.read_csv(f'/home/silvia/Flavia_E3/EmoData/Annot13_{list_movies[movie]}_stim.tsv', sep = '\t', header = None)
                 data.columns = labels['Columns']
 
                 # Take the time peaks
@@ -417,7 +421,7 @@ def compute_X_concat(PATH, emotions, threshold, PATH_YEO, regions = 'ALL', contr
 def run_pls(X_movie, Y, region, movie_name = 'concatenated'):
     nPer = 1000         # Number of permutations for significance testing
     seed = 10           # Seed for reproducibility
-    sl = 0.05          # Signficant level for statistical testing
+    sl = 0.05           # Signficant level for statistical testing
     res = run_decomposition(X_movie, Y)
     res_permu = permutation(res, nPer, seed, sl)
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
@@ -441,15 +445,14 @@ def boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 20, num_roun
         results = pd.concat([results, pls], axis=0)
     return results
 
-def concat_emo(server = True):
+def concat_emo(server = 'miplab'):
     list_movies = ['AfterTheRain', 'BetweenViewings', 'BigBuckBunny', 'Chatter', 'FirstBite', 'LessonLearned', 'Payload', 'Sintel', 'Spaceman', 'Superhero', 'TearsOfSteel', 'TheSecretNumber', 'ToClaireFromSonny', 'YouAgain']
     data_concat = pd.DataFrame()
     for movie_name in list_movies:
-        if server == True:
-            # PATH  = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData'
+        if server == 'enrico':
             PATH = '/home/silvia/Flavia_E3/EmoData'
-        else:
-            PATH = '/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData'
+        elif server == 'miplab':
+            PATH = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData'
         labels = pd.read_json(PATH + f'/Annot13_{movie_name}_stim.json')
         data = pd.read_csv(PATH + f'/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
         data.columns = labels['Columns']
@@ -567,22 +570,22 @@ def extract_corrmat_emo(emo_path_folder,film_ID):
 def extract_features(movie_name, columns = ['mean_chroma', 'mean_mfcc', 'spectralflux', 'rms', 'zcrs'], 
                              columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 
                                                'average_brightness_right', 'average_saturation_right', 'average_hue_right'],
-                             cluster = True
+                             server = 'miplab'
                              ):
-    if cluster == True:
-        # PATH_EMO = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/'
+    if server == 'enrico':
         PATH_EMO = '/home/silvia/Flavia_E3/EmoData/'
-    else:
-        PATH_EMO = '/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/EmoData/'
+    elif server == 'miplab':
+        PATH_EMO = '/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/'
     length = extract_corrmat_allregressors(PATH_EMO, movie_name).shape[0]
 
     movie_name_with_ = re.sub(r"(\w)([A-Z])", r"\1_\2", movie_name)
-    if cluster == True:
-        # df_sound = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
-        # df_images = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
+    if server == 'enrico':
         df_sound = pd.read_csv(f'/home/silvia/Silvia/HigherOrder/Data/Output/features_extracted/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
         df_images = pd.read_csv(f'/home/silvia/Silvia/HigherOrder/Data/Output/features_extracted/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
-    else: 
+    elif server == 'miplab': 
+        df_sound = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
+        df_images = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/features_extracted/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
+    else:
         df_sound = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/features_extracted/features_sound_{movie_name_with_}.csv')[columns]
         df_images = pd.read_csv(f'/Users/silviaromanato/Desktop/SEMESTER_PROJECT/Material/Data/features_extracted/movie_features_{movie_name_with_}_exp.csv')[columns_images]
     window_size1 = df_images.shape[0] // length
