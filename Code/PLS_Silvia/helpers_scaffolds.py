@@ -777,6 +777,7 @@ def compute_X_withtimes(PATH, movie, times, method, PATH_YEO, regions = None):
         X = process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N)
     if method == 'scaffold':
         X = process_scaffold_method(PATH, movie, regions, yeo_indices, times, N)
+        print('The shape of X for SCAFFOLD is: ', X.shape, X)
     if method == 'triangles':
         X = process_triangles_method(PATH, movie, regions, yeo_indices, times, N)
     
@@ -853,6 +854,7 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(times)
+                print('The shape of scaffold_current is: ', scaffold_current)
     X = scaffold_current.copy()
     print('The shape of X for SCAFFOLD is: ', X.shape)
     return X
