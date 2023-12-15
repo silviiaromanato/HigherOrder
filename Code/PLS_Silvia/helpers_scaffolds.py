@@ -229,16 +229,12 @@ def standa(X,Y):
     X_normed=(X_normed-np.nanmean(X_normed,axis=0))/(np.nanstd(X_normed,axis=0, ddof=1))
     Y_normed=(Y_normed-np.nanmean(Y_normed,axis=0))/(np.nanstd(Y_normed,axis=0, ddof=1))
     print('There are nan values in the X: ', np.isnan(X_normed).any().sum(), np.isnan(Y_normed).any().sum())
-
-
     return X_normed, Y_normed
 
 def run_decomposition(X,Y):                                                   
         res={}
-         # print("... Normalisation ...")
-        print('There are nan values in the X: ', np.isnan(X).any(), np.isnan(Y).any())
+        print("... Normalisation ...")
         X_std, Y_std = standa(X, Y)
-        print('There are nan values in the X_std: ', np.isnan(X_std).any(), np.isnan(Y_std).any())
         res['X']=X
         res['Y']=Y
         res['X_std']= X_std
@@ -446,7 +442,6 @@ def run_pls(X_movie, Y, region, movie_name = 'concatenated'):
     sl = 0.05           # Signficant level for statistical testing
     res = run_decomposition(X_movie, Y)
     # print if there are nan values 
-    print('There are nan values in the res: ', np.isnan(res['X_std']).any(), np.isnan(res['Y_std']).any())
     res_permu = permutation(res, nPer, seed, sl)
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
     results['Movie']=movie_name
