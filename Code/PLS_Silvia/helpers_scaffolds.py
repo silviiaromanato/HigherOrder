@@ -233,7 +233,6 @@ def run_decomposition(X,Y):
         res={}
          # print("... Normalisation ...")
         X_std, Y_std = standa(X, Y)
-        print('There are nan values in the X_std: ', np.isnan(X_std).any(), np.isnan(Y_std).any())
         res['X']=X
         res['Y']=Y
         res['X_std']= X_std
@@ -241,7 +240,6 @@ def run_decomposition(X,Y):
      
         # print("...SVD ...")
         R=R_cov(X_std, Y_std)
-        print('There are nan values in the R: ', np.isnan(R).any())
         R = np.nan_to_num(R)
         U,S, V = SVD(R, ICA=True)
         ExplainedVarLC =varexp(S)
@@ -423,8 +421,8 @@ def run_pls(X_movie, Y, region, movie_name = 'concatenated'):
     nPer = 1000         # Number of permutations for significance testing
     seed = 10           # Seed for reproducibility
     sl = 0.05           # Signficant level for statistical testing
-    print('There are nan values in the X_movie: ', np.isnan(X_movie).any(), np.isnan(Y).any())
     res = run_decomposition(X_movie, Y)
+    # print if there are nan values 
     print('There are nan values in the res: ', np.isnan(res['X_std']).any(), np.isnan(res['Y_std']).any())
     res_permu = permutation(res, nPer, seed, sl)
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
