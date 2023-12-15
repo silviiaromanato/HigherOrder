@@ -6,8 +6,6 @@ from compute import *
 from helpers_scaffolds import *
 import sys 
 
-PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
-
 nb = 30              # Number of participants
 nPer = 1000         # Number of permutations for significance testing
 nBoot = 1000        # Number of bootstrap iterations
@@ -18,7 +16,7 @@ columns = ['DASS_dep', 'DASS_anx', 'DASS_str',	'bas_d', 'bas_f', 'bas_r', 'bis',
 
 if __name__ == '__main__': 
 
-    # Input arguments
+    # ------------------------- Input arguments -------------------------
     PATH = sys.argv[1]
     feature = sys.argv[2] # these can be the features too
     PATH_DATA = sys.argv[3]
@@ -29,81 +27,70 @@ if __name__ == '__main__':
     movie_name = sys.argv[8]
     bootstrap_rounds = int(int(sys.argv[9]))
     method = sys.argv[10]
-    PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}_{method}_pts.csv'
+    server = sys.argv[11]
+
+    # ------------------------- Paths -------------------------
+    if server == 'miplab':
+        PATH_SAVE = f'/media/miplab-nas2/Data2/Movies_Emo/Silvia/Data/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}_{method}_pts.csv'
+        PATH_LABELS = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json'
+        PATH_DATA = f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv'
+        PATH_YEO = '/media/miplab-nas2/Data2/Movies_Emo/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
+    else:
+        PATH_SAVE = f'/storage/Projects/lab_projects/Silvia/Output/PLS_csv/PLSpeaks_{todo}_{concatmovies}_{method}_pts.csv'
+        PATH_LABELS = f'/home/silvia/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json'
+        PATH_DATA = f'/home/silvia/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv'
+        PATH_YEO = '/home/silvia/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
+
+    print('\n' + ' -' * 10 + f' - {feature} - {region} - {number_points} - {todo} - {movie_name} - {concatmovies} - {method}', ' -' * 10)
 
     if concatmovies == 'concat':
         minimum_points = 30
     elif concatmovies == 'single':
         minimum_points = 15
 
-    print('\n' + ' -' * 10 + f' - {feature} - {region} - {number_points} - {todo} - {movie_name} - {concatmovies} - {method}', ' -' * 10)
-
+    
     # Load the data Y and concatenated the feature
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
+    labels = pd.read_json(PATH_LABELS)
     if concatmovies == 'concat':
-        if todo == 'emotions':
-            data = concat_emo()
-        if todo == 'features_extracted':
-            data = extract_features_concat(cluster = True)
+        data = concat_emo() if todo == 'emotions' else extract_features_concat(cluster = True) if todo == 'features_extracted' else None
+    elif concatmovies == 'single':
+        data = pd.read_csv(PATH_DATA, sep = '\t', header = None) if todo == 'emotions' else extract_features(movie_name, columns = ['spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], cluster = True) if todo == 'features_extracted' else None
+        data.columns = labels['Columns']
     
-    elif concatmovies == 'single':
-        if todo == 'emotions':
-            Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
-            labels = pd.read_json(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.json')
-            data = pd.read_csv(f'/media/miplab-nas2/Data2/Movies_Emo/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv', sep = '\t', header = None)
-            data.columns = labels['Columns']
-        if todo == 'features_extracted':
-            data = extract_features(movie_name, columns = ['spectralflux', 'rms', 'zcrs'], columns_images = ['average_brightness_left', 'average_saturation_left', 'average_hue_left', 'average_brightness_right', 'average_saturation_right', 'average_hue_right'], cluster = True)
+    threshold_values = {
+        'concat': {150: 1, 100: 1.5, 50: 2, 35: 2.5},
+        'single': {70: 0.5, 50: 0.7, 35: 1, 20: 1.5}
+    }
+    threshold = threshold_values.get(concatmovies, {}).get(number_points)
 
-    # Find the times where the generic feature (emotional or extracted) is peaking
+    max_iterations = 1000
+    tolerance_range = range(number_points - 5, number_points + 6)
+    def get_times_peaking(threshold):
+        return data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
 
-    if concatmovies == 'concat':
-        if number_points == 150:
-            threshold = 1
-        elif number_points == 100:
-            threshold = 1.5
-        elif number_points == 50:
-            threshold = 2
-        elif number_points == 35:
-            threshold = 2.5
-    elif concatmovies == 'single':
-        if number_points == 70:
-            threshold = 0.5
-        elif number_points == 50:
-            threshold = 0.7
-        elif number_points == 35:
-            threshold = 1
-        elif number_points == 20:
-            threshold = 1.5
-    count = 0
-    times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
-    while (len(times_peaking) < number_points-5) | (len(times_peaking) > number_points+5):
-        count += 1
-        if len(times_peaking) < number_points-5:
-            print(f'There are {len(times_peaking)}  for {feature}. We will increase the threshold.')
-            threshold -= 0.01
-            times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
-
-        elif len(times_peaking) > number_points+5:
-            print(f'There are {len(times_peaking)} peaks for {feature}. We will decrease the threshold.')
-            threshold += 0.01
-            times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
-        elif (len(times_peaking) >= number_points-5) & (len(times_peaking) <= number_points+5):
-            print('The number of times where there are peaks is: ', len(times_peaking))
+    times_peaking = get_times_peaking(threshold)
+    for count in range(max_iterations):
+        num_peaks = len(times_peaking)
+        if num_peaks in tolerance_range:
             break
-        if count == 1000:
-            print('Too many iterations, we will not perform the PLS.\n')
-            sys.exit()
-    # round the threshold to 2 decimals
+        if num_peaks < number_points - 5:
+            print(f'There are {num_peaks} for {feature}. We will increase the threshold.')
+            threshold -= 0.01
+        elif num_peaks > number_points + 5:
+            print(f'There are {num_peaks} peaks for {feature}. We will decrease the threshold.')
+            threshold += 0.01
+        times_peaking = get_times_peaking(threshold)
+    else:
+        print('Too many iterations, we will not perform the PLS.\n')
+        sys.exit()
     threshold = round(threshold, 2)
-    times_peaking = data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
     print('The number of times where there are peaks is: ', len(times_peaking), 'and the threshold is: ', threshold)
 
     # Load the boostrapped results from the same region ad movie
     yeo_dict = loading_yeo(PATH_YEO)
 
     print('\nWe are doing the peak part')
-    # generic feature ----------> results
     if concatmovies == 'concat':
         X_movie = compute_X_concat(PATH, feature, threshold, control= False, todo = todo, mean = False)
     elif concatmovies == 'single':
