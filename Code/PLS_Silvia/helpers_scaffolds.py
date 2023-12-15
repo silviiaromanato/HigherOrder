@@ -847,13 +847,16 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
                         print('The shape of scaffold_current is: ', scaffold_current)
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
+                        print('The shape of scaffold_current is: ', scaffold_current)
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
             else:
                 for t in times:
                     if regions == 'ALL':
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
+                        print('The shape of scaffold_current is: ', scaffold_current)
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
+                        print('The shape of scaffold_current is: ', scaffold_current)
                 scaffold_current[subjID]=scaffold_current[subjID]/len(times)
     X = scaffold_current.copy()
     print('The shape of X for SCAFFOLD is: ', X.shape)
