@@ -776,8 +776,8 @@ def compute_X_withtimes(PATH, movie, times, method, PATH_YEO, regions = None):
     if method == 'bold':
         X = process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N)
     if method == 'scaffold':
-        X = process_scaffold_method(PATH, movie, regions, yeo_indices, times, N)
-        print('The shape of X for SCAFFOLD is: ', X.shape, X)
+        X = process_scaffold_method(PATH, movie, regions, yeo_indices, times, N)# X is all 0
+
     if method == 'triangles':
         X = process_triangles_method(PATH, movie, regions, yeo_indices, times, N)
     
@@ -832,8 +832,8 @@ def process_triangles_method(PATH, movie, regions, yeo_indices, times, N):
     print('The shape of X for TRIANGLES is: ', X.shape)
     return X
 
-
 def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
+    print(movie, regions, yeo_indices, times)
     scaffold_current=np.zeros((30,int(N*(N-1)/2)))
     for i in glob.glob(PATH+'*'):
         if (i.split('/')[-1].split('-')[0] == 'Scaffold_frequency_TC_114_sub') & (i.split('/')[-1].split('-')[1].endswith(f'{movie}.hd5')):
@@ -844,6 +844,7 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
                 for t in range(1,len(file)+1):
                     if regions == 'ALL':
                         scaffold_current[subjID,:]+=file[str(t)][:][u,v]
+                        print('The shape of scaffold_current is: ', scaffold_current)
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(file)
@@ -854,7 +855,6 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
                     else:
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(times)
-                print('The shape of scaffold_current is: ', scaffold_current)
     X = scaffold_current.copy()
     print('The shape of X for SCAFFOLD is: ', X.shape)
     return X
