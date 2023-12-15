@@ -225,10 +225,8 @@ def standa(X,Y):
     X_normed = X.copy()
     Y_normed = Y.copy()
     
-    print('There are nan values in the X: ', X_normed, X_normed.shape)
     X_normed=(X_normed-np.nanmean(X_normed,axis=0))/(np.nanstd(X_normed,axis=0, ddof=1))
     Y_normed=(Y_normed-np.nanmean(Y_normed,axis=0))/(np.nanstd(Y_normed,axis=0, ddof=1))
-    print('There are nan values in the X: ', np.isnan(X_normed).any().sum())
     return X_normed, Y_normed
 
 def run_decomposition(X,Y):                                                   
@@ -441,7 +439,6 @@ def run_pls(X_movie, Y, region, movie_name = 'concatenated'):
     seed = 10           # Seed for reproducibility
     sl = 0.05           # Signficant level for statistical testing
     res = run_decomposition(X_movie, Y)
-    # print if there are nan values 
     res_permu = permutation(res, nPer, seed, sl)
     results=pd.DataFrame(list(zip(varexp(res['S']),res_permu['P_val'])), columns=['Covariance Explained', 'P-value'])
     results['Movie']=movie_name
