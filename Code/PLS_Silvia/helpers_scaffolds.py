@@ -231,7 +231,6 @@ def standa(X,Y):
 
 def run_decomposition(X,Y):                                                   
         res={}
-        print("... Normalisation ...")
         X_std, Y_std = standa(X, Y)
         res['X']=X
         res['Y']=Y
@@ -458,8 +457,6 @@ def boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 20, num_roun
         pls = run_pls(X_movie_sample, Y_sample, region, movie_name)
         pls = pd.DataFrame(pls)
         pls['bootstrap_round'] = i
-        print('There are nan values in results: ', pls.isnull().values.any(), results.isnull().values.any())
-
         results = pd.concat([results, pls], axis=0)
     return results
 
