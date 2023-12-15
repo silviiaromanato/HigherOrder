@@ -739,7 +739,7 @@ def increase_thr(significant, emotions):
 
     plt.xlabel('Emotions', fontsize=20)
     plt.title(f'Covariance explained with less points (threshold increase)', fontsize=25)
-    # increase the font size of the x and y ticks
+
     plt.xticks(fontsize=17)
     plt.ylim(0, 1)
 
@@ -777,7 +777,6 @@ def compute_X_withtimes(PATH, movie, times, method, PATH_YEO, regions = None):
         X = process_bold_method_withtimes(PATH, movie, times, regions, yeo_indices, N)
     if method == 'scaffold':
         X = process_scaffold_method(PATH, movie, regions, yeo_indices, times, N)# X is all 0
-
     if method == 'triangles':
         X = process_triangles_method(PATH, movie, regions, yeo_indices, times, N)
     
@@ -855,6 +854,7 @@ def process_scaffold_method(PATH, movie, regions, yeo_indices, times, N):
                         scaffold_current[subjID,:]+=file[str(t)][:][yeo_indices,:][:,yeo_indices][u,v]
                 scaffold_current[subjID]=scaffold_current[subjID]/len(times)
     X = scaffold_current.copy()
+    print('The shape of X for SCAFFOLD is: ', X.shape)
     return X
 
 def preprocess_peaks_concat(peaks_data, data_all):
