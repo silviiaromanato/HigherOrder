@@ -240,7 +240,11 @@ def run_decomposition(X,Y):
      
         # print("...SVD ...")
         R=R_cov(X_std, Y_std)
+        print('R has Nan: ', np.isnan(R).any())
+        print('R has Inf: ', np.isinf(R).any())
         R = np.nan_to_num(R)
+        print('R has Nan: ', np.isnan(R).any())
+        print('R has Inf: ', np.isinf(R).any())
         U,S, V = SVD(R, ICA=True)
         ExplainedVarLC =varexp(S)
         Lx, Ly= PLS_scores(X_std, Y_std, U, V)
