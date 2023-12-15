@@ -19,7 +19,7 @@ if __name__ == '__main__':
     # ------------------------- Input arguments -------------------------
     PATH = sys.argv[1]
     feature = sys.argv[2] # these can be the features too
-    PATH_DATA = sys.argv[3]
+    PATH_DATA_Y = sys.argv[3]
     region = sys.argv[4]
     number_points = int(sys.argv[5])
     todo = sys.argv[6]
@@ -47,9 +47,7 @@ if __name__ == '__main__':
     elif concatmovies == 'single':
         minimum_points = 15
 
-    Y = pd.read_csv(PATH_DATA, sep='\t', header=0)
-    print(Y.columns, 'target cols are: ', columns)
-    Y = Y[columns]
+    Y = pd.read_csv(PATH_DATA_Y, sep='\t', header=0)[columns]
     labels = pd.read_json(PATH_LABELS)
     if concatmovies == 'concat':
         data = concat_emo() if todo == 'emotions' else extract_features_concat(cluster = True) if todo == 'features_extracted' else None
