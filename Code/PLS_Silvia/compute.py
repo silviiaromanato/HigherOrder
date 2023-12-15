@@ -82,27 +82,22 @@ def resampling(df, dur, resol=1.3):
     df.drop(range(dur-1, len(df)), axis=0, inplace=True)
     return df
 
-def standa (X,Y, durations):  
-    X_normed = X.copy()
-    Y_normed = Y.copy()
+# def standa(X,Y, durations):  
+#     X_normed = X.copy()
+#     Y_normed = Y.copy()
     
-    id_0=0
-    id_1=durations[0]
+#     id_0=0
+#     id_1=durations[0]
     
-    for dur in durations:  
-        id_1 = id_0+dur
-        X_normed[id_0:id_1]=(X_normed[id_0:id_1]-np.nanmean(X_normed[id_0:id_1], 
-                                                            axis=0))/(np.nanstd(X_normed[id_0:id_1],axis=0, ddof=0))
-        Y_normed[id_0:id_1]=(Y_normed[id_0:id_1]-np.nanmean(Y_normed[id_0:id_1],
-                                                            axis=0))/(np.nanstd(Y_normed[id_0:id_1],axis=0, ddof=0))
-
+#     for dur in durations:  
+#         id_1 = id_0+dur
+#         X_normed[id_0:id_1]=(X_normed[id_0:id_1]-np.nanmean(X_normed[id_0:id_1], 
+#                                                             axis=0))/(np.nanstd(X_normed[id_0:id_1],axis=0, ddof=0))
+#         Y_normed[id_0:id_1]=(Y_normed[id_0:id_1]-np.nanmean(Y_normed[id_0:id_1],
+#                                                             axis=0))/(np.nanstd(Y_normed[id_0:id_1],axis=0, ddof=0))
+#         id_0+=dur
         
-        
-     
-        id_0+=dur
-       
-        
-    return X_normed, Y_normed
+#     return X_normed, Y_normed
     
 def R_cov(X, Y) : 
     """
@@ -432,4 +427,14 @@ def corr_behav_saliences(df1, df2, LV_id) :
     correlation = scipy.stats.pearsonr(np.array(df1[LV_id[0]]), np.array(df2[LV_id[1]]))
     # Print the correlation coefficient
     print(f"Correlation coefficient for the LV {LV_id[0]+1} & {LV_id[1]+1}", correlation)
-    
+
+def zscore(mat):
+    """Performs z-scoring over matrix columns"""
+    zscored_mat = mat.copy()
+    for col in range(mat.shape[1]):
+        current_col = mat[:,col]
+        current_mean = np.mean(current_col)
+        current_std = np.std(current_col)
+        new_col = (current_col - current_mean)/current_std
+        zscored_mat[:,col] = new_col
+    return zscored_mat

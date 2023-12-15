@@ -220,12 +220,20 @@ def process_bold_method(PATH, movie, regions, yeo_indices, N):
 
     return X
 
+def zscore(mat):
+    """Performs z-scoring over matrix columns"""
+    zscored_mat = mat.copy()
+    for col in range(mat.shape[1]):
+        current_col = mat[:,col]
+        current_mean = np.mean(current_col)
+        current_std = np.std(current_col)
+        new_col = (current_col - current_mean)/current_std
+        zscored_mat[:,col] = new_col
+    return zscored_mat
+
 def standa(X,Y):  
-    X_normed = X.copy()
-    Y_normed = Y.copy()
-    
-    X_normed=(X_normed-np.nanmean(X_normed,axis=0))/(np.nanstd(X_normed,axis=0, ddof=1))
-    Y_normed=(Y_normed-np.nanmean(Y_normed,axis=0))/(np.nanstd(Y_normed,axis=0, ddof=1))
+    X_normed = zscore(X)
+    Y_normed = zscore(Y)
 
     return X_normed, Y_normed
 
@@ -260,6 +268,23 @@ def permutation(res_original, nPerms, seed,seuil):
         res['Sp_vect']=permu(res_original['X_std'],res_original['Y_std'], res_original['U'], nPerms, seed)
         res['P_val'], res['sig_LC'] = myPLS_get_LC_pvals(res['Sp_vect'],res_original['S'],nPerms, seuil)
         return res 
+
+def R_cov(X, Y) : 
+    """
+    Computes the Correlation Matrix
+    
+    Input 
+    -------
+        - X (T x V Dataframe) : Voxel-wise serie
+        - Y (T x M DataFrame) : Behavior dataset 
+    Ouput
+    -------
+        - R (M x V Array) : Correlation Matrix
+    """
+    if(X.shape[0] != Y.shape[0]): raise Exception("Input arguments X and Y should have the same number of rows")
+        
+    R = (np.array(Y.T) @ np.array(X))
+    return R
 
 def myPLS_bootstrapping(X0,Y0,U,V, nBoots, seed=1):
     """ Boostrap on X0 & Y0 and recompute SVD 
