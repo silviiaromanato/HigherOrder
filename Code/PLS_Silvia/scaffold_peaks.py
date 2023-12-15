@@ -42,14 +42,11 @@ if __name__ == '__main__':
         PATH_YEO = '/home/silvia/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 
     print('\n' + ' -' * 10 + f' - {feature} - {region} - {number_points} - {todo} - {movie_name} - {concatmovies} - {method}', ' -' * 10)
-
     if concatmovies == 'concat':
         minimum_points = 30
     elif concatmovies == 'single':
         minimum_points = 15
 
-    
-    # Load the data Y and concatenated the feature
     Y = pd.read_csv(PATH_DATA, sep='\t', header=0)[columns]
     labels = pd.read_json(PATH_LABELS)
     if concatmovies == 'concat':
