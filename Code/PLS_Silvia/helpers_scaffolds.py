@@ -232,6 +232,7 @@ def standa(X,Y):
 def run_decomposition(X,Y):                                                   
         res={}
          # print("... Normalisation ...")
+        print('There are nan values in the X: ', np.isnan(X).any(), np.isnan(Y).any())
         X_std, Y_std = standa(X, Y)
         print('There are nan values in the X_std: ', np.isnan(X_std).any(), np.isnan(Y_std).any())
         res['X']=X
