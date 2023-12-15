@@ -18,9 +18,13 @@ if __name__ == '__main__':
 
     # ------------------------- Input arguments -------------------------
     PATH = sys.argv[1]
+    print(PATH)
     feature = sys.argv[2] # these can be the features too
+    print(feature)
     PATH_DATA = sys.argv[3]
+    print(PATH_DATA)
     region = sys.argv[4]
+    print(region)
     number_points = int(sys.argv[5])
     todo = sys.argv[6]
     concatmovies = sys.argv[7]
