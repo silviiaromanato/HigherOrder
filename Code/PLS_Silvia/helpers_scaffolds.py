@@ -323,7 +323,7 @@ def bootstrap(res_original,nBoot,seed):
     res= myPLS_bootstrapping(res_original['X'],res_original['Y'], res_original['U'],res_original['V'], nBoot, seed)
     return res
 
-def loading_yeo(path=PATH_YEO):
+def loading_yeo(path):
     ## Loading the yeoROIS
     yeoROIs=np.array([i[0]-1 for i in loadmat(path)['yeoROIs']])
     yeoROI_dict={label_Yeo:np.where(yeoROIs==idx_Yeo)[0] for idx_Yeo,label_Yeo in enumerate(['VIS','SM','DA','VA','L','FP','DMN'])}
