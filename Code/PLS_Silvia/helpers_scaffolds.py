@@ -220,20 +220,16 @@ def process_bold_method(PATH, movie, regions, yeo_indices, N):
 
     return X
 
-def zscore(mat):
-    """Performs z-scoring over matrix columns"""
-    zscored_mat = mat.copy()
-    for col in range(mat.shape[1]):
-        current_col = mat[:,col]
-        current_mean = np.mean(current_col)
-        current_std = np.std(current_col)
-        new_col = (current_col - current_mean)/current_std
-        zscored_mat[:,col] = new_col
-    return zscored_mat
 
 def standa(X,Y):  
-    X_normed = zscore(X)
-    Y_normed = zscore(Y)
+    X_normed = X.copy()
+    Y_normed = Y.copy()
+    
+    print('There are nan values in the X: ', np.isnan(X_normed).any().sum(), np.isnan(Y_normed).any().sum())
+    X_normed=(X_normed-np.nanmean(X_normed,axis=0))/(np.nanstd(X_normed,axis=0, ddof=1))
+    Y_normed=(Y_normed-np.nanmean(Y_normed,axis=0))/(np.nanstd(Y_normed,axis=0, ddof=1))
+    print('There are nan values in the X: ', np.isnan(X_normed).any().sum(), np.isnan(Y_normed).any().sum())
+
 
     return X_normed, Y_normed
 
