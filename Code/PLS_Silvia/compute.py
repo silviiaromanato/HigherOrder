@@ -141,6 +141,9 @@ def SVD(R, ICA=False, seed=1, n_components=None,):
        
     """
     R = np.array(R)
+    print('R has nan values:', np.isnan(R).any())
+    print('R has inf values:', np.isinf(R).any())
+    
     n_components = min(R.shape)
     
     
