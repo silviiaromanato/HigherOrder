@@ -13,7 +13,7 @@ seed = 10           # Seed for reproducibility
 sl = 0.05          # Signficant level for statistical testing
 p_star = 0.05
 columns = ['DASS_dep', 'DASS_anx', 'DASS_str',	'bas_d', 'bas_f', 'bas_r', 'bis', 'BIG5_ext', 'BIG5_agr', 'BIG5_con', 'BIG5_neu', 'BIG5_ope']
-
+control = False
 if __name__ == '__main__': 
 
     # ------------------------- Input arguments -------------------------
@@ -97,25 +97,26 @@ if __name__ == '__main__':
     results['threshold'] = threshold
     results['Number of points'] = number_points
     results['Method'] = method
-
-    print('\nWe are doing the control')
-    results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 
-                                                'bootstrap_round', 'Feature', 'threshold', 'Number of points', 'Method'])
-    for i in range(bootstrap_rounds):
-        print(f'\nControl {i}')
-        if concatmovies == 'concat':
-            X_movie = compute_X_concat(PATH, feature, threshold, PATH_YEO, control=True, seed = 5 * i, todo = todo, mean = False, server = server)
-        elif concatmovies == 'single':
-            X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, method = method, PATH_YEO = PATH_YEO, regions = region)
-        X_movie = pd.DataFrame(X_movie)
-        results_control_i = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = 2)
-        results_control_i['Feature'] = f'Control_{i}_{feature}'
-        results_control_i['threshold'] = threshold
-        results_control_i['Number of points'] = number_points
-        results_control_i['Method'] = method
-        results_control = pd.concat([results_control, results_control_i], axis=0)
     
-    results = pd.concat([results, results_control], axis=0)
+    if control:
+        print('\nWe are doing the control')
+        results_control = pd.DataFrame(columns = ['Covariance Explained', 'P-value', 'Movie', 'LC', 'Region', 
+                                                    'bootstrap_round', 'Feature', 'threshold', 'Number of points', 'Method'])
+        for i in range(bootstrap_rounds):
+            print(f'\nControl {i}')
+            if concatmovies == 'concat':
+                X_movie = compute_X_concat(PATH, feature, threshold, PATH_YEO, control=True, seed = 5 * i, todo = todo, mean = False, server = server)
+            elif concatmovies == 'single':
+                X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, method = method, PATH_YEO = PATH_YEO, regions = region)
+            X_movie = pd.DataFrame(X_movie)
+            results_control_i = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = 2)
+            results_control_i['Feature'] = f'Control_{i}_{feature}'
+            results_control_i['threshold'] = threshold
+            results_control_i['Number of points'] = number_points
+            results_control_i['Method'] = method
+            results_control = pd.concat([results_control, results_control_i], axis=0)
+        
+        results = pd.concat([results, results_control], axis=0)
 
     if os.path.exists(PATH_SAVE):
         PLS_results = pd.read_csv(PATH_SAVE)
