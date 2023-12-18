@@ -62,7 +62,7 @@ if __name__ == '__main__':
     }
     threshold = threshold_values.get(concatmovies, {}).get(number_points)
 
-    max_iterations = 1000
+    max_iterations = 5000
     tolerance_range = range(number_points - 5, number_points + 6)
     def get_times_peaking(threshold):
         return data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
