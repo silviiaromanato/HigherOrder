@@ -68,6 +68,7 @@ if __name__ == '__main__':
         return data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
 
     times_peaking = get_times_peaking(threshold)
+    print('The number of times where there are peaks is: ', len(times_peaking), 'and the threshold is: ', threshold)
     for count in range(max_iterations):
         num_peaks = len(times_peaking)
         if num_peaks in tolerance_range:
