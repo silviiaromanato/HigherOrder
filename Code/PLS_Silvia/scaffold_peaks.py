@@ -79,7 +79,7 @@ if __name__ == '__main__':
         times_peaking = get_times_peaking(threshold)
         if count % 1000 == 0:
             print('Too many iterations, we will increase the tolerance range.\n')
-            tolerance_range = range(number_points - (10 * count / 1000), number_points + (11 * count / 1000))
+            tolerance_range = range(number_points - int(10 * count / 1000), number_points + int(11 * count / 1000))
     threshold = round(threshold, 2)
     print('The number of times where there are peaks is: ', len(times_peaking), 'and the threshold is: ', threshold)
 
