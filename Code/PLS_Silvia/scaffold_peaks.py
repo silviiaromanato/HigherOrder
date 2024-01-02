@@ -60,7 +60,7 @@ if __name__ == '__main__':
     # ------------------------ Compute the PLS ------------------------
     
     results = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = bootstrap_rounds)
-    results = add_columns(results)
+    results = add_columns(results, feature, threshold, number_points, method)
     
     # ------------------------ Compute the control ------------------------
     if control:
