@@ -51,11 +51,11 @@ if __name__ == '__main__':
 
     # ------------------------ Get threshold ------------------------
 
-    threshold, times_peaking = get_threshold(threshold_values, number_points)
+    threshold, times_peaking = get_threshold(threshold_values, number_points, data, feature, max_iterations = 10000)
 
     # ------------------------ Compute the X matrix ------------------------
 
-    X_movie = get_x(concatmovies)
+    X_movie = get_x(concatmovies, PATH, feature, threshold, PATH_YEO, todo, server, movie_name, times_peaking, method, region)
 
     # ------------------------ Compute the PLS ------------------------
     
@@ -70,11 +70,11 @@ if __name__ == '__main__':
         for i in range(bootstrap_rounds):
 
             # X matrix
-            X_movie = get_x(concatmovies)
+            X_movie = get_x(concatmovies, PATH, feature, threshold, PATH_YEO, todo, server, movie_name, times_peaking, method, region, i = i)
 
             # Control
             results_control_i = boostrap_subjects(X_movie, Y, region, movie_name, sample_size = 25, num_rounds = 2)
-            results_control_i = add_columns(results_control_i)
+            results_control_i = add_columns(results_control_i, feature, threshold, number_points, method)
 
             # Concatenate the results
             results_control = pd.concat([results_control, results_control_i], axis=0)

@@ -760,13 +760,13 @@ def get_data(concatmovies, todo, movie_name, columns, server, PATH_DATA_Y, PATH_
 
     return Y, data, threshold_values, minimum_points
 
-def get_times_peaking(threshold):
+def get_times_peaking(threshold, data, feature):
         return data[f'{feature}'].loc[data[f'{feature}'] > threshold].index
 
-def get_threshold(threshold_values, number_points):
+def get_threshold(threshold_values, number_points, data, feature, max_iterations = 10000):
     threshold = threshold_values[number_points] if number_points in threshold_values.keys() else 1.5
     tolerance_range = range(number_points - 5, number_points + 6)
-    times_peaking = get_times_peaking(threshold)
+    times_peaking = get_times_peaking(threshold, data, feature)
     print('The number of times where there are peaks is: ', len(times_peaking), 'and the threshold is: ', threshold)
     for count in range(max_iterations):
         num_peaks = len(times_peaking)
@@ -784,15 +784,15 @@ def get_threshold(threshold_values, number_points):
     print('The number of times where there are peaks is: ', len(times_peaking), 'and the threshold is: ', threshold)
     return threshold, times_peaking
 
-def get_x(concatmovies):
+def get_x(concatmovies, PATH, feature, threshold, PATH_YEO, todo, server, movie_name, times_peaking, method, region,  i = 1):
     if concatmovies == 'concat':
-        X_movie = compute_X_concat(PATH, feature, threshold, PATH_YEO, control=True, seed = 5 * i, todo = todo, mean = False, server = server)
+        X_movie = compute_X_concat(PATH, feature, threshold, PATH_YEO, control=True, seed = 5, todo = todo, mean = False, server = server)
     elif concatmovies == 'single':
         X_movie = compute_X_withtimes(PATH, movie_name, times_peaking, method = method, PATH_YEO = PATH_YEO, regions = region)
     X_movie = pd.DataFrame(X_movie)
     return X_movie
 
-def add_columns(df):
+def add_columns(df, feature, threshold, number_points, method):
     df['Feature'] = feature
     df['threshold'] = threshold
     df['Number of points'] = number_points
