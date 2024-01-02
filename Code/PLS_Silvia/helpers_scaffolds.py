@@ -776,7 +776,7 @@ def get_threshold(threshold_values, number_points, data, feature, max_iterations
             threshold -= 0.01
         elif num_peaks > number_points + 5:
             threshold += 0.01
-        times_peaking = get_times_peaking(threshold)
+        times_peaking = get_times_peaking(threshold, data, feature)
         if count % 1000 == 0:
             print('Too many iterations, we will increase the tolerance range.\n')
             tolerance_range = range(number_points - int(10 * count / 1000), number_points + int(11 * count / 1000))
