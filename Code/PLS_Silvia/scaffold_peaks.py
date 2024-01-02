@@ -46,7 +46,7 @@ if __name__ == '__main__':
         PATH_DATA = f'/home/silvia/Flavia_E3/EmoData/Annot13_{movie_name}_stim.tsv'
         PATH_YEO = '/home/silvia/Silvia/HigherOrder/Data/yeo_RS7_Schaefer100S.mat'
 
-    Y, data, threshold_values, minimum_points = get_data(concatmovies, todo, movie_name, columns, server)
+    Y, data, threshold_values, minimum_points = get_data(concatmovies, todo, movie_name, columns, server, PATH_DATA_Y, PATH_LABELS, PATH_DATA)
     yeo_dict = loading_yeo(PATH_YEO)
 
     # ------------------------ Get threshold ------------------------

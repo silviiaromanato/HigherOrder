@@ -743,7 +743,7 @@ def preprocess_peaks_concat(peaks_data, data_all):
     return peaks_data, data_all, features, thresholds
 
 
-def get_data(concatmovies, todo, movie_name, columns, server):
+def get_data(concatmovies, todo, movie_name, columns, server, PATH_DATA_Y, PATH_LABELS, PATH_DATA):
     Y = pd.read_csv(PATH_DATA_Y, sep='\t', header=0)[columns]
     labels = pd.read_json(PATH_LABELS)
 

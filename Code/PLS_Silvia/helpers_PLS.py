@@ -725,45 +725,68 @@ def retrieve_significant_data(peaks_data, data_all_movie, count_pts, thresholds,
     significant.loc[significant['Feature'] == 'All movie', 'Number of points'] = count_pts[thr]['All Movie']
     return significant
 
-def plot_peaks(significant, emotions, thresholds):
-    # Define your thresholds
-    palette = sns.color_palette("Set2", 8)
+def plot_peaks(significant, thresholds, emotions = None, on = 'Number of points'):
 
-    # Assuming 'significant' is your DataFrame and 'emotions' is defined
-    order_emotions = ['All movie'] + list(emotions)  # Adjusted for simplicity
+    if on == 'threshold':
+        # Define your thresholds
+        palette = sns.color_palette("Set2", 8)
 
-    # Set up the subplot grid
-    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(30, 15))  # Adjust the size as needed
+        # Assuming 'significant' is your DataFrame and 'emotions' is defined
+        order_emotions = ['All movie'] + list(emotions)  # Adjusted for simplicity
 
-    for i, thr in enumerate(thresholds):
-        # Filter data for the current threshold
-        significant.loc[significant['Feature'] == 'All movie', 'threshold'] = thr
-        df_thr = significant[significant['threshold'] == thr]
+        # Set up the subplot grid
+        fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(30, 15))  # Adjust the size as needed
 
-        # Plot the boxplot in the i-th subplot
-        sns.boxplot(x='Feature', y='Covariance Explained', data=df_thr,  hue='Control',
-                    palette=palette, order=order_emotions, ax=axes[i])
+        for i, thr in enumerate(thresholds):
+            # Filter data for the current threshold
+            significant.loc[significant['Feature'] == 'All movie', 'threshold'] = thr
+            df_thr = significant[significant['threshold'] == thr]
 
-        # Adjust x-ticks
-        list_n = []
-        for emo in order_emotions:
-            if emo.startswith('average_'):
-                n = df_thr[df_thr['Feature'] == emo]['Number of points'].unique()
-            else:
-                n = df_thr[df_thr['Feature'] == emo.split('_')[0]]['Number of points'].unique()
-            if len(n) == 0:
-                n = 0
-            else:
-                n = n[0]
-            list_n.append(f'{emo}: {int(n)}')
+            # Plot the boxplot in the i-th subplot
+            sns.boxplot(x='Feature', y='Covariance Explained', data=df_thr,  hue='Control',
+                        palette=palette, order=order_emotions, ax=axes[i])
 
-        axes[i].set_xticklabels(list_n, rotation=90, fontsize=15)
-        axes[i].set_title(f'Concatenated movies - threshold {thr}', fontsize=20)
-        axes[i].set_ylim(0, 1)
+            # Adjust x-ticks
+            list_n = []
+            for emo in order_emotions:
+                if emo.startswith('average_'):
+                    n = df_thr[df_thr['Feature'] == emo]['Number of points'].unique()
+                else:
+                    n = df_thr[df_thr['Feature'] == emo.split('_')[0]]['Number of points'].unique()
+                if len(n) == 0:
+                    n = 0
+                else:
+                    n = n[0]
+                list_n.append(f'{emo}: {int(n)}')
 
-        for item in ([axes[i].title, axes[i].xaxis.label, axes[i].yaxis.label] +
-                     axes[i].get_xticklabels() + axes[i].get_yticklabels()):
-            item.set_fontsize(25)
+            axes[i].set_xticklabels(list_n, rotation=90, fontsize=15)
+            axes[i].set_title(f'Concatenated movies - threshold {thr}', fontsize=20)
+            axes[i].set_ylim(0, 1)
+
+            for item in ([axes[i].title, axes[i].xaxis.label, axes[i].yaxis.label] +
+                        axes[i].get_xticklabels() + axes[i].get_yticklabels()):
+                item.set_fontsize(25)
+
+    elif on == 'Number of points':
+        palette = sns.color_palette("Set2", 2)
+        fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(30, 15))  # Adjust the size as needed
+        for i, thr in enumerate(thresholds):
+            significant.loc[significant['Feature'] == 'All movie', on] = thr
+            df_thr = significant[significant[on] == thr]
+
+            # sns.boxplot(x='Feature', y='Covariance Explained', data=df_thr,  hue='Control', ax=axes[i], palette=palette,
+            #             order = ['All movie', 'Happiness', 'Love', 'WarmHeartedness', 'Regard', 'Sad', 'Anxiety', 'Fear'])
+            
+            sns.boxplot(data=df_thr, x="Feature", y="Covariance Explained", hue="Control", ax=axes[i], palette=palette)
+
+            axes[i].set_title(f'Concatenated movies - {on} {thr}', fontsize=20)
+            axes[i].set_ylim(0, 1)
+            axes[i].set_xlabel('Features', fontsize=25)
+            axes[i].set_ylabel('Covariance Explained', fontsize=25)
+            # font size of the x and y ticks 
+            axes[i].tick_params(axis='both', which='major', labelsize=20, rotation=90)
+            axes[i].tick_params(axis='both', which='minor', labelsize=20, rotation=90)
+            axes[i].axhline(y=significant[significant['Feature'] == 'All movie']['Covariance Explained'].median(), color='r', linestyle='--', label='All movie median')
 
     plt.tight_layout()
     plt.show()
